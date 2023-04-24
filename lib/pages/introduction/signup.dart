@@ -4,9 +4,10 @@ import 'package:speedyship/components/square_tile.dart';
 import 'package:speedyship/components/my_button.dart';
 import 'package:speedyship/components/my_button2.dart';
 import 'package:speedyship/pages/auth.dart';
-import 'package:speedyship/pages/introduction/login.dart';
+import 'package:speedyship/components/date_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class SignupPage extends StatefulWidget {
   SignupPage({super.key});
@@ -16,6 +17,7 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
+  DateTime? _selectedDate;
   //text controllers
   final emailController = TextEditingController();
 
@@ -26,6 +28,16 @@ class _SignupPageState extends State<SignupPage> {
   final fnameController = TextEditingController();
 
   final lnameController = TextEditingController();
+
+  final phonecontroller = TextEditingController();
+
+  final _dobcontroller = TextEditingController();
+
+  void _onDateSelected(DateTime date) {
+    setState(() {
+      _dobcontroller.text = DateFormat('dd/MM/yyyy').format(date);
+    });
+  }
 
   //sign up a user
   Future<void> signup() async {
@@ -44,9 +56,11 @@ class _SignupPageState extends State<SignupPage> {
         'email': emailController.text,
         'firstName': fnameController.text,
         'lastName': lnameController.text,
+        'PhoneNumber': phonecontroller.text,
+        'DateOfBirth': _dobcontroller.text,
       });
 
-      // Navigate to the next page after a successful sign-up
+      //Login a user after they sign up
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => AuthPage()),
       );
@@ -95,7 +109,7 @@ class _SignupPageState extends State<SignupPage> {
               //pwd
               MyTextField(
                 controller: passwordController,
-                hintText: 'password',
+                hintText: 'Password',
                 obscureText: true,
               ),
 
@@ -116,7 +130,7 @@ class _SignupPageState extends State<SignupPage> {
               ),
 
               const SizedBox(height: 15),
-
+              //last name
               MyTextField(
                 controller: lnameController,
                 hintText: 'Last Name',
@@ -124,7 +138,12 @@ class _SignupPageState extends State<SignupPage> {
               ),
 
               const SizedBox(height: 15),
-
+              //dob
+              MyDatePicker(
+                onDateSelected: (date) => setState(
+                  () => _selectedDate = date,
+                ),
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25.0),
                 child: Row(
@@ -132,6 +151,13 @@ class _SignupPageState extends State<SignupPage> {
                   children: [],
                 ),
               ),
+
+              const SizedBox(height: 15),
+
+              MyTextField(
+                  controller: phonecontroller,
+                  hintText: "Phone Number",
+                  obscureText: false),
 
               const SizedBox(height: 25),
               //sign in button

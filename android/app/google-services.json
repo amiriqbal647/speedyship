@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "1082815366088",
+    "project_id": "speedyship-ec358",
+    "storage_bucket": "speedyship-ec358.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1082815366088:android:8b8005c1d4f329d682f6fd",
+        "android_client_info": {
+          "package_name": "com.example.speedyship"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1082815366088-uierbeml9n59c4j2o7loitanscu5g26t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDbfY4VSOzUlvDaGyglZw8-_u0kqv2zWAI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1082815366088-uierbeml9n59c4j2o7loitanscu5g26t.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1082815366088-0i4khe73deg3gkm9fhe2jtas57p3re1q.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.speedyship"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

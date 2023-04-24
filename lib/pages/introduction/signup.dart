@@ -6,7 +6,7 @@ import 'package:speedyship/components/my_button2.dart';
 import 'package:speedyship/pages/auth.dart';
 import 'package:speedyship/pages/introduction/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_firestore/firebase_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SignupPage extends StatefulWidget {
   SignupPage({super.key});
@@ -23,13 +23,28 @@ class _SignupPageState extends State<SignupPage> {
 
   final repeatController = TextEditingController();
 
+  final fnameController = TextEditingController();
+
+  final lnameController = TextEditingController();
+
   //sign up a user
-  Future signup() async {
+  Future<void> signup() async {
     try {
+      // Create user account
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: emailController.text,
         password: passwordController.text,
       );
+
+      // Get the current user
+      User? user = FirebaseAuth.instance.currentUser;
+
+      // Add user data to Firestore collection
+      await FirebaseFirestore.instance.collection('users').doc(user?.uid).set({
+        'email': emailController.text,
+        'firstName': fnameController.text,
+        'lastName': lnameController.text,
+      });
 
       // Navigate to the next page after a successful sign-up
       Navigator.of(context).pushReplacement(
@@ -92,6 +107,24 @@ class _SignupPageState extends State<SignupPage> {
                   obscureText: true),
 
               const SizedBox(height: 15),
+
+              //firstname
+              MyTextField(
+                controller: fnameController,
+                hintText: 'First Name',
+                obscureText: false,
+              ),
+
+              const SizedBox(height: 15),
+
+              MyTextField(
+                controller: lnameController,
+                hintText: 'Last Name',
+                obscureText: false,
+              ),
+
+              const SizedBox(height: 15),
+
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25.0),
                 child: Row(
@@ -171,7 +204,7 @@ class _SignupPageState extends State<SignupPage> {
                           color: Colors.blue, fontWeight: FontWeight.bold),
                     ),
                   ),
-                  const SizedBox(height: 15),
+                  const SizedBox(height: 30),
                 ],
               ),
             ]),

@@ -31,14 +31,6 @@ class _SignupPageState extends State<SignupPage> {
 
   final phonecontroller = TextEditingController();
 
-  final _dobcontroller = TextEditingController();
-
-  void _onDateSelected(DateTime date) {
-    setState(() {
-      _dobcontroller.text = DateFormat('dd/MM/yyyy').format(date);
-    });
-  }
-
   //sign up a user
   Future<void> signup() async {
     try {
@@ -50,6 +42,7 @@ class _SignupPageState extends State<SignupPage> {
 
       // Get the current user
       User? user = FirebaseAuth.instance.currentUser;
+      final selectedDate = _selectedDate?.toIso8601String();
 
       // Add user data to Firestore collection
       await FirebaseFirestore.instance.collection('users').doc(user?.uid).set({
@@ -57,7 +50,7 @@ class _SignupPageState extends State<SignupPage> {
         'firstName': fnameController.text,
         'lastName': lnameController.text,
         'PhoneNumber': phonecontroller.text,
-        'DateOfBirth': _dobcontroller.text,
+        'DateOfBirth': selectedDate,
       });
 
       //Login a user after they sign up

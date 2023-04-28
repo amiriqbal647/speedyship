@@ -67,7 +67,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '1082815366088',
     projectId: 'speedyship-ec358',
     storageBucket: 'speedyship-ec358.appspot.com',
-    iosClientId: '1082815366088-0i4khe73deg3gkm9fhe2jtas57p3re1q.apps.googleusercontent.com',
+    iosClientId:
+        '1082815366088-0i4khe73deg3gkm9fhe2jtas57p3re1q.apps.googleusercontent.com',
     iosBundleId: 'com.example.speedyship',
   );
 
@@ -77,7 +78,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '1082815366088',
     projectId: 'speedyship-ec358',
     storageBucket: 'speedyship-ec358.appspot.com',
-    iosClientId: '1082815366088-0i4khe73deg3gkm9fhe2jtas57p3re1q.apps.googleusercontent.com',
+    iosClientId:
+        '1082815366088-0i4khe73deg3gkm9fhe2jtas57p3re1q.apps.googleusercontent.com',
     iosBundleId: 'com.example.speedyship',
   );
 }

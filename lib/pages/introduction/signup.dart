@@ -1,4 +1,8 @@
+import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:speedyship/components/my_textfield.dart';
 import 'package:speedyship/components/square_tile.dart';
 import 'package:speedyship/components/my_button.dart';
@@ -8,6 +12,8 @@ import 'package:speedyship/components/date_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+
+import '../../components/image_picker.dart';
 
 class SignupPage extends StatefulWidget {
   SignupPage({super.key});
@@ -51,6 +57,8 @@ class _SignupPageState extends State<SignupPage> {
         'lastName': lnameController.text,
         'PhoneNumber': phonecontroller.text,
         'DateOfBirth': selectedDate,
+        'image': imageUrl,
+        'role': 'user',
       });
 
       //Login a user after they sign up
@@ -68,6 +76,8 @@ class _SignupPageState extends State<SignupPage> {
       print(e);
     }
   }
+
+  String imageUrl = '';
 
   //rest of the code
   @override
@@ -114,6 +124,16 @@ class _SignupPageState extends State<SignupPage> {
                   obscureText: true),
 
               const SizedBox(height: 15),
+
+              ElevatedButton(
+                onPressed: () async {
+                  String imageUrl = await uploadImage();
+                  setState(() {
+                    this.imageUrl = imageUrl;
+                  });
+                },
+                child: Icon(Icons.camera),
+              ),
 
               //firstname
               MyTextField(

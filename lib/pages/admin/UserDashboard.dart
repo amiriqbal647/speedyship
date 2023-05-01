@@ -49,8 +49,10 @@ class _UserDashboardState extends State<UserDashboard> {
               final email = user is Map ? user['email'] : (user as dynamic)[2];
               final phoneNumber =
                   user is Map ? user['PhoneNumber'] : (user as dynamic)[3];
-              final dateOfBirth =
-                  user is Map ? user['DateOfBirth'] : (user as dynamic)[4];
+              final dateOfBirth = user is Map
+                  ? user['DateOfBirth'].toString()
+                  : (user as dynamic)[4].toString();
+
               final imageUrl =
                   user is Map ? user['image'] : (user as dynamic)[5];
 

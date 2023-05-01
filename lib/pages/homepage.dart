@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:speedyship/pages/shipments/shipmentForm.dart';
 import 'admin/admin_main.dart';
 import 'introduction/EditUserInfo.dart';
 import 'package:image_picker/image_picker.dart';
@@ -75,6 +76,15 @@ class _HomePageState extends State<HomePage> {
                   );
                 },
                 child: Text("Sign Up")),
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => ShipmentForm(),
+                    ),
+                  );
+                },
+                child: Text("Shipment form")),
           ],
         ),
       ),

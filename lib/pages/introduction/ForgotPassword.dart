@@ -74,7 +74,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             onPressed: () {
               passwordReset();
             },
-            child: const Text("Reset Password"),
+            child: Text("Reset Password"),
           )
         ],
       ),

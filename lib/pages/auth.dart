@@ -45,7 +45,7 @@ class AuthPage extends StatelessWidget {
                     return LoginPage();
                   }
                 } else {
-                  return CircularProgressIndicator();
+                  return SignupPage();
                 }
               },
             );

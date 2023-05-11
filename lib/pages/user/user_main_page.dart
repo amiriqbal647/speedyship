@@ -2,6 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:speedyship/pages/courier/become_courier.dart';
+import 'package:speedyship/pages/courier/courier_main.dart';
+import 'package:speedyship/pages/shipments/shipmentForm.dart';
 
 final FirebaseAuth auth = FirebaseAuth.instance;
 final FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -106,6 +109,19 @@ class _UserMainPageState extends State<UserMainPage> {
               },*/
             ),
             Divider(),
+            Divider(),
+            ListTile(
+              leading: Icon(Icons.motorcycle),
+              title: Text('Apply for Courier'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => BecomeCourierPage(),
+                  ),
+                );
+              },
+            ),
             ListTile(
               leading: Icon(Icons.logout),
               title: Text('Sign Out'),
@@ -193,7 +209,10 @@ class _UserMainPageState extends State<UserMainPage> {
                       padding: const EdgeInsets.all(20.0),
                       child: ElevatedButton(
                           onPressed: () {
-                            print("batman");
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ShipmentForm()));
                           },
                           child: Text('Start shipping'),
                           style: ElevatedButton.styleFrom(

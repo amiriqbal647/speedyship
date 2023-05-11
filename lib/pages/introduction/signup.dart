@@ -12,8 +12,9 @@ import 'package:speedyship/components/date_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
-
+import 'package:speedyship/services/auth_service.dart';
 import '../../components/image_picker.dart';
+import 'package:speedyship/services/auth_service.dart';
 
 class SignupPage extends StatefulWidget {
   SignupPage({super.key});
@@ -101,6 +102,67 @@ class _SignupPageState extends State<SignupPage> {
               ),
 
               const SizedBox(height: 25),
+              Container(
+                width: 150,
+                height: 150,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(width: 2, color: Colors.grey),
+                ),
+                child: Stack(
+                  children: [
+                    if (imageUrl != null && imageUrl.isNotEmpty)
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(100),
+                        child: Image.network(
+                          imageUrl,
+                          width: 150,
+                          height: 150,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    if (imageUrl == null || imageUrl.isEmpty)
+                      Container(
+                        width: 150,
+                        height: 150,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.grey,
+                        ),
+                        child: Icon(
+                          Icons.image,
+                          color: Colors.white,
+                          size: 80,
+                        ),
+                      ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                        ),
+                        child: IconButton(
+                          icon: Icon(Icons.camera),
+                          color: Colors.grey[600],
+                          onPressed: () async {
+                            String imageUrl = await uploadImage();
+                            setState(() {
+                              this.imageUrl = imageUrl;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 15),
+
               //username
               MyTextField(
                 controller: emailController,
@@ -124,16 +186,6 @@ class _SignupPageState extends State<SignupPage> {
                   obscureText: true),
 
               const SizedBox(height: 15),
-
-              ElevatedButton(
-                onPressed: () async {
-                  String imageUrl = await uploadImage();
-                  setState(() {
-                    this.imageUrl = imageUrl;
-                  });
-                },
-                child: Icon(Icons.camera),
-              ),
 
               //firstname
               MyTextField(
@@ -174,7 +226,10 @@ class _SignupPageState extends State<SignupPage> {
 
               const SizedBox(height: 25),
               //sign in button
-              MyButton2(onTap: () => signup()),
+              MyButton2(
+                onTap: () => signup(),
+                buttonText: 'Sign Up',
+              ),
               const SizedBox(height: 50),
               //or continue with
               Padding(
@@ -206,14 +261,18 @@ class _SignupPageState extends State<SignupPage> {
               //google and apple sign in buttons
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
+                children: [
                   //google button
                   SquareTile(
+                    onTap: () => AuthService().signInWithGoogle(),
                     imagepath: 'lib/images/google.png',
                   ),
                   SizedBox(width: 20),
                   //apple button
                   SquareTile(
+                    onTap: () {
+                      print("apple is pressed");
+                    },
                     imagepath: 'lib/images/apple.png',
                   ),
                 ],

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:speedyship/components/my_button2.dart';
+import 'package:speedyship/pages/courier/courier_main.dart';
+import 'package:speedyship/pages/courier/courier_register.dart';
 
 class BecomeCourierPage extends StatelessWidget {
   @override
@@ -90,7 +92,14 @@ class BecomeCourierPage extends StatelessWidget {
               ),
               SizedBox(height: 16.0),
               MyButton2(
-                onTap: () => print('batman'),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => DocumentUploader(),
+                    ),
+                  );
+                },
                 buttonText: 'Continue',
               ),
             ],

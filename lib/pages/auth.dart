@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:speedyship/pages/courier/courier_main.dart';
 import 'package:speedyship/pages/introduction/login.dart';
 import 'package:speedyship/pages/homepage.dart';
 import 'package:speedyship/pages/introduction/signup.dart';
@@ -40,12 +41,12 @@ class AuthPage extends StatelessWidget {
                   } else if (role == 'user') {
                     return UserMainPage();
                   } else if (role == 'courier') {
-                    return SignupPage();
+                    return CourierMainPage();
                   } else {
                     return LoginPage();
                   }
                 } else {
-                  return SignupPage();
+                  return LoginPage();
                 }
               },
             );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class CourierMainPage extends StatefulWidget {
   @override
@@ -25,6 +26,14 @@ class _CourierMainPageState extends State<CourierMainPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Courier Main'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: () {
+              FirebaseAuth.instance.signOut();
+            },
+          ),
+        ],
       ),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),

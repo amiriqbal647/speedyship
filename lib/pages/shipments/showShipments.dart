@@ -5,7 +5,10 @@ class ShipmentList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('shipments').snapshots(),
+      stream: FirebaseFirestore.instance
+          .collection('shipments')
+          .orderBy('timestamp', descending: true)
+          .snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasError) {
           return Center(
@@ -30,7 +33,7 @@ class ShipmentList extends StatelessWidget {
           );
         }
 
-        QueryDocumentSnapshot currentShipment = shipments.last;
+        QueryDocumentSnapshot currentShipment = shipments.first;
 
         return Card(
           margin: EdgeInsets.all(16.0),
@@ -58,7 +61,7 @@ class ShipmentList extends StatelessWidget {
                 SizedBox(height: 8.0),
                 Text('Width: ${currentShipment['width']}'),
                 SizedBox(height: 16.0),
-                Text('Age: ${currentShipment['weight']}'),
+                Text('Weight: ${currentShipment['weight']}'),
               ],
             ),
           ),

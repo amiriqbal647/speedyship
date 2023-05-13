@@ -1,35 +1,44 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-import 'package:speedyship/pages/shipments/showShipments.dart';
-import '../../components/my_textfield.dart';
-import '../../components/dropdown_form_field.dart';
-import '../../components/city_dropdown_form_field.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:speedyship/pages/shipments/showShipments.dart';
 
-class ShipmentForm extends StatefulWidget {
-  ShipmentForm({Key? key}) : super(key: key);
+import '../homepage.dart';
+import '../location.dart';
 
+class ShipmentInformation extends StatefulWidget {
   @override
-  State<ShipmentForm> createState() => _ShipmentFormState();
+  State<ShipmentInformation> createState() => _ShipmentInformationState();
 }
 
-class _ShipmentFormState extends State<ShipmentForm> {
-  String _selectedOption = 'food';
-  String _citysSelectedOption = "magusa";
-
-  final weightController = TextEditingController();
-
-  final lengthController = TextEditingController();
-
-  final widthController = TextEditingController();
-
-  final heightController = TextEditingController();
-
-  final locationController = TextEditingController();
-
-  final destinationcontroller = TextEditingController();
+class _ShipmentInformationState extends State<ShipmentInformation> {
   final _formKey = GlobalKey<FormState>();
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  static List<String> _CategoryList = [
+    "Food",
+    "Electronics",
+    "Clothes",
+    "Documents"
+  ];
+  static List<String> _cityList = [
+    "Famagusta",
+    "Nicosia",
+    "Karpas",
+    "Kerniya",
+    "Lefke",
+    "Morphou"
+  ];
+  String _selectedVal2 = _cityList.first;
+  String _selectedVal = _CategoryList.first;
+
+  final weightController = TextEditingController();
+  final lengthController = TextEditingController();
+  final widthController = TextEditingController();
+  final heightController = TextEditingController();
+  final _myLocationController = TextEditingController();
+  final _destinationController = TextEditingController();
 
   Future<void> _submitForm() async {
     if (_formKey.currentState != null && _formKey.currentState!.validate()) {
@@ -37,23 +46,27 @@ class _ShipmentFormState extends State<ShipmentForm> {
         final user = _auth.currentUser;
         final userId = user?.uid;
         await FirebaseFirestore.instance.collection('shipments').add({
-          'category': _selectedOption,
+          'category': _selectedVal,
           'weight': int.tryParse(weightController.text) ?? 0,
           'length': int.tryParse(lengthController.text) ?? 0,
           'width': int.tryParse(widthController.text) ?? 0,
           'height': int.tryParse(heightController.text) ?? 0,
-          'city': _citysSelectedOption,
-          'location': locationController.text,
-          'destination': destinationcontroller.text,
+          'city': _selectedVal2,
+          'location': _myLocationController.text,
+          'destination': _destinationController.text,
           'userId': userId,
         });
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Shipment added successfully')),
         );
-
-        setState(() {});
         // Go back to previous screen
-        // Navigator.pop(context);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomePage(),
+          ),
+        );
       } catch (error) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to add shipment')),
@@ -63,187 +76,281 @@ class _ShipmentFormState extends State<ShipmentForm> {
     }
   }
 
-  String? _validateText(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'This field is required';
-    }
-    return null;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("shipment details")),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          children: [
-            Column(
-              children: [
-                Text(
-                  "shipment details",
-                  style: TextStyle(fontSize: 25),
+      appBar: AppBar(
+          title: Text(
+            'Shipment Information',
+            style: TextStyle(color: Colors.black),
+          ),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          iconTheme: IconThemeData(color: Colors.black)),
+      body: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: ListView(children: [
+          Form(
+            key: _formKey,
+            child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.teal,
+                  borderRadius: BorderRadius.circular(20),
                 ),
-                SizedBox(
-                  height: 25,
-                ),
-                MyDropdownButtonFormField(
-                  selectedOption: _selectedOption,
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedOption = value.toString();
-                    });
-                  },
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                TextFormField(
-                  controller: weightController,
-                  decoration: InputDecoration(
-                    labelText: 'Weight',
-                    hintText: 'Enter weight',
-                  ),
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'This field is required';
-                    }
-                    if (double.tryParse(value) == null) {
-                      return 'Please enter a valid number';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                TextFormField(
-                  controller: lengthController,
-                  decoration: InputDecoration(
-                    labelText: 'length',
-                    hintText: 'Enter length',
-                  ),
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'This field is required';
-                    }
-                    if (double.tryParse(value) == null) {
-                      return 'Please enter a valid number';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                TextFormField(
-                  controller: widthController,
-                  decoration: InputDecoration(
-                    labelText: 'width',
-                    hintText: 'Enter width',
-                  ),
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'This field is required';
-                    }
-                    if (double.tryParse(value) == null) {
-                      return 'Please enter a valid number';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                TextFormField(
-                  controller: heightController,
-                  decoration: InputDecoration(
-                    labelText: 'height',
-                    hintText: 'Enter height',
-                  ),
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'This field is required';
-                    }
-                    if (double.tryParse(value) == null) {
-                      return 'Please enter a valid number';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Text(
-                  "Shipping Address",
-                  style: TextStyle(fontSize: 25),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                MyCityDropdownButtonFormField(
-                  selectedOption: _citysSelectedOption,
-                  onChanged: (value) {
-                    setState(() {
-                      _citysSelectedOption = value.toString();
-                    });
-                  },
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                TextFormField(
-                  controller: locationController,
-                  decoration: InputDecoration(
-                    labelText: 'location Name',
-                    hintText: 'Enter location name',
-                  ),
-                  validator: _validateText,
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                TextFormField(
-                  controller: destinationcontroller,
-                  decoration: InputDecoration(
-                    labelText: 'destination Name',
-                    hintText: 'Enter desintation name',
-                  ),
-                  validator: _validateText,
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState != null &&
-                        _formKey.currentState!.validate()) {
-                      _submitForm();
+                child: Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Shipment Details container
+                      Text(
+                        'Shipment details',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20),
+                      ),
 
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => ShipmentList(),
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Colors.grey.shade600,
+                                  spreadRadius: 1,
+                                  blurRadius: 15)
+                            ],
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(25.0),
+                            child: Column(
+                              children: [
+                                //Category
+                                DropdownButtonFormField(
+                                  onChanged: (val) {
+                                    setState(() {
+                                      _selectedVal = val!;
+                                    });
+                                  },
+                                  decoration:
+                                      InputDecoration(labelText: 'Category'),
+                                  items: _CategoryList.map((item) {
+                                    return DropdownMenuItem(
+                                      child: Text(item),
+                                      value: item,
+                                    );
+                                  }).toList(),
+                                  value: _selectedVal,
+                                  icon: Icon(Icons.keyboard_arrow_down_sharp),
+                                ),
+
+                                //Weight
+                                TextFormField(
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return "Please enter a weight";
+                                    }
+                                    return null;
+                                  },
+                                  keyboardType: TextInputType.number,
+                                  decoration: InputDecoration(
+                                      suffixIcon: Icon(Icons.line_weight),
+                                      labelText: "Weight"),
+                                  controller: weightController,
+                                ),
+
+                                //Length & height
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Flexible(
+                                      child: // Length
+                                          TextFormField(
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return "Plese enter a length";
+                                          }
+                                          return null;
+                                        },
+                                        keyboardType: TextInputType.number,
+                                        decoration: InputDecoration(
+                                            suffixIcon: Icon(Icons.straighten),
+                                            labelText: "Length"),
+                                        controller: lengthController,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 20,
+                                    ),
+                                    Flexible(
+                                      child: TextFormField(
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return "Please enter a width";
+                                          }
+                                          return null;
+                                        },
+                                        keyboardType: TextInputType.number,
+                                        decoration: InputDecoration(
+                                            suffixIcon: Icon(Icons.straighten),
+                                            labelText: "Width"),
+                                        controller: widthController,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+
+                                // Height
+
+                                TextFormField(
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return "Please enter a height";
+                                    }
+                                    return null;
+                                  },
+                                  keyboardType: TextInputType.number,
+                                  //initialValue: "100cm",
+                                  decoration: InputDecoration(
+                                      suffixIcon: Icon(Icons.straighten),
+                                      labelText: "Height"),
+                                  controller: heightController,
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
-                      );
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('shipment added')));
-                      _selectedOption = 'food';
-                      _citysSelectedOption = 'magusa';
-                      weightController.clear();
-                      lengthController.clear();
-                      widthController.clear();
-                      heightController.clear();
-                      locationController.clear();
-                      destinationcontroller.clear();
-                    }
-                  },
-                  child: Text('Submit'),
-                ),
-              ],
-            ),
-          ],
-        ),
+                      ),
+
+                      // Shipping Address
+                      Text(
+                        'Shipping address',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20),
+                      ),
+
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Colors.grey.shade600,
+                                  spreadRadius: 1,
+                                  blurRadius: 15)
+                            ],
+                          ),
+                          //padding: EdgeInsets.all(10),
+                          child: Padding(
+                            padding: const EdgeInsets.all(25.0),
+                            child: Column(children: [
+                              // City
+                              DropdownButtonFormField(
+                                decoration: InputDecoration(
+                                  labelText: "City",
+                                ),
+                                items: _cityList.map((item) {
+                                  return DropdownMenuItem(
+                                    child: Text(item),
+                                    value: item,
+                                  );
+                                }).toList(),
+                                onChanged: (val) {
+                                  setState(() {
+                                    _selectedVal2 = val!;
+                                  });
+                                },
+                                value: _selectedVal2,
+                                icon: Icon(Icons.keyboard_arrow_down_sharp),
+                              ),
+
+                              // My Location
+                              TextFormField(
+                                readOnly: true,
+                                onTap: () async {
+                                  String? selectedAddress =
+                                      await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => SelectLocation(),
+                                    ),
+                                  );
+                                  if (selectedAddress != null) {
+                                    _myLocationController.text =
+                                        selectedAddress;
+                                  }
+                                },
+                                decoration: InputDecoration(
+                                    suffixIcon: Icon(Icons.home_filled),
+                                    labelText: 'My Location'),
+                                controller: _myLocationController,
+                              ),
+
+                              //Destination
+                              TextFormField(
+                                readOnly: true,
+                                onTap: () async {
+                                  String? selectedAddress =
+                                      await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => SelectLocation(),
+                                    ),
+                                  );
+                                  if (selectedAddress != null) {
+                                    _destinationController.text =
+                                        selectedAddress;
+                                  }
+                                },
+                                decoration: InputDecoration(
+                                    suffixIcon: Icon(Icons.location_on),
+                                    labelText: 'Destination'),
+                                controller: _destinationController,
+                              ),
+                            ]),
+                          ),
+                        ),
+                      ),
+
+                      // Continue button
+
+                      Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            _submitForm();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ShipmentList()),
+                            );
+                          },
+                          child: Text('Continue'),
+                          style: ElevatedButton.styleFrom(
+                            fixedSize: Size(350, 60),
+                            backgroundColor: Colors.orange,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                )),
+          ),
+        ]),
       ),
     );
   }

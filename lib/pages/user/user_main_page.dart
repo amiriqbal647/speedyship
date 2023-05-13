@@ -212,7 +212,7 @@ class _UserMainPageState extends State<UserMainPage> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => ShipmentForm()));
+                                    builder: (context) => ShipmentInformation()));
                           },
                           child: Text('Start shipping'),
                           style: ElevatedButton.styleFrom(

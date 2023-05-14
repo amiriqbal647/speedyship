@@ -39,6 +39,8 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
   final heightController = TextEditingController();
   final _myLocationController = TextEditingController();
   final _destinationController = TextEditingController();
+  final recipientcontroller = TextEditingController();
+  final recipientphonecontroller = TextEditingController();
 
   Future<void> _submitForm() async {
     if (_formKey.currentState != null && _formKey.currentState!.validate()) {
@@ -46,6 +48,8 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
         final user = _auth.currentUser;
         final userId = user?.uid;
         await FirebaseFirestore.instance.collection('shipments').add({
+          'RecipientName': recipientcontroller.text.trim(),
+          'RecipientPhone': recipientphonecontroller.text,
           'category': _selectedVal,
           'weight': int.tryParse(weightController.text) ?? 0,
           'length': int.tryParse(lengthController.text) ?? 0,
@@ -148,7 +152,21 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                                   value: _selectedVal,
                                   icon: Icon(Icons.keyboard_arrow_down_sharp),
                                 ),
-
+                                TextFormField(
+                                  decoration: InputDecoration(
+                                    labelText: 'Recipients Name',
+                                    suffixIcon: Icon(Icons.person),
+                                  ),
+                                  controller: recipientcontroller,
+                                ),
+                                TextFormField(
+                                  decoration: InputDecoration(
+                                    labelText: 'Recipients Phone Number',
+                                    suffixIcon: Icon(Icons.phone),
+                                  ),
+                                  controller: recipientphonecontroller,
+                                  keyboardType: TextInputType.phone,
+                                ),
                                 //Weight
                                 TextFormField(
                                   validator: (value) {
@@ -334,24 +352,28 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => SummaryPage(
-                                    category: _selectedVal,
-                                    weight:
-                                        int.tryParse(weightController.text) ??
-                                            0,
-                                    length:
-                                        int.tryParse(lengthController.text) ??
-                                            0,
-                                    width:
-                                        int.tryParse(widthController.text) ?? 0,
-                                    height:
-                                        int.tryParse(heightController.text) ??
-                                            0,
-                                    city: _selectedVal2,
-                                    location: _myLocationController.text,
-                                    destination: _destinationController.text,
-                                  ),
-                                ),
+                                    builder: (context) => SummaryPage(
+                                          category: _selectedVal,
+                                          weight: int.tryParse(
+                                                  weightController.text) ??
+                                              0,
+                                          length: int.tryParse(
+                                                  lengthController.text) ??
+                                              0,
+                                          width: int.tryParse(
+                                                  widthController.text) ??
+                                              0,
+                                          height: int.tryParse(
+                                                  heightController.text) ??
+                                              0,
+                                          city: _selectedVal2,
+                                          location: _myLocationController.text,
+                                          destination:
+                                              _destinationController.text,
+                                          recphone:
+                                              recipientphonecontroller.text,
+                                          recname: recipientcontroller.text,
+                                        )),
                               );
                             }
                           },

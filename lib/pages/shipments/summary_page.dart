@@ -11,6 +11,8 @@ class SummaryPage extends StatelessWidget {
   final String city;
   final String location;
   final String destination;
+  final String recname;
+  final String recphone;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   SummaryPage({
@@ -22,6 +24,8 @@ class SummaryPage extends StatelessWidget {
     required this.city,
     required this.location,
     required this.destination,
+    required this.recphone,
+    required this.recname,
   });
 
   Future<void> _submitForm(BuildContext context) async {
@@ -29,6 +33,8 @@ class SummaryPage extends StatelessWidget {
       final user = _auth.currentUser;
       final userId = user?.uid;
       await FirebaseFirestore.instance.collection('shipments').add({
+        'RecipientName': this.recname,
+        'RecipientPhone': this.recphone,
         'category': this.category,
         'weight': this.weight,
         'length': this.length,
@@ -110,7 +116,7 @@ class SummaryPage extends StatelessWidget {
               ),
               SizedBox(height: 16.0),
               Text(
-                'Your application has been submitted. Please wait until the admin approves your request.',
+                'Your request has been submitted, please wait for available couriers to bid',
                 style: TextStyle(
                   fontSize: 16.0,
                 ),
@@ -197,6 +203,8 @@ class SummaryPage extends StatelessWidget {
                     // Dimensions
                     _buildSummaryItem(
                         'Dimensions(L*W*H)', '$length x $width x $height'),
+                    _buildSummaryItem('Recipient Name', recname),
+                    _buildSummaryItem('Recipients Phone Number', recphone),
                     // City
                     _buildSummaryItem('City', city),
                     // Location

@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:speedyship/pages/shipments/showShipments.dart';
+import 'package:speedyship/pages/shipments/summary_page.dart';
 
 import '../homepage.dart';
 import '../location.dart';
@@ -329,12 +329,31 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                         padding: const EdgeInsets.all(15.0),
                         child: ElevatedButton(
                           onPressed: () {
-                            _submitForm();
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ShipmentList()),
-                            );
+                            if (_formKey.currentState != null &&
+                                _formKey.currentState!.validate()) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SummaryPage(
+                                    category: _selectedVal,
+                                    weight:
+                                        int.tryParse(weightController.text) ??
+                                            0,
+                                    length:
+                                        int.tryParse(lengthController.text) ??
+                                            0,
+                                    width:
+                                        int.tryParse(widthController.text) ?? 0,
+                                    height:
+                                        int.tryParse(heightController.text) ??
+                                            0,
+                                    city: _selectedVal2,
+                                    location: _myLocationController.text,
+                                    destination: _destinationController.text,
+                                  ),
+                                ),
+                              );
+                            }
                           },
                           child: Text('Continue'),
                           style: ElevatedButton.styleFrom(

@@ -34,14 +34,9 @@ class _NewCourierPageState extends State<NewCourierPage> {
   }
 
   void _getUsers() async {
-    // Get a reference to the "users" collection in Firestore
     final usersRef = FirebaseFirestore.instance.collection('users');
-
-    // Query the "users" collection for users with a "pending" status
     final querySnapshot =
         await usersRef.where('status', isEqualTo: 'pending').get();
-
-    // Convert the QuerySnapshot to a list of User objects
     final users = querySnapshot.docs
         .map((doc) => User(
             id: doc.id,
@@ -50,38 +45,26 @@ class _NewCourierPageState extends State<NewCourierPage> {
             status: doc.get('status')))
         .toList();
 
-    // Set the _users list and update the state
     setState(() {
       _users = users;
     });
   }
 
   Future<void> _approveUser(User user) async {
-    // Get a reference to the user's document in Firestore
     final userRef = FirebaseFirestore.instance.collection('users').doc(user.id);
-
-    // Update the user's role to "courier"
     await userRef.update({'role': 'courier'});
-
-    // Remove the status field from the user's document
     await userRef.update({
       'status': FieldValue.delete(),
     });
 
-    // Remove the user from the _users list and update the state
     setState(() {
       _users.remove(user);
     });
   }
 
   Future<void> _denyUser(User user) async {
-    // Get a reference to the user's document in Firestore
     final userRef = FirebaseFirestore.instance.collection('users').doc(user.id);
-
-    // Remove the "status" field from the user's document
     await userRef.update({'status': FieldValue.delete()});
-
-    // Remove the user from the _users list and update the state
     setState(() {
       _users.remove(user);
     });
@@ -90,7 +73,9 @@ class _NewCourierPageState extends State<NewCourierPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Color(0xFF009378),
         title: Text('New Courier'),
       ),
       body: ListView.builder(
@@ -102,13 +87,17 @@ class _NewCourierPageState extends State<NewCourierPage> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
             ),
+            elevation: 5, // Add shadow to the card
             child: Column(
               children: [
                 ListTile(
-                  title: Text('${user.firstName} ${user.lastName}'),
-                  subtitle: Text('Status: ${user.status}'),
+                  title: Text('${user.firstName} ${user.lastName}',
+                      style: TextStyle(
+                          color:
+                              Colors.black)), // user name text color is black
+                  subtitle: Text('Status: ${user.status}',
+                      style: TextStyle(color: Color(0xFFE77B00))),
                   onTap: () {
-                    // Navigate to the user's file list page
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -124,10 +113,16 @@ class _NewCourierPageState extends State<NewCourierPage> {
                 ButtonBar(
                   children: [
                     ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: Color(0xFF009378),
+                      ),
                       onPressed: () => _approveUser(user),
                       child: Text('Approve'),
                     ),
                     ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: Color(0xFFE77B00),
+                      ),
                       onPressed: () => _denyUser(user),
                       child: Text('Deny'),
                     ),

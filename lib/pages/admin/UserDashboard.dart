@@ -10,6 +10,8 @@ class UserDashboard extends StatefulWidget {
 class _UserDashboardState extends State<UserDashboard> {
   final CollectionReference usersRef =
       FirebaseFirestore.instance.collection('users');
+  final Color primaryColor = Color(0xFF009378);
+  final Color accentColor = Color(0xFFE77B00);
 
   void deleteUser(String userId) {
     usersRef.doc(userId).delete();
@@ -19,13 +21,16 @@ class _UserDashboardState extends State<UserDashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('User List'),
+        title: Text('User List', style: TextStyle(color: Colors.white)),
+        backgroundColor: primaryColor,
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: usersRef.snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return Center(child: Text('Something went wrong'));
+            return Center(
+                child: Text('Something went wrong',
+                    style: TextStyle(color: Colors.black)));
           }
 
           if (!snapshot.hasData) {
@@ -56,53 +61,95 @@ class _UserDashboardState extends State<UserDashboard> {
               final imageUrl =
                   user is Map ? user['image'] : (user as dynamic)[5];
 
-              return ListTile(
-                leading: CircleAvatar(
-                  radius: 20,
-                  child: imageUrl != null
-                      ? Image.network(imageUrl, fit: BoxFit.cover)
-                      : Text('No image'),
+              return Card(
+                elevation: 5.0, // This gives a shadow to the card.
+                margin: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
                 ),
-                title: Text('$firstName $lastName'),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(email),
-                    phoneNumber != null
-                        ? Text(phoneNumber)
-                        : Text('No phone number'),
-                    dateOfBirth != null
-                        ? Text(dateOfBirth)
-                        : Text('No date of birth provided for this user'),
-                  ],
-                ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.edit),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => EditUserPage(
-                              userId: userId,
-                              firstName: firstName,
-                              lastName: lastName,
-                              email: email,
-                              phoneNumber: phoneNumber,
-                              dateOfBirth: dateOfBirth,
-                              imageUrl: imageUrl,
+                child: Container(
+                  padding: EdgeInsets.all(15), // Increased padding.
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 30,
+                            backgroundColor: accentColor,
+                            child: imageUrl != null
+                                ? ClipRRect(
+                                    borderRadius: BorderRadius.circular(30),
+                                    child: Image.network(imageUrl,
+                                        fit: BoxFit.cover),
+                                  )
+                                : Icon(Icons.person, color: Colors.white),
+                          ),
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('$firstName $lastName',
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize:
+                                            18.0)), // Increased font size.
+                                SizedBox(height: 10),
+                                Text('Email: $email',
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize:
+                                            16.0)), // Increased font size.
+                                SizedBox(height: 5),
+                                Text(
+                                    'Phone: ${phoneNumber ?? 'No phone number'}',
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize:
+                                            16.0)), // Increased font size.
+                                SizedBox(height: 5),
+                                Text('DOB: ${dateOfBirth}',
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize:
+                                            16.0)), // Increased font size.
+                              ],
                             ),
                           ),
-                        );
-                      },
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.delete),
-                      onPressed: () => deleteUser(userId),
-                    ),
-                  ],
+                        ],
+                      ),
+                      SizedBox(height: 15),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.edit, color: primaryColor),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => EditUserPage(
+                                    userId: userId,
+                                    firstName: firstName,
+                                    lastName: lastName,
+                                    email: email,
+                                    phoneNumber: phoneNumber,
+                                    dateOfBirth: dateOfBirth,
+                                    imageUrl: imageUrl,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.delete, color: Colors.red),
+                            onPressed: () => deleteUser(userId),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               );
             },

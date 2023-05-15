@@ -30,6 +30,9 @@ class _EditUserPageState extends State<EditUserPage> {
   late String _lastName;
   late String _email;
 
+  final Color primaryColor = Color.fromRGBO(0, 147, 120, 1);
+  final Color secondaryColor = Color.fromRGBO(231, 123, 0, 1);
+
   @override
   void initState() {
     super.initState();
@@ -49,8 +52,11 @@ class _EditUserPageState extends State<EditUserPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Edit User'),
+        title: Text('Edit User', style: TextStyle(color: primaryColor)),
+        backgroundColor: Colors.white,
+        iconTheme: IconThemeData(color: primaryColor),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -59,59 +65,23 @@ class _EditUserPageState extends State<EditUserPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              TextFormField(
-                initialValue: _firstName,
-                decoration: InputDecoration(
-                  labelText: 'First Name',
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a first name';
-                  }
-                  return null;
-                },
-                onChanged: (value) {
-                  setState(() {
-                    _firstName = value;
-                  });
-                },
-              ),
+              buildTextFormField('First Name', _firstName, (value) {
+                setState(() {
+                  _firstName = value;
+                });
+              }),
               SizedBox(height: 16.0),
-              TextFormField(
-                initialValue: _lastName,
-                decoration: InputDecoration(
-                  labelText: 'Last Name',
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a last name';
-                  }
-                  return null;
-                },
-                onChanged: (value) {
-                  setState(() {
-                    _lastName = value;
-                  });
-                },
-              ),
+              buildTextFormField('Last Name', _lastName, (value) {
+                setState(() {
+                  _lastName = value;
+                });
+              }),
               SizedBox(height: 16.0),
-              TextFormField(
-                initialValue: _email,
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter an email';
-                  }
-                  return null;
-                },
-                onChanged: (value) {
-                  setState(() {
-                    _email = value;
-                  });
-                },
-              ),
+              buildTextFormField('Email', _email, (value) {
+                setState(() {
+                  _email = value;
+                });
+              }),
               SizedBox(height: 32.0),
               ElevatedButton(
                 onPressed: () {
@@ -120,12 +90,47 @@ class _EditUserPageState extends State<EditUserPage> {
                     Navigator.pop(context, true);
                   }
                 },
-                child: Text('Save Changes'),
+                style: ElevatedButton.styleFrom(
+                  primary: secondaryColor, // background
+                  onPrimary: Colors.white, // foreground
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30), // round corners
+                  ),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                  child: Text('Save Changes'),
+                ),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  TextFormField buildTextFormField(
+      String label, String initialValue, Function(String) onChanged) {
+    return TextFormField(
+      initialValue: initialValue,
+      style: TextStyle(color: Colors.black),
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: TextStyle(color: primaryColor),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: primaryColor, width: 2.0),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: primaryColor, width: 2.0),
+        ),
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter a $label';
+        }
+        return null;
+      },
+      onChanged: onChanged,
     );
   }
 }

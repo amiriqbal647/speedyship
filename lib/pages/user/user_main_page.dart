@@ -6,6 +6,8 @@ import 'package:speedyship/pages/courier/become_courier.dart';
 import 'package:speedyship/pages/courier/courier_main.dart';
 import 'package:speedyship/pages/shipments/shipmentForm.dart';
 
+import 'CourierRequsets.dart';
+
 final FirebaseAuth auth = FirebaseAuth.instance;
 final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -76,6 +78,18 @@ class _UserMainPageState extends State<UserMainPage> {
                   ),
                 );
               },*/
+            ),
+            ListTile(
+              leading: Icon(Icons.request_page),
+              title: Text('Requests'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => BidsPage(),
+                  ),
+                );
+              },
             ),
             ListTile(
               leading: Icon(Icons.shopping_cart),
@@ -212,12 +226,13 @@ class _UserMainPageState extends State<UserMainPage> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => ShipmentInformation()));
+                                    builder: (context) =>
+                                        ShipmentInformation()));
                           },
                           child: Text('Start shipping'),
                           style: ElevatedButton.styleFrom(
                               fixedSize: Size(200, 60),
-                              backgroundColor: Colors.orange,
+                              backgroundColor: Color(0xFFFF9800),
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20)))),
                     )

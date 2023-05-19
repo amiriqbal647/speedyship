@@ -41,7 +41,7 @@ class AuthPage extends StatelessWidget {
                   } else if (role == 'user') {
                     return UserMainPage();
                   } else if (role == 'courier') {
-                    return CourierMainPage();
+                    return CourierMain();
                   } else {
                     return LoginPage();
                   }

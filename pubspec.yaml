@@ -21,6 +21,7 @@ dependencies:
   google_sign_in: ^6.1.0
   image_picker: ^0.8.7+4
   shared_preferences: ^2.1.1
+  flex_color_scheme: ^7.0.5
 
 dev_dependencies:
   flutter_test:

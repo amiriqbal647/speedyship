@@ -4,6 +4,7 @@ import 'package:speedyship/pages/introduction/signup.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:speedyship/pages/auth.dart';
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,6 +18,9 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme:FlexThemeData.light(scheme: FlexScheme.tealM3, useMaterial3: true),
+      darkTheme:FlexThemeData.dark(scheme: FlexScheme.tealM3, useMaterial3: true),
+      themeMode: ThemeMode.light,
       debugShowCheckedModeBanner: false,
       home: AuthPage(),
     );

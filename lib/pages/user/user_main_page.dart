@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:speedyship/pages/courier/become_courier.dart';
 import 'package:speedyship/pages/courier/courier_main.dart';
 import 'package:speedyship/pages/shipments/shipmentForm.dart';
+import 'package:speedyship/pages/user/EditProfile.dart';
 
 import 'CourierRequsets.dart';
 
@@ -70,14 +71,14 @@ class _UserMainPageState extends State<UserMainPage> {
             ListTile(
               leading: Icon(Icons.account_circle),
               title: Text('Account'),
-              /*onTap: () {
+              onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => MainProfilePage(),
+                    builder: (context) => EditProfile(),
                   ),
                 );
-              },*/
+              },
             ),
             ListTile(
               leading: Icon(Icons.request_page),

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'bid_operations.dart'; // Replace with the correct import path
+import 'bid_operations.dart';
 
 class BidsPage extends StatefulWidget {
   @override
@@ -11,7 +10,6 @@ class BidsPage extends StatefulWidget {
 
 class _BidsPageState extends State<BidsPage> {
   List<String> _declinedBidIds = [];
-  String? _acceptedBidShipmentId;
 
   void _onBidDeclined(String bidId) {
     setState(() {
@@ -19,20 +17,78 @@ class _BidsPageState extends State<BidsPage> {
     });
   }
 
-  void _onBidAccepted(String shipmentId) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('acceptedShipmentId', shipmentId);
-    setState(() {
-      _acceptedBidShipmentId = shipmentId;
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Thank you for accepting a bid.')),
-    );
-  }
+  void _onBidAccepted(String shipmentId, String bidId) async {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User? currentUser = auth.currentUser;
+    if (currentUser == null) {
+      return; // If the user is not logged in, do nothing
+    }
 
-  Future<String?> getAcceptedShipmentId() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('acceptedShipmentId');
+    final String currentUserId = currentUser.uid;
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+    final WriteBatch batch = firestore.batch();
+
+    final QuerySnapshot<Map<String, dynamic>> bidSnapshot = await firestore
+        .collection('bids')
+        .where('shipmentId', isEqualTo: shipmentId)
+        .get();
+
+    final now = DateTime.now();
+
+    for (final DocumentSnapshot<Map<String, dynamic>> bidDocument
+        in bidSnapshot.docs) {
+      final Map<String, dynamic>? bidData = bidDocument.data();
+
+      if (bidData != null) {
+        final String currentBidId = bidDocument.id;
+        final int bidPrice = bidData['price'] as int;
+        final String bidDate = bidData['date'] as String;
+
+        if (currentBidId == bidId) {
+          // Fetch the courierId from the bids collection
+          final String courierId = bidData['courierId'] as String;
+
+          // Store accepted bid in acceptedBids collection
+          final acceptedBidRef = firestore.collection('acceptedBids').doc();
+          batch.set(acceptedBidRef, {
+            'bidId': bidId,
+            'courierId': courierId,
+            'userId': currentUserId,
+            'price': bidPrice,
+            'date': bidDate,
+            'shipmentId': shipmentId,
+          });
+        } else {
+          // Move other bids to declinedBids collection
+          final declinedBidRef =
+              firestore.collection('declinedBids').doc(currentBidId);
+          batch.set(declinedBidRef, {
+            'bidId': currentBidId,
+            'courierId':
+                bidData['courierId'] as String, // Use the original courierId
+            'userId': currentUserId,
+            'price': bidPrice,
+            'date': bidDate,
+            'shipmentId': shipmentId,
+          });
+        }
+
+        // Delete bid from bids collection
+        batch.delete(bidDocument.reference);
+      }
+    }
+
+    batch.commit().then((_) {
+      // Show a confirmation snackbar
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Thank you for accepting a bid.')),
+      );
+    }).catchError((error) {
+      // Show an error snackbar
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error accepting bid: $error')),
+      );
+    });
   }
 
   @override
@@ -52,8 +108,7 @@ class _BidsPageState extends State<BidsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Bids'),
-        backgroundColor:
-            Color(0xFF099378), // Use the specified color (rgb(9, 147, 120))
+        backgroundColor: Color(0xFF099378),
       ),
       body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
         stream: FirebaseFirestore.instance
@@ -74,98 +129,69 @@ class _BidsPageState extends State<BidsPage> {
             );
           }
 
-          return FutureBuilder<String?>(
-            future: getAcceptedShipmentId(),
-            builder: (BuildContext context,
-                AsyncSnapshot<String?> shipmentIdSnapshot) {
-              if (shipmentIdSnapshot.connectionState ==
-                  ConnectionState.waiting) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
+          return ListView.builder(
+            itemCount: snapshot.data!.size,
+            itemBuilder: (BuildContext context, int index) {
+              final DocumentSnapshot<Map<String, dynamic>> document =
+                  snapshot.data!.docs[index];
+              final Map<String, dynamic>? data = document.data();
+
+              if (data == null) {
+                // Skip rendering if data is null
+                return SizedBox.shrink();
               }
 
-              final String? acceptedShipmentId = shipmentIdSnapshot.data;
+              final String bidId = document.id;
+              final String courierId = data['courierId'] as String;
+              final int bidPrice = data['price'] as int;
+              final String bidDate = data['date'] as String;
+              final String shipmentId = data['shipmentId'] as String;
 
-              final List<DocumentSnapshot<Map<String, dynamic>>> bidDocuments =
-                  snapshot.data!.docs;
-
-              final List<DocumentSnapshot<Map<String, dynamic>>>
-                  filteredBidDocuments = bidDocuments
-                      .where((document) =>
-                          !_declinedBidIds.contains(document.id) &&
-                          document.data()?.containsKey('shipmentId') == true &&
-                          document.data()?['shipmentId'] != acceptedShipmentId)
-                      .toList();
-
-              if (filteredBidDocuments.isEmpty) {
-                return Center(
-                  child: Text('No bids available.'),
-                );
+              if (_declinedBidIds.contains(bidId)) {
+                // Skip rendering if the bid was declined
+                return SizedBox.shrink();
               }
 
-              return ListView.builder(
-                itemCount: filteredBidDocuments.length,
-                itemBuilder: (BuildContext context, int index) {
-                  final DocumentSnapshot<Map<String, dynamic>> document =
-                      filteredBidDocuments[index];
-                  final Map<String, dynamic>? data = document.data();
-
-                  if (data == null) {
-                    // Skip rendering if data is null
-                    return SizedBox.shrink();
-                  }
-
-                  final String bidId = document.id;
-                  final String courierId = data['courierId'] as String;
-                  final int price = data['price'] as int;
-                  final String date = data['date'] as String;
-                  final String shipmentId = data['shipmentId'] as String;
-
-                  return Card(
-                    elevation: 2, // Apply elevation for the card
-                    margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    child: ListTile(
-                      title: Text('Shipment ID: $shipmentId'),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Courier ID: $courierId'),
-                          Text('Price: $price'),
-                          Text('Date: $date'),
-                        ],
+              return Card(
+                elevation: 2,
+                margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                child: ListTile(
+                  title: Text('Shipment ID: $shipmentId'),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Courier ID: $courierId'),
+                      Text('Price: $bidPrice'),
+                      Text('Date: $bidDate'),
+                    ],
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          _onBidAccepted(shipmentId, bidId);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          primary: Color(0xFF12AE6D),
+                        ),
+                        child: Text('Accept'),
                       ),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          ElevatedButton(
-                            onPressed: () {
-                              _onBidAccepted(shipmentId);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              primary: Color.fromARGB(255, 18, 174,
-                                  109), // Use the specified color (rgb(231, 123, 0))
-                            ),
-                            child: Text('Accept'),
-                          ),
-                          SizedBox(width: 10),
-                          ElevatedButton(
-                            onPressed: () {
-                              _onBidDeclined(bidId);
-                              BidOperations.declineBid(context, bidId,
-                                  courierId, price, date, shipmentId);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              primary: Color.fromARGB(231, 239, 128,
-                                  24), // Use a red color for the decline button
-                            ),
-                            child: Text('Decline'),
-                          ),
-                        ],
+                      SizedBox(width: 10),
+                      ElevatedButton(
+                        onPressed: () {
+                          _onBidDeclined(bidId);
+                          BidOperations.declineBid(context, bidId, courierId,
+                              bidPrice, bidDate, shipmentId);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          primary: Color(0xFFEF8024),
+                        ),
+                        child: Text('Decline'),
                       ),
-                    ),
-                  );
-                },
+                    ],
+                  ),
+                ),
               );
             },
           );

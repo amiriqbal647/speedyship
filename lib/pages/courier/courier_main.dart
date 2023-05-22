@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'AcceptedBidsPage.dart';
 import 'IndvidualUserSh.dart';
 import 'RejectedBidsPage.dart';
+import 'editCourierAccount.dart';
 
 class CourierMain extends StatefulWidget {
   @override
@@ -87,18 +88,18 @@ class _CourierMainState extends State<CourierMain> {
             ListTile(
               leading: Icon(Icons.account_circle),
               title: Text('Account'),
-              /*onTap: () {
+              onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => MainProfilePage(),
+                    builder: (context) => EditProfile(),
                   ),
                 );
-              },*/
+              },
             ),
             ListTile(
               leading: Icon(Icons.done_all_rounded),
-              title: Text('Accepted Requests'),
+              title: Text('accepted Requests'),
               onTap: () {
                 Navigator.push(
                   context,

@@ -123,7 +123,6 @@ class _UserMainPageState extends State<UserMainPage> {
               },*/
             ),
             Divider(),
-            Divider(),
             ListTile(
               leading: Icon(Icons.motorcycle),
               title: Text('Apply for Courier'),

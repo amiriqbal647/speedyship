@@ -21,7 +21,7 @@ class BidOperations {
         .doc(acceptedBidId)
         .set({
       'bidId': bidId,
-      'courierId': courierId,
+      'courierId': courierId, // Set the courierId field
       'userId': currentUserId,
       'price': price,
       'date': date,

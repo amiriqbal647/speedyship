@@ -26,18 +26,9 @@ class IndividualUserShipment extends StatelessWidget {
     required this.length,
     required this.username,
     required this.userId,
-    required this.shipmentId, required city,
+    required this.shipmentId,
+    required city,
   });
-
-  Future<bool> checkIfBidPlaced(String userId, String shipmentId) async {
-    // Check if the courier has already placed a bid for this shipment
-    final querySnapshot = await FirebaseFirestore.instance
-        .collection('bids')
-        .where('userId', isEqualTo: userId)
-        .where('shipmentId', isEqualTo: shipmentId)
-        .get();
-    return querySnapshot.docs.isNotEmpty;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,9 +55,10 @@ class IndividualUserShipment extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                        color: Colors.grey.shade600,
-                        spreadRadius: 1,
-                        blurRadius: 15)
+                      color: Colors.grey.shade600,
+                      spreadRadius: 1,
+                      blurRadius: 15,
+                    ),
                   ],
                 ),
                 child: Column(
@@ -75,13 +67,12 @@ class IndividualUserShipment extends StatelessWidget {
                     Text(
                       'Shipment Details',
                       style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
-                    SizedBox(
-                      height: 20,
-                    ),
+                    SizedBox(height: 20),
                     _buildSummaryItem('Location', location),
                     _buildSummaryItem('Destination', destination),
                     _buildSummaryItem('Category', category),
@@ -94,53 +85,22 @@ class IndividualUserShipment extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(
-              height: 20,
-            ),
-            // Button
+            SizedBox(height: 20),
             Center(
               child: ElevatedButton(
                 child: Text("Make a bid"),
-                onPressed: () async {
-                  final bidPlaced = await checkIfBidPlaced(userId, shipmentId);
-                  if (bidPlaced) {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text('Bid Already Placed'),
-                          content: Text(
-                              'You have already placed a bid for this shipment.'),
-                          actions: <Widget>[
-                            TextButton(
-                              child: Text('OK'),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  } else {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CourierBidsForm(
-                          userId: userId,
-                          shipmentId: shipmentId,
-                        ),
-                      ),
-                    );
-                  }
+                onPressed: () {
+                  _checkUserBid(context);
                 },
                 style: ElevatedButton.styleFrom(
-                    fixedSize: Size(350, 60),
-                    backgroundColor: Colors.orange,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20))),
+                  fixedSize: Size(350, 60),
+                  backgroundColor: Colors.orange,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -152,13 +112,14 @@ class IndividualUserShipment extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(title, style: TextStyle(color: Colors.white)),
-        SizedBox(
-          height: 10,
-        ),
+        SizedBox(height: 10),
         Text(
           value,
           style: TextStyle(
-              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15),
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 15,
+          ),
         ),
         Divider(
           height: 30,
@@ -166,5 +127,57 @@ class IndividualUserShipment extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  void _checkUserBid(BuildContext context) async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) {
+      // User not logged in, handle accordingly
+      return;
+    }
+
+    try {
+      final QuerySnapshot<Map<String, dynamic>> snapshot =
+          await FirebaseFirestore.instance
+              .collection('bids')
+              .where('userId', isEqualTo: currentUser.uid)
+              .where('shipmentId', isEqualTo: shipmentId)
+              .get();
+
+      if (snapshot.docs.isNotEmpty) {
+        // User already placed a bid for this shipment
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Bid Already Placed'),
+              content: Text('You have already placed a bid for this shipment.'),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        // User can place a bid
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CourierBidsForm(
+              userId: userId,
+              shipmentId: shipmentId,
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      // Error occurred, handle accordingly
+      print('Error checking user bid: $e');
+    }
   }
 }

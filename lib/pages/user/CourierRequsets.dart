@@ -58,6 +58,13 @@ class _BidsPageState extends State<BidsPage> {
             'date': bidDate,
             'shipmentId': shipmentId,
           });
+
+          // Modify the shipment document in the shipments collection
+          final shipmentRef = firestore.collection('shipments').doc(shipmentId);
+          batch.update(shipmentRef, {
+            'courierId': courierId,
+            // Include any other fields you want to update in the shipment document
+          });
         } else {
           // Move other bids to declinedBids collection
           final declinedBidRef =

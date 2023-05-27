@@ -6,7 +6,7 @@ import 'package:speedyship/pages/courier/become_courier.dart';
 import 'package:speedyship/pages/courier/courier_main.dart';
 import 'package:speedyship/pages/shipments/shipmentForm.dart';
 import 'package:speedyship/pages/user/EditProfile.dart';
-
+import 'package:speedyship/pages/user/orders.dart';
 import 'CourierRequsets.dart';
 
 final FirebaseAuth auth = FirebaseAuth.instance;
@@ -95,14 +95,14 @@ class _UserMainPageState extends State<UserMainPage> {
             ListTile(
               leading: Icon(Icons.shopping_cart),
               title: Text('Orders'),
-              /*onTap: () {
+              onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => MyOrders(),
+                    builder: (context) => OrdersPage(),
                   ),
                 );
-              },*/
+              },
             ),
             ListTile(
               leading: Icon(Icons.star_rate),

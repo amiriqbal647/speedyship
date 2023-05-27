@@ -123,7 +123,38 @@ class AcceptedBidsPage extends StatelessWidget {
                       ),
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: subtitle,
+                        children: [
+                          ...subtitle,
+                          SizedBox(
+                              height:
+                                  8.0), // Add some spacing between the subtitle and buttons
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  // Begin Delivery button logic
+                                  FirebaseFirestore.instance
+                                      .collection('shipments')
+                                      .doc(document['shipmentId'])
+                                      .update({'status': 'pending'});
+                                },
+                                child: Text('Begin Delivery'),
+                              ),
+                              SizedBox(width: 8.0),
+                              ElevatedButton(
+                                onPressed: () {
+                                  // Cancel Delivery button logic
+                                  FirebaseFirestore.instance
+                                      .collection('shipments')
+                                      .doc(document['shipmentId'])
+                                      .update({'status': 'cancelled'});
+                                },
+                                child: Text('Cancel Delivery'),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                   );

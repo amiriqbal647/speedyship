@@ -41,22 +41,20 @@ class _MyDatePickerState extends State<MyDatePicker> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => _selectDate(context),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 25.0),
-        child: AbsorbPointer(
-          child: TextFormField(
-            controller: _dobcontroller,
-            decoration: InputDecoration(
-              hintText: "Date of Birth",
-              focusedBorder: const OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey),
-              ),
-              enabledBorder: const OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.white),
-              ),
-              fillColor: Colors.grey.shade200,
-              filled: true,
-            ),
+      child: AbsorbPointer(
+        child: TextFormField(
+          controller: _dobcontroller,
+          decoration: InputDecoration(
+            hintText: "Date of Birth",
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide:
+                    const BorderSide(color: Colors.transparent, width: 0)),
+            enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide:
+                    const BorderSide(color: Colors.transparent, width: 0)),
+            filled: true,
           ),
         ),
       ),

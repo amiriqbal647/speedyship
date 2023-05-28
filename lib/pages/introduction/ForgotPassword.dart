@@ -64,6 +64,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           const SizedBox(height: 10),
           //username
           MyTextField(
+            readOnly: false,
+            keyboardType: TextInputType.text,
             controller: emailController,
             hintText: 'Username',
             obscureText: false,

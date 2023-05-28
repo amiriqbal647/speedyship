@@ -16,6 +16,8 @@ import 'package:speedyship/pages/introduction/login.dart';
 import 'package:speedyship/services/auth_service.dart';
 import '../../components/image_picker.dart';
 import 'package:speedyship/services/auth_service.dart';
+import 'package:speedyship/components/my_elevated_button.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 class SignupPage extends StatefulWidget {
   SignupPage({super.key});
@@ -85,230 +87,449 @@ class _SignupPageState extends State<SignupPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
+      appBar: AppBar(),
       body: SingleChildScrollView(
-        child: SafeArea(
-          child: Center(
-            child:
-                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-              const SizedBox(height: 50),
-              //logo
-              Image.asset('lib/images/speedyshiptp.png'),
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Device.screenType == ScreenType.tablet
+              ? Center(
+                  child: SizedBox(
+                    width: 40.w,
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 10),
+                          Text(
+                            'Sign Up to Speedyship',
+                            style: Theme.of(context).textTheme.displaySmall,
+                          ),
 
-              const SizedBox(height: 50),
-              //welcome back
-              Text(
-                'Welcome to SpeedyShip!',
-                style: TextStyle(color: Colors.grey[700], fontSize: 18),
-              ),
+                          Row(
+                            children: [
+                              Text(
+                                'Already have an account?',
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                              InkWell(
+                                child: Text(
+                                  'Log in',
+                                  style: TextStyle(
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      fontSize: 16),
+                                ),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const LoginPage()),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
 
-              const SizedBox(height: 25),
-              Container(
-                width: 150,
-                height: 150,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(width: 2, color: Colors.grey),
-                ),
-                child: Stack(
-                  children: [
-                    if (imageUrl != null && imageUrl.isNotEmpty)
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(100),
-                        child: Image.network(
-                          imageUrl,
-                          width: 150,
-                          height: 150,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    if (imageUrl == null || imageUrl.isEmpty)
-                      Container(
-                        width: 150,
-                        height: 150,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.grey,
-                        ),
-                        child: Icon(
-                          Icons.image,
-                          color: Colors.white,
-                          size: 80,
-                        ),
-                      ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white,
-                        ),
-                        child: IconButton(
-                          icon: Icon(Icons.camera),
-                          color: Colors.grey[600],
-                          onPressed: () async {
-                            String imageUrl = await uploadImage();
-                            setState(() {
-                              this.imageUrl = imageUrl;
-                            });
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                          const SizedBox(height: 20),
+                          //image picker
+                          Center(
+                            child: Container(
+                              width: 150,
+                              height: 150,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border:
+                                    Border.all(width: 2, color: Colors.grey),
+                              ),
+                              child: Stack(
+                                children: [
+                                  if (imageUrl != null && imageUrl.isNotEmpty)
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(100),
+                                      child: Image.network(
+                                        imageUrl,
+                                        width: 150,
+                                        height: 150,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  if (imageUrl == null || imageUrl.isEmpty)
+                                    Container(
+                                      width: 150,
+                                      height: 150,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.grey,
+                                      ),
+                                      child: Icon(
+                                        Icons.image,
+                                        color: Colors.white,
+                                        size: 80,
+                                      ),
+                                    ),
+                                  Positioned(
+                                    bottom: 0,
+                                    right: 0,
+                                    child: Container(
+                                      width: 50,
+                                      height: 50,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.white,
+                                      ),
+                                      child: IconButton(
+                                        icon: Icon(Icons.camera),
+                                        color: Colors.grey[600],
+                                        onPressed: () async {
+                                          String imageUrl = await uploadImage();
+                                          setState(() {
+                                            this.imageUrl = imageUrl;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
 
-              const SizedBox(height: 15),
+                          const SizedBox(height: 15),
 
-              //username
-              MyTextField(
-                controller: emailController,
-                hintText: 'Email Address',
-                obscureText: false,
-              ),
+                          //username
+                          MyTextField(
+                            keyboardType: TextInputType.emailAddress,
+                            controller: emailController,
+                            hintText: 'Email Address',
+                            obscureText: false,
+                            readOnly: false,
+                          ),
 
-              const SizedBox(height: 15),
-              //pwd
-              MyTextField(
-                controller: passwordController,
-                hintText: 'Password',
-                obscureText: true,
-              ),
+                          const SizedBox(height: 15),
+                          //pwd
+                          MyTextField(
+                            keyboardType: TextInputType.text,
+                            controller: passwordController,
+                            hintText: 'Password',
+                            obscureText: true,
+                            readOnly: false,
+                          ),
 
-              const SizedBox(height: 15),
-              //repeat
-              MyTextField(
-                  controller: repeatController,
-                  hintText: 'Repeat your password',
-                  obscureText: true),
+                          const SizedBox(height: 15),
+                          //repeat
+                          MyTextField(
+                            keyboardType: TextInputType.text,
+                            controller: repeatController,
+                            hintText: 'Repeat your password',
+                            obscureText: true,
+                            readOnly: false,
+                          ),
 
-              const SizedBox(height: 15),
+                          const SizedBox(height: 15),
 
-              //firstname
-              MyTextField(
-                controller: fnameController,
-                hintText: 'First Name',
-                obscureText: false,
-              ),
+                          //firstname
+                          MyTextField(
+                            keyboardType: TextInputType.text,
+                            controller: fnameController,
+                            hintText: 'First Name',
+                            obscureText: false,
+                            readOnly: false,
+                          ),
 
-              const SizedBox(height: 15),
-              //last name
-              MyTextField(
-                controller: lnameController,
-                hintText: 'Last Name',
-                obscureText: false,
-              ),
+                          const SizedBox(height: 15),
+                          //last name
+                          MyTextField(
+                            keyboardType: TextInputType.text,
+                            controller: lnameController,
+                            hintText: 'Last Name',
+                            obscureText: false,
+                            readOnly: false,
+                          ),
 
-              const SizedBox(height: 15),
-              //dob
-              MyDatePicker(
-                onDateSelected: (date) => setState(
-                  () => _selectedDate = date,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [],
-                ),
-              ),
+                          const SizedBox(height: 15),
+                          //dob
+                          MyDatePicker(
+                            onDateSelected: (date) => setState(
+                              () => _selectedDate = date,
+                            ),
+                          ),
 
-              const SizedBox(height: 15),
+                          const SizedBox(height: 15),
+                          //Phone no
+                          MyTextField(
+                            keyboardType: TextInputType.number,
+                            controller: phonecontroller,
+                            hintText: "Phone Number",
+                            obscureText: false,
+                            readOnly: false,
+                          ),
 
-              MyTextField(
-                  controller: phonecontroller,
-                  hintText: "Phone Number",
-                  obscureText: false),
+                          const SizedBox(height: 25),
+                          //sign in button
+                          Center(
+                            child: MyButton(
+                              onTap: () => signup(),
+                              buttonText: 'Sign Up',
+                            ),
+                          ),
+                          const SizedBox(height: 15),
+                          //or continue with
+                          Row(
+                            children: [
+                              Expanded(
+                                child: const Divider(
+                                  thickness: 1,
+                                ),
+                              ),
+                              const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 10.0),
+                                child: Text(
+                                  'Or continue using',
+                                ),
+                              ),
+                              const Expanded(
+                                  child: Divider(
+                                thickness: 1,
+                              ))
+                            ],
+                          ),
 
-              const SizedBox(height: 25),
-              //sign in button
-              MyButton2(
-                onTap: () => signup(),
-                buttonText: 'Sign Up',
-              ),
-              const SizedBox(height: 50),
-              //or continue with
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Divider(
-                        thickness: 0.5,
-                        color: Colors.grey[500],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                      child: Text(
-                        'Or continue with',
-                        style: TextStyle(color: Colors.grey[700]),
-                      ),
-                    ),
-                    Expanded(
-                        child: Divider(
-                      thickness: 0.5,
-                      color: Colors.grey[500],
-                    ))
-                  ],
-                ),
-              ),
-              const SizedBox(height: 50),
-              //google and apple sign in buttons
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  //google button
-                  SquareTile(
-                    onTap: () => AuthService().signInWithGoogle(),
-                    imagepath: 'lib/images/google.png',
+                          const SizedBox(height: 15),
+                          //google and apple sign in buttons
+                          // google button
+                          Center(
+                              child: MyElevatedButton(
+                            onPressed: () {},
+                            imagepath: 'lib/images/google.png',
+                            buttonText: 'Google',
+                          )),
+
+                          const SizedBox(height: 15),
+                          // apple button
+                          Center(
+                              child: MyElevatedButton(
+                            onPressed: () {},
+                            imagepath: 'lib/images/apple.png',
+                            buttonText: 'Apple',
+                          )),
+                        ]),
                   ),
-                  SizedBox(width: 20),
-                  //apple button
-                  SquareTile(
-                    onTap: () {
-                      print("apple is pressed");
-                    },
-                    imagepath: 'lib/images/apple.png',
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 50),
-
-              //not a mem? register
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
+                )
+              :
+              // Mobile View *************************************
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  const SizedBox(height: 10),
                   Text(
-                    'Already a member?',
-                    style: TextStyle(
-                      color: Colors.grey[700],
+                    'Sign Up to Speedyship',
+                    style: Theme.of(context).textTheme.displaySmall,
+                  ),
+
+                  Row(
+                    children: [
+                      Text(
+                        'Already have an account?',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      InkWell(
+                        child: Text(
+                          'Log in',
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                              fontSize: 16),
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const LoginPage()),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 20),
+                  //image picker
+                  Center(
+                    child: Container(
+                      width: 150,
+                      height: 150,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(width: 2, color: Colors.grey),
+                      ),
+                      child: Stack(
+                        children: [
+                          if (imageUrl != null && imageUrl.isNotEmpty)
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(100),
+                              child: Image.network(
+                                imageUrl,
+                                width: 150,
+                                height: 150,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          if (imageUrl == null || imageUrl.isEmpty)
+                            Container(
+                              width: 150,
+                              height: 150,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.grey,
+                              ),
+                              child: Icon(
+                                Icons.image,
+                                color: Colors.white,
+                                size: 80,
+                              ),
+                            ),
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: Container(
+                              width: 50,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white,
+                              ),
+                              child: IconButton(
+                                icon: Icon(Icons.camera),
+                                color: Colors.grey[600],
+                                onPressed: () async {
+                                  String imageUrl = await uploadImage();
+                                  setState(() {
+                                    this.imageUrl = imageUrl;
+                                  });
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  const SizedBox(width: 4),
-                  InkWell(
-                    onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => LoginPage()));
-                    },
-                    child: const Text(
-                      'Sign in now',
-                      style: TextStyle(
-                          color: Colors.blue, fontWeight: FontWeight.bold),
+
+                  const SizedBox(height: 15),
+
+                  //Email address
+                  MyTextField(
+                    keyboardType: TextInputType.emailAddress,
+                    controller: emailController,
+                    hintText: 'Email Address',
+                    obscureText: false,
+                    readOnly: false,
+                  ),
+
+                  const SizedBox(height: 15),
+                  //pwd
+                  MyTextField(
+                    keyboardType: TextInputType.text,
+                    controller: passwordController,
+                    hintText: 'Password',
+                    obscureText: true,
+                    readOnly: false,
+                  ),
+
+                  const SizedBox(height: 15),
+                  //repeat
+                  MyTextField(
+                    keyboardType: TextInputType.text,
+                    controller: repeatController,
+                    hintText: 'Repeat your password',
+                    obscureText: true,
+                    readOnly: false,
+                  ),
+
+                  const SizedBox(height: 15),
+
+                  //firstname
+                  MyTextField(
+                    keyboardType: TextInputType.text,
+                    controller: fnameController,
+                    hintText: 'First Name',
+                    obscureText: false,
+                    readOnly: false,
+                  ),
+
+                  const SizedBox(height: 15),
+                  //last name
+                  MyTextField(
+                    keyboardType: TextInputType.text,
+                    controller: lnameController,
+                    hintText: 'Last Name',
+                    obscureText: false,
+                    readOnly: false,
+                  ),
+
+                  const SizedBox(height: 15),
+                  //dob
+                  MyDatePicker(
+                    onDateSelected: (date) => setState(
+                      () => _selectedDate = date,
                     ),
                   ),
-                  const SizedBox(height: 30),
-                ],
-              ),
-            ]),
-          ),
+
+                  const SizedBox(height: 15),
+                  //Phone no
+                  MyTextField(
+                    keyboardType: TextInputType.number,
+                    controller: phonecontroller,
+                    hintText: "Phone Number",
+                    obscureText: false,
+                    readOnly: false,
+                  ),
+
+                  const SizedBox(height: 25),
+                  //sign in button
+                  Center(
+                    child: MyButton(
+                      onTap: () => signup(),
+                      buttonText: 'Sign Up',
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  //or continue with
+                  Row(
+                    children: [
+                      Expanded(
+                        child: const Divider(
+                          thickness: 1,
+                        ),
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10.0),
+                        child: Text(
+                          'Or continue using',
+                        ),
+                      ),
+                      const Expanded(
+                          child: Divider(
+                        thickness: 1,
+                      ))
+                    ],
+                  ),
+
+                  const SizedBox(height: 15),
+                  //google and apple sign in buttons
+                  // google button
+                  Center(
+                      child: MyElevatedButton(
+                    onPressed: () {},
+                    imagepath: 'lib/images/google.png',
+                    buttonText: 'Google',
+                  )),
+
+                  const SizedBox(height: 15),
+                  // apple button
+                  Center(
+                      child: MyElevatedButton(
+                    onPressed: () {},
+                    imagepath: 'lib/images/apple.png',
+                    buttonText: 'Apple',
+                  )),
+                ]),
         ),
       ),
     );

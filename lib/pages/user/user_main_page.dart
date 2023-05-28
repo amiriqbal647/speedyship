@@ -2,12 +2,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:speedyship/components/my_button.dart';
 import 'package:speedyship/pages/courier/become_courier.dart';
 import 'package:speedyship/pages/courier/courier_main.dart';
 import 'package:speedyship/pages/shipments/shipmentForm.dart';
 import 'package:speedyship/pages/user/EditProfile.dart';
 import 'package:speedyship/pages/user/orders.dart';
 import 'CourierRequsets.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:speedyship/components/our_service_card.dart';
 
 final FirebaseAuth auth = FirebaseAuth.instance;
 final FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -52,20 +55,15 @@ class _UserMainPageState extends State<UserMainPage> {
 
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        iconTheme: IconThemeData(color: Colors.black),
-      ),
+      appBar: AppBar(),
       drawer: Drawer(
         child: ListView(
           children: [
             UserAccountsDrawerHeader(
-              decoration: BoxDecoration(color: Colors.teal),
               accountName: Text(_name),
               accountEmail: Text(_email),
               currentAccountPicture: CircleAvatar(
-                child: Text('MA'),
+                child: Text('aa'),
               ),
             ),
             ListTile(
@@ -148,199 +146,221 @@ class _UserMainPageState extends State<UserMainPage> {
       ),
       body: SingleChildScrollView(
         child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Hello text
-              SizedBox(
-                height: 20,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 40),
-                child: Text(
-                  'Hello,',
-                  style: TextStyle(fontSize: 15),
-                ),
-              ),
+            child: Device.screenType == ScreenType.tablet
+                ?
+                //Desktop view***************************************************
+                SizedBox(
+                    width: 50.w,
+                    child: Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // user name and welcome back tile
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          ListTile(
+                              trailing: CircleAvatar(
+                                radius: 25,
+                                child: Text('aa'),
+                              ),
+                              title: Text(
+                                _name,
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                              subtitle: Text('Welcome back!',
+                                  style:
+                                      Theme.of(context).textTheme.titleLarge)),
 
-              // Username text
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 40),
-                child: Text(
-                  _name,
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-              ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          // start shipping card
+                          Card(
+                            elevation: 5,
+                            child: Column(
+                              children: [
+                                const SizedBox(
+                                  height: 10.0,
+                                ),
+                                //box image
+                                Image.asset(
+                                  'lib/images/img1.png',
+                                  height: 45.h,
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                ),
 
-              SizedBox(
-                height: 20,
-              ),
-              // Image and button container
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 40.0),
-                child: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Colors.teal,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.grey.shade600,
-                          spreadRadius: 1,
-                          blurRadius: 15)
-                    ],
-                  ),
-                  child: Column(children: [
-                    // Image
-                    Container(
-                      width: 300,
-                      height: 200,
-                      child: Image.asset(
-                        'lib/images/img1.png',
-                        fit: BoxFit.cover,
+                                // welcome text
+                                Text(
+                                  'Welcome to SpeedyShip',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineMedium,
+                                ),
+
+                                // enjoy text
+                                const Text('Enjoy our fast shipping service'),
+
+                                // start shipping button
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 15.0),
+                                  width: 160,
+                                  child: MyButton(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                ShipmentInformation(),
+                                          ),
+                                        );
+                                      },
+                                      buttonText: 'Start shipping'),
+                                )
+                              ],
+                            ),
+                          ),
+
+                          const SizedBox(height: 15),
+
+                          // Our Services
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
+                            child: Text(
+                              'Our Services',
+                              style: Theme.of(context).textTheme.headlineMedium,
+                            ),
+                          ),
+                          //our services scroll
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: [
+                                OurServiceCard(
+                                  cardText: 'Hi there',
+                                ),
+                                OurServiceCard(
+                                  cardText: 'Hi there',
+                                ),
+                                OurServiceCard(
+                                  cardText: 'Hi there',
+                                ),
+                                OurServiceCard(
+                                  cardText: 'Hi there',
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
                       ),
                     ),
-
-                    // Welcome to speedyShip
-                    Text(
-                      'Welcome to SpeedyShip',
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Text('Enjoy our fast shipping service',
-                        style: TextStyle(
-                            fontSize: 12,
-                            //fontWeight: FontWeight.bold,
-                            color: Colors.white)),
-
-                    //Start shipping button
-                    Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        ShipmentInformation()));
-                          },
-                          child: Text('Start shipping'),
-                          style: ElevatedButton.styleFrom(
-                              fixedSize: Size(200, 60),
-                              backgroundColor: Color(0xFFFF9800),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20)))),
-                    )
-                  ]),
-                ),
-              ),
-
-              SizedBox(
-                height:
-                    40, // Increased space between the big container and Quick Access section
-              ),
-              // Quick Access section
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 40),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Quick Access',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    GridView.count(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 10,
-                      crossAxisSpacing: 10,
+                  )
+                :
+                //Mobile view*************************************************************
+                Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildQuickAccessItem(
-                          Icons.star_rate,
-                          'Ratings',
-                          Colors.teal,
-                          () {},
+                        // user name and welcome back tile
+                        const SizedBox(
+                          height: 10,
                         ),
-                        _buildQuickAccessItem(
-                          Icons.shopping_cart,
-                          'Orders',
-                          Colors.teal,
-                          () {},
+                        ListTile(
+                            trailing: CircleAvatar(
+                              radius: 25,
+                              child: Text('aa'),
+                            ),
+                            title: Text(
+                              _name,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                            subtitle: Text('Welcome back!',
+                                style: Theme.of(context).textTheme.titleLarge)),
+
+                        const SizedBox(
+                          height: 15,
                         ),
-                        _buildQuickAccessItem(
-                          Icons
-                              .request_page, // Change the icon to 'request_page'
-                          'Requests', // Change the label to 'Requests'
-                          Colors.teal,
-                          () {},
+                        // start shipping card
+                        Card(
+                          elevation: 5,
+                          child: Column(
+                            children: [
+                              //box image
+                              Image.asset(
+                                'lib/images/img1.png',
+                                height: 25.h,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                              ),
+
+                              // welcome text
+                              Text(
+                                'Welcome to SpeedyShip',
+                                style:
+                                    Theme.of(context).textTheme.headlineMedium,
+                              ),
+
+                              // enjoy text
+                              const Text('Enjoy our fast shipping service'),
+
+                              // start shipping button
+                              Container(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 15.0),
+                                width: 160,
+                                child: MyButton(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              ShipmentInformation(),
+                                        ),
+                                      );
+                                    },
+                                    buttonText: 'Start shipping'),
+                              )
+                            ],
+                          ),
                         ),
-                        _buildQuickAccessItem(
-                          Icons.help,
-                          'Help',
-                          Colors.teal,
-                          () {},
+
+                        const SizedBox(height: 15),
+
+                        // Our Services
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
+                          child: Text(
+                            'Our Services',
+                            style: Theme.of(context).textTheme.headlineMedium,
+                          ),
                         ),
+                        //our services scroll
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [
+                              OurServiceCard(
+                                cardText: 'Hi there',
+                              ),
+                              OurServiceCard(
+                                cardText: 'Hi there',
+                              ),
+                              OurServiceCard(
+                                cardText: 'Hi there',
+                              ),
+                              OurServiceCard(
+                                cardText: 'Hi there',
+                              ),
+                            ],
+                          ),
+                        )
                       ],
                     ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildQuickAccessItem(
-      IconData icon, String label, Color color, Function onTap) {
-    return GestureDetector(
-      onTap: () => onTap(),
-      child: Container(
-        padding: EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.shade300,
-              spreadRadius: 1,
-              blurRadius: 8,
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment:
-              MainAxisAlignment.center, // Center the icons vertically
-          children: [
-            Icon(
-              icon,
-              size: 40,
-              color: color,
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Text(
-              label,
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
+                  )),
       ),
     );
   }

@@ -1,31 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 class MyButton extends StatelessWidget {
   final Function()? onTap;
+  final String buttonText;
 
-  const MyButton({super.key, this.onTap});
+  const MyButton({super.key, this.onTap, required this.buttonText});
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(25),
-        margin: const EdgeInsets.symmetric(horizontal: 25.0),
-        decoration: BoxDecoration(
-          color: Colors.orange[700],
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        child: const Center(
-            child: Text(
-          "Sign In",
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
-        )),
-      ),
-    );
+    return FilledButton(
+        onPressed: onTap,
+        style: FilledButton.styleFrom(
+            fixedSize: Size(90.w, 60),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
+        child: Text(buttonText));
   }
 }

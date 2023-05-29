@@ -46,6 +46,9 @@ class _EditProfileState extends State<EditProfile> {
       'PhoneNumber': phoneNumberController.text,
       'DateOfBirth': dateOfBirthController.text,
     });
+
+    // Navigate back to the previous page
+    Navigator.pop(context);
   }
 
   // Retrieve the ID of the currently logged-in user
@@ -110,7 +113,7 @@ class _EditProfileState extends State<EditProfile> {
               onPressed: () {
                 updateUserInfo();
               },
-              child: Text("Submit"),
+              child: Text("submit him"),
             ),
           ],
         ),

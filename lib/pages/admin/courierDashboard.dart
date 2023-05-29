@@ -2,13 +2,24 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import 'delete_user_dialog.dart';
+
 class User {
-  String name;
+  String firstName;
+  String lastName;
   String email;
   String phoneNumber;
-  String address;
+  String dateOfBirth;
+  String role; // New field for role
 
-  User(this.name, this.email, this.phoneNumber, this.address);
+  User({
+    required this.firstName,
+    required this.lastName,
+    required this.email,
+    required this.phoneNumber,
+    required this.dateOfBirth,
+    required this.role, // Added role parameter
+  });
 }
 
 class CourierDashboard extends StatefulWidget {
@@ -28,118 +39,46 @@ class _CourierDashboardState extends State<CourierDashboard> {
   Future<void> fetchUsers() async {
     final FirebaseAuth auth = FirebaseAuth.instance;
 
-    final QuerySnapshot snapshot = await FirebaseFirestore.instance
-        .collection('users')
-        .where('role', isEqualTo: 'courier')
-        .get();
+    final QuerySnapshot snapshot =
+        await FirebaseFirestore.instance.collection('users').get();
 
-    final List<User> users = snapshot.docs
+    final List<User> allUsers = snapshot.docs
         .map((doc) => User(
-            doc['firstName'], doc['email'], doc['PhoneNumber'], doc['role']))
+              firstName: doc['firstName'] as String? ?? '',
+              lastName: doc['lastName'] as String? ?? '',
+              email: doc['email'] as String? ?? '',
+              phoneNumber: doc['PhoneNumber'] as String? ?? '',
+              dateOfBirth: doc['DateOfBirth'] as String? ?? '',
+              role: doc['role'] as String? ?? '', // Assign the role value
+            ))
         .toList();
 
+    final List<User> courierUsers =
+        allUsers.where((user) => user.role == 'courier').toList();
+
     setState(() {
-      this.users = users;
+      this.users = courierUsers;
     });
   }
-
-  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   void deleteUser(User user) {
-    setState(() {
-      users.remove(user);
-    });
-  }
-
-  void editUser(BuildContext context, User user) {
-    TextEditingController nameController =
-        TextEditingController(text: user.name);
-    TextEditingController emailController =
-        TextEditingController(text: user.email);
-    TextEditingController phoneController =
-        TextEditingController(text: user.phoneNumber);
-    TextEditingController addressController =
-        TextEditingController(text: user.address);
-
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Edit User'),
-          content: Form(
-            key: _formKey,
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  TextFormField(
-                    controller: nameController,
-                    decoration: InputDecoration(labelText: 'Name'),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a name';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    controller: emailController,
-                    decoration: InputDecoration(labelText: 'Email'),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter an email';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    controller: phoneController,
-                    decoration: InputDecoration(labelText: 'Phone Number'),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a phone number';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    controller: addressController,
-                    decoration: InputDecoration(labelText: 'Address'),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter an address';
-                      }
-                      return null;
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text('Save'),
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  setState(() {
-                    user.name = nameController.text;
-                    user.email = emailController.text;
-                    user.phoneNumber = phoneController.text;
-                    user.address = addressController.text;
-                  });
-                  Navigator.of(context).pop();
-                }
-              },
-            ),
-          ],
+        return DeleteUserDialog(
+          onDelete: () {
+            setState(() {
+              users.remove(user);
+            });
+            Navigator.of(context).pop();
+          },
         );
       },
     );
+  }
+
+  void editUser(BuildContext context, User user) {
+    // Edit user logic here
   }
 
   @override
@@ -169,12 +108,13 @@ class _CourierDashboardState extends State<CourierDashboard> {
                       leading: CircleAvatar(
                         backgroundColor: Color.fromRGBO(9, 147, 120, 1.0),
                         child: Text(
-                          user.name[0].toUpperCase(),
+                          '${user.firstName[0]}${user.lastName[0]}'
+                              .toUpperCase(),
                           style: TextStyle(fontSize: 24, color: Colors.white),
                         ),
                       ),
                       title: Text(
-                        user.name,
+                        '${user.firstName} ${user.lastName}',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       subtitle: Column(
@@ -182,7 +122,7 @@ class _CourierDashboardState extends State<CourierDashboard> {
                         children: [
                           Text(user.email),
                           Text(user.phoneNumber),
-                          Text(user.address),
+                          Text(user.dateOfBirth),
                         ],
                       ),
                     ),
@@ -190,15 +130,19 @@ class _CourierDashboardState extends State<CourierDashboard> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         IconButton(
-                          icon: Icon(Icons.edit,
-                              color: Color.fromARGB(255, 18, 146, 77)),
+                          icon: Icon(
+                            Icons.edit,
+                            color: Color.fromARGB(255, 18, 146, 77),
+                          ),
                           onPressed: () {
                             editUser(context, user);
                           },
                         ),
                         IconButton(
-                          icon: Icon(Icons.delete,
-                              color: Color.fromARGB(255, 222, 114, 25)),
+                          icon: Icon(
+                            Icons.delete,
+                            color: Color.fromARGB(255, 222, 114, 25),
+                          ),
                           onPressed: () {
                             deleteUser(user);
                           },

@@ -18,10 +18,14 @@ dependencies:
   flutter_neumorphic: ^3.2.0
   geocoding: ^2.1.0
   google_maps_flutter: ^2.2.6
-  google_sign_in: ^6.1.0
+  google_sign_in: ^6.1.2
   image_picker: ^0.8.7+4
   shared_preferences: ^2.1.1
   flex_color_scheme: ^7.0.5
+  localization: ^2.1.0
+  flutter_rating_bar: ^4.0.1
+  email_validator: ^2.1.17
+  responsive_sizer: ^3.1.1
 
 dev_dependencies:
   flutter_test:

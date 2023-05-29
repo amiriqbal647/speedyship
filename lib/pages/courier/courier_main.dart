@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'package:speedyship/pages/courier/CourierProfile.dart';
+import 'package:speedyship/pages/courier/courierRatings.dart';
+import 'package:speedyship/pages/courier/deliveries.dart';
 import 'AcceptedBidsPage.dart';
 import 'IndvidualUserSh.dart';
 import 'RejectedBidsPage.dart';
@@ -92,7 +94,7 @@ class _CourierMainState extends State<CourierMain> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => EditProfile(),
+                    builder: (context) => ProfilePage(),
                   ),
                 );
               },
@@ -122,23 +124,28 @@ class _CourierMainState extends State<CourierMain> {
               },
             ),
             ListTile(
-              leading: Icon(Icons.shopping_cart),
-              title: Text('Orders'),
-              /*onTap: () {
+              leading: Icon(Icons.local_shipping),
+              title: Text('Deliveries'),
+              onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => MyOrders(),
+                    builder: (context) => DeliveriesPage(),
                   ),
                 );
-              },*/
+              },
             ),
             ListTile(
               leading: Icon(Icons.star_rate),
               title: Text('Ratings'),
-              /*onTap: () {
-                // Add the desired functionality for Ratings here
-              },*/
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CourierRatingsPage(),
+                  ),
+                );
+              },
             ),
             ListTile(
               leading: Icon(Icons.help),

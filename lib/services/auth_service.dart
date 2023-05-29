@@ -1,19 +1,43 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter/material.dart';
+import 'package:speedyship/pages/introduction/login.dart';
+import 'package:speedyship/pages/user/user_main_page.dart';
 
 class AuthService {
+  handleAuthState() {
+    return StreamBuilder(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (BuildContext context, snapshot) {
+          if (snapshot.hasData) {
+            return UserMainPage();
+          } else {
+            return const LoginPage();
+          }
+        });
+  }
+
   signInWithGoogle() async {
-    // begin the interactive sign in process
-    final GoogleSignInAccount? gUser = await GoogleSignIn().signIn();
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser =
+        await GoogleSignIn(scopes: <String>["email"]).signIn();
 
-    //obtain auth details from the requests
-    final GoogleSignInAuthentication? gAuth = await gUser!.authentication;
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser!.authentication;
 
-    //create a new credential for use
+    // Create a new credential
     final credential = GoogleAuthProvider.credential(
-        accessToken: gAuth?.accessToken, idToken: gAuth?.idToken);
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
 
-    //finally, let's sign in
+    // Once signed in, return the UserCredential
     return await FirebaseAuth.instance.signInWithCredential(credential);
+  }
+
+  //Sign out
+  signOut() {
+    FirebaseAuth.instance.signOut();
   }
 }

@@ -1,21 +1,20 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-enum Status {
-  delivered,
-  canceled,
-  pending,
-}
+class Shipment {
+  final String shipmentId;
+  final String userName;
+  final double weight;
+  final String pickUp;
+  final String destination;
 
-class User {
-  final String? shipmentId;
-  final String? userName;
-  final double? weight;
-  final String? pickUp;
-  final String? destination;
-  final Status? status;
-
-  User(this.shipmentId, this.userName, this.weight, this.pickUp,
-      this.destination, this.status);
+  Shipment({
+    required this.shipmentId,
+    required this.userName,
+    required this.weight,
+    required this.pickUp,
+    required this.destination,
+  });
 }
 
 class ProductsDashboard extends StatefulWidget {
@@ -24,45 +23,43 @@ class ProductsDashboard extends StatefulWidget {
 }
 
 class _ProductsDashboardState extends State<ProductsDashboard> {
-  List<User> users = [
-    User('#2521', 'REIAD ALARBI', 5.0, 'Los Angeles', 'New York',
-        Status.pending),
-    User('#2342', 'IBRAHEM ALI', 3.5, 'San Francisco', 'Chicago',
-        Status.pending),
-    User('#2433', 'AMIR SOMETHING', 10.0, 'Houston', 'Miami', Status.delivered),
-    User('#3424', 'YUSEF MOHAMMADEAN', 7.5, 'Seattle', 'Boston',
-        Status.delivered),
-    User('#5425', 'AMRO ZAHAR', 2.0, 'Dallas', 'Atlanta', Status.canceled),
-  ];
+  List<Shipment> shipments = [];
 
-  void deleteUser(User user) {
+  @override
+  void initState() {
+    super.initState();
+    fetchShipments();
+  }
+
+  Future<void> fetchShipments() async {
+    final QuerySnapshot<Map<String, dynamic>> snapshot =
+        await FirebaseFirestore.instance.collection('shipments').get();
+
+    final List<Shipment> shipments = snapshot.docs.map((doc) {
+      final userData = doc.data();
+      return Shipment(
+        shipmentId: doc.id,
+        userName: userData?['RecipientName'] as String? ?? '',
+        weight: (userData?['weight'] as num?)?.toDouble() ?? 0.0,
+        pickUp: userData?['pickUp'] as String? ?? '',
+        destination: userData?['destination'] as String? ?? '',
+      );
+    }).toList();
+
     setState(() {
-      users.remove(user);
+      this.shipments = shipments;
     });
   }
 
-  Color getStatusColor(Status status) {
-    switch (status) {
-      case Status.delivered:
-        return Colors.blue;
-      case Status.canceled:
-        return Colors.red;
-      case Status.pending:
-      default:
-        return Colors.yellow;
-    }
-  }
+  void deleteShipment(Shipment shipment) {
+    FirebaseFirestore.instance
+        .collection('shipments')
+        .doc(shipment.shipmentId)
+        .delete();
 
-  String getStatusText(Status status) {
-    switch (status) {
-      case Status.delivered:
-        return 'Delivered';
-      case Status.canceled:
-        return 'Canceled';
-      case Status.pending:
-      default:
-        return 'Pending';
-    }
+    setState(() {
+      shipments.remove(shipment);
+    });
   }
 
   @override
@@ -75,9 +72,9 @@ class _ProductsDashboardState extends State<ProductsDashboard> {
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: ListView.builder(
-          itemCount: users.length,
+          itemCount: shipments.length,
           itemBuilder: (context, index) {
-            final user = users[index];
+            final shipment = shipments[index];
             return Card(
               elevation: 4,
               shape: RoundedRectangleBorder(
@@ -85,71 +82,48 @@ class _ProductsDashboardState extends State<ProductsDashboard> {
               ),
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
-                child: Row(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Shipment ID: ${user.shipmentId ?? ""}',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            'User: ${user.userName ?? ""}',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            'Weight: ${user.weight?.toString() ?? ""} kg',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            'Pick up: ${user.pickUp ?? ""}',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            'Destination: ${user.destination ?? ""}',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          SizedBox(height: 4),
-                          Row(
-                            children: [
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: getStatusColor(
-                                      user.status ?? Status.pending),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              SizedBox(width: 8),
-                              Text(
-                                getStatusText(user.status ?? Status.pending),
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+                    Text(
+                      'Shipment ID: ${shipment.shipmentId}',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    IconButton(
-                      icon: Icon(Icons.delete,
-                          color: Color.fromARGB(255, 222, 114, 25)),
-                      onPressed: () {
-                        deleteUser(user);
-                      },
+                    SizedBox(height: 8),
+                    Text(
+                      'User: ${shipment.userName}',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      'Weight: ${shipment.weight.toString()} kg',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      'Pick up: ${shipment.pickUp}',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      'Destination: ${shipment.destination}',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    SizedBox(height: 12),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.delete,
+                          color: Color.fromARGB(255, 222, 114, 25),
+                        ),
+                        onPressed: () {
+                          deleteShipment(shipment);
+                        },
+                      ),
                     ),
                   ],
                 ),

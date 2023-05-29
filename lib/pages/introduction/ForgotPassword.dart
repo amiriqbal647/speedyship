@@ -1,45 +1,81 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-import '../../components/my_textfield.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
-  const ForgotPasswordPage({super.key});
-
   @override
-  State<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
+  _ForgotPasswordPageState createState() => _ForgotPasswordPageState();
 }
 
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
-  final emailController = TextEditingController();
+  final _auth = FirebaseAuth.instance;
+  final _formKey = GlobalKey<FormState>();
+  String _email = '';
 
-  @override
-  void dispose() {
-    emailController.dispose();
-    super.dispose();
-  }
+  Future<void> _resetPassword() async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
 
-  Future passwordReset() async {
-    try {
-      await FirebaseAuth.instance
-          .sendPasswordResetEmail(email: emailController.text.trim());
-      showDialog(
+      try {
+        User? user = _auth.currentUser;
+        if (user != null && !user.emailVerified) {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('Email Not Verified'),
+                content: Text(
+                    'Please verify your email before resetting your password.'),
+                actions: [
+                  TextButton(
+                    child: Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        } else {
+          await _auth.sendPasswordResetEmail(email: _email);
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('Password Reset Email Sent'),
+                content:
+                    Text('Please check your email to reset your password.'),
+                actions: [
+                  TextButton(
+                    child: Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        }
+      } catch (e) {
+        showDialog(
           context: context,
-          builder: (context) {
+          builder: (BuildContext context) {
             return AlertDialog(
-              content:
-                  Text("Password reset Link sent! check your Email Please"),
+              title: Text('Error'),
+              content: Text(e.toString()),
+              actions: [
+                TextButton(
+                  child: Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
             );
-          });
-    } on FirebaseAuthException catch (e) {
-      print(e);
-      showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              content: Text(e.message.toString()),
-            );
-          });
+          },
+        );
+      }
     }
   }
 
@@ -47,36 +83,40 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.teal,
-        elevation: 0,
+        title: Text('Forgot Password'),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25.0),
-            child: Text(
-              'Enter your Email and we will send you a password reset link',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 20),
-            ),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              if (_auth.currentUser != null &&
+                  !_auth.currentUser!.emailVerified)
+                Text(
+                  'Please verify your email before resetting your password.',
+                  style: TextStyle(color: Colors.red),
+                ),
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Email'),
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please enter your email.';
+                  }
+                  return null;
+                },
+                onSaved: (value) {
+                  _email = value!;
+                },
+              ),
+              SizedBox(height: 16.0),
+              ElevatedButton(
+                onPressed: _resetPassword,
+                child: Text('Send Password Reset Email'),
+              ),
+            ],
           ),
-          const SizedBox(height: 10),
-          //username
-          MyTextField(
-            controller: emailController,
-            hintText: 'Username',
-            obscureText: false,
-          ),
-          const SizedBox(height: 10),
-
-          MaterialButton(
-            onPressed: () {
-              passwordReset();
-            },
-            child: Text("Reset Password"),
-          )
-        ],
+        ),
       ),
     );
   }

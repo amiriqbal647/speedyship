@@ -26,6 +26,7 @@ dependencies:
   flutter_rating_bar: ^4.0.1
   email_validator: ^2.1.17
   responsive_sizer: ^3.1.1
+  flutter_pw_validator: ^1.6.0
 
 dev_dependencies:
   flutter_test:

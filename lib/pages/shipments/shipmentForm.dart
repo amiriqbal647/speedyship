@@ -147,6 +147,15 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                             obscureText: false,
                             keyboardType: TextInputType.name,
                             readOnly: false,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter a name';
+                              } else if (!RegExp(r'^[a-zA-Z]{1,20}$')
+                                  .hasMatch(value)) {
+                                return 'Please enter a valid name with maximum 20 letters';
+                              }
+                              return null;
+                            },
                           ),
                           const SizedBox(
                             height: 15,
@@ -154,11 +163,23 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
 
                           //Recipient phone no
                           MyTextField(
-                              controller: recipientphonecontroller,
-                              hintText: 'Recipient phone number',
-                              obscureText: false,
-                              readOnly: false,
-                              keyboardType: TextInputType.phone),
+                            controller: recipientphonecontroller,
+                            hintText: 'Recipient phone number',
+                            obscureText: false,
+                            keyboardType: TextInputType.phone,
+                            readOnly: false,
+                            // placeholder: '',
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter a phone number';
+                              } else if (!RegExp(
+                                      r'^\+90\s(5\d{2})\s(\d{3})\s(\d{4})$')
+                                  .hasMatch(value)) {
+                                return 'the format of the number should be +90 5xx xxx xxxx';
+                              }
+                              return null;
+                            },
+                          ),
                           const SizedBox(
                             height: 15,
                           ),
@@ -170,9 +191,16 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                             obscureText: false,
                             readOnly: false,
                             keyboardType: TextInputType.number,
+                            // inputFormatters: [
+                            //   FilteringTextInputFormatter.allow(
+                            //       RegExp(r'[0-9]')),
+                            // ],
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return "Please enter a weight";
+                              } else if (double.tryParse(value) == null ||
+                                  double.parse(value) > 50) {
+                                return "Please enter a valid weight less than or equal to 50";
                               }
                               return null;
                             },
@@ -186,38 +214,54 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Flexible(
-                                  child: // Length
-                                      MyTextField(
-                                controller: lengthController,
-                                hintText: 'Length',
-                                obscureText: false,
-                                readOnly: false,
-                                keyboardType: TextInputType.number,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return "Plese enter a length";
-                                  }
-                                  return null;
-                                },
-                              )),
+                                child: // Length
+                                    MyTextField(
+                                  controller: lengthController,
+                                  hintText: 'length',
+                                  obscureText: false,
+                                  readOnly: false,
+                                  keyboardType: TextInputType.number,
+                                  // inputFormatters: [
+                                  //   FilteringTextInputFormatter.allow(
+                                  //       RegExp(r'[0-9]')),
+                                  // ],
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return "Please enter a length";
+                                    } else if (double.tryParse(value) == null ||
+                                        double.parse(value) > 50) {
+                                      return "Please enter a valid length less than or equal to 50";
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
                               const SizedBox(
                                 width: 15,
                               ),
                               Flexible(
-                                  //width
-                                  child: MyTextField(
-                                controller: widthController,
-                                hintText: 'Width',
-                                obscureText: false,
-                                readOnly: false,
-                                keyboardType: TextInputType.number,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return "Plese enter a width";
-                                  }
-                                  return null;
-                                },
-                              )),
+                                //width
+                                child: MyTextField(
+                                  controller: widthController,
+                                  hintText: 'Width',
+                                  obscureText: false,
+                                  readOnly: false,
+                                  keyboardType: TextInputType.number,
+                                  // inputFormatters: [
+                                  //   FilteringTextInputFormatter.allow(
+                                  //       RegExp(r'[0-9]')),
+                                  // ],
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return "Please enter a width";
+                                    } else if (double.tryParse(value) == null ||
+                                        double.parse(value) > 50) {
+                                      return "Please enter a valid width less than or equal to 50";
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
                             ],
                           ),
                           const SizedBox(
@@ -225,18 +269,25 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                           ),
                           // Height
                           MyTextField(
-                            controller: heightController,
+                            controller: weightController,
                             hintText: 'Height',
                             obscureText: false,
                             readOnly: false,
                             keyboardType: TextInputType.number,
+                            // inputFormatters: [
+                            //   FilteringTextInputFormatter.allow(
+                            //       RegExp(r'[0-9]')),
+                            // ],
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return "Plese enter a Height";
+                                return "Please enter a Height";
+                              } else if (double.tryParse(value) == null ||
+                                  double.parse(value) > 50) {
+                                return "Please enter a valid Height less than or equal to 50";
                               }
                               return null;
                             },
-                          )
+                          ),
                         ],
                       ),
                     ),
@@ -374,48 +425,6 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                       },
                     ),
                   ),
-                  // Padding(
-                  //   padding: const EdgeInsets.all(15.0),
-                  //   child: ElevatedButton(
-                  //     onPressed: () {
-                  //       if (_formKey.currentState != null &&
-                  //           _formKey.currentState!.validate()) {
-                  //         Navigator.push(
-                  //           context,
-                  //           MaterialPageRoute(
-                  //               builder: (context) => SummaryPage(
-                  //                     category: _selectedVal,
-                  //                     weight:
-                  //                         int.tryParse(weightController.text) ??
-                  //                             0,
-                  //                     length:
-                  //                         int.tryParse(lengthController.text) ??
-                  //                             0,
-                  //                     width:
-                  //                         int.tryParse(widthController.text) ??
-                  //                             0,
-                  //                     height:
-                  //                         int.tryParse(heightController.text) ??
-                  //                             0,
-                  //                     city: _selectedVal2,
-                  //                     location: _myLocationController.text,
-                  //                     destination: _destinationController.text,
-                  //                     recphone: recipientphonecontroller.text,
-                  //                     recname: recipientcontroller.text,
-                  //                   )),
-                  //         );
-                  //       }
-                  //     },
-                  //     child: Text('Continue'),
-                  //     style: ElevatedButton.styleFrom(
-                  //       fixedSize: Size(350, 60),
-                  //       backgroundColor: Colors.orange,
-                  //       shape: RoundedRectangleBorder(
-                  //         borderRadius: BorderRadius.circular(20),
-                  //       ),
-                  //     ),
-                  //   ),
-                  // )
                 ],
               ),
             )),

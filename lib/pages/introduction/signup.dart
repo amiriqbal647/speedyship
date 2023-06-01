@@ -1,5 +1,6 @@
 import 'dart:io';
 
+// import 'package:email_validator/email_validator.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -82,6 +83,13 @@ class _SignupPageState extends State<SignupPage> {
   }
 
   String imageUrl = '';
+  String? emailErrorMessage; // Declare a variable to hold the error message
+
+  bool _isValidEmail(String value) {
+    final emailRegex =
+        RegExp(r'^[\w-]+(\.[\w-]+)*@([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,7}$');
+    return emailRegex.hasMatch(value);
+  }
 
   //rest of the code
   @override
@@ -197,14 +205,22 @@ class _SignupPageState extends State<SignupPage> {
                           const SizedBox(height: 15),
 
                           //username
+
                           MyTextField(
                             keyboardType: TextInputType.emailAddress,
                             controller: emailController,
                             hintText: 'Email Address',
                             obscureText: false,
                             readOnly: false,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your email address';
+                              } else if (!_isValidEmail(value)) {
+                                return 'Please enter a valid email address';
+                              }
+                              return null; // Return null if the input is valid
+                            },
                           ),
-
                           const SizedBox(height: 15),
                           //pwd
                           MyTextField(
@@ -298,11 +314,19 @@ class _SignupPageState extends State<SignupPage> {
                           //google and apple sign in buttons
                           // google button
                           Center(
-                              child: MyElevatedButton(
-                            onPressed: () {},
-                            imagepath: 'lib/images/google.png',
-                            buttonText: 'Google',
-                          )),
+                            child: MyElevatedButton(
+                              onPressed: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        AuthService().signInWithGoogle(),
+                                  ),
+                                );
+                              },
+                              imagepath: 'lib/images/google.png',
+                              buttonText: 'Google',
+                            ),
+                          ),
 
                           const SizedBox(height: 15),
                           // apple button
@@ -430,6 +454,8 @@ class _SignupPageState extends State<SignupPage> {
                     hintText: 'Password',
                     obscureText: true,
                     readOnly: false,
+                    // validatePassword: true,
+                    // validator: Validtor,
                   ),
 
                   const SizedBox(height: 15),
@@ -510,7 +536,6 @@ class _SignupPageState extends State<SignupPage> {
                       ))
                     ],
                   ),
-
                   const SizedBox(height: 15),
                   //google and apple sign in buttons
                   // google button

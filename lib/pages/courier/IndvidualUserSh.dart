@@ -16,19 +16,18 @@ class IndividualUserShipment extends StatelessWidget {
   final String userId;
   final String shipmentId;
 
-  const IndividualUserShipment({
-    required this.location,
-    required this.destination,
-    required this.category,
-    required this.height,
-    required this.weight,
-    required this.width,
-    required this.length,
-    required this.username,
-    required this.userId,
-    required this.shipmentId,
-    required city,
-  });
+  const IndividualUserShipment(
+      {required this.location,
+      required this.destination,
+      required this.category,
+      required this.height,
+      required this.weight,
+      required this.width,
+      required this.length,
+      required this.username,
+      required this.userId,
+      required this.shipmentId,
+      required city});
 
   @override
   Widget build(BuildContext context) {
@@ -137,14 +136,42 @@ class IndividualUserShipment extends StatelessWidget {
     }
 
     try {
-      final QuerySnapshot<Map<String, dynamic>> snapshot =
+      final DocumentSnapshot<Map<String, dynamic>> shipmentSnapshot =
+          await FirebaseFirestore.instance
+              .collection('shipments')
+              .doc(shipmentId)
+              .get();
+
+      if (!shipmentSnapshot.exists) {
+        // Shipment document doesn't exist
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Shipment Not Found'),
+              content: Text('The shipment does not exist.'),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+        return;
+      }
+
+      final QuerySnapshot<Map<String, dynamic>> bidSnapshot =
           await FirebaseFirestore.instance
               .collection('bids')
-              .where('userId', isEqualTo: currentUser.uid)
+              .where('courierId', isEqualTo: currentUser.uid)
               .where('shipmentId', isEqualTo: shipmentId)
               .get();
 
-      if (snapshot.docs.isNotEmpty) {
+      if (bidSnapshot.docs.isNotEmpty) {
         // User already placed a bid for this shipment
         showDialog(
           context: context,

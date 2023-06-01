@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
+import 'package:speedyship/components/my_textfield.dart';
 
 class CourierBidsForm extends StatefulWidget {
   final String userId;
@@ -13,6 +15,7 @@ class CourierBidsForm extends StatefulWidget {
 }
 
 class _CourierBidsFormState extends State<CourierBidsForm> {
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController priceController = TextEditingController();
   final TextEditingController dateController = TextEditingController();
 
@@ -72,63 +75,78 @@ class _CourierBidsFormState extends State<CourierBidsForm> {
       body: Center(
         child: Container(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                "Add Your Bid",
-                style: TextStyle(
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromRGBO(9, 147, 120, 1),
-                ),
-              ),
-              SizedBox(height: 24.0),
-              TextField(
-                controller: priceController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  labelText: 'Price',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "Add Your Bid",
+                  style: TextStyle(
+                    fontSize: 24.0,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromRGBO(9, 147, 120, 1),
                   ),
-                  contentPadding: EdgeInsets.all(15),
                 ),
-              ),
-              SizedBox(height: 16.0),
-              TextField(
-                controller: dateController,
-                decoration: InputDecoration(
-                  labelText: 'Date',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
+                SizedBox(height: 24.0),
+                MyTextField(
+                  controller: priceController,
+                  hintText: 'price',
+                  obscureText: false,
+                  keyboardType: TextInputType.number,
+                  readOnly: false,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                  ],
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a price.';
+                    }
+                    if (int.tryParse(value) == null) {
+                      return 'Please enter a valid number.';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 16.0),
+                TextField(
+                  controller: dateController,
+                  decoration: InputDecoration(
+                    labelText: 'Date',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    contentPadding: EdgeInsets.all(15),
                   ),
-                  contentPadding: EdgeInsets.all(15),
                 ),
-              ),
-              SizedBox(height: 16.0),
-              Container(
-                height: 50,
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () => submitBid(context),
-                  child: Text('Submit'),
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        Color.fromRGBO(231, 123, 0, 1)),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15.0),
+                SizedBox(height: 16.0),
+                Container(
+                  height: 50,
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        submitBid(context);
+                      }
+                    },
+                    child: Text('Submit'),
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                          Color.fromRGBO(231, 123, 0, 1)),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
                       ),
+                      padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                        EdgeInsets.all(10),
+                      ),
+                      elevation: MaterialStateProperty.all<double>(5),
                     ),
-                    padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                      EdgeInsets.all(10),
-                    ),
-                    elevation: MaterialStateProperty.all<double>(5),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           decoration: BoxDecoration(
             color: Colors.white,

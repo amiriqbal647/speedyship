@@ -65,7 +65,9 @@ class _UserMainPageState extends State<UserMainPage> {
               accountName: Text(_name),
               accountEmail: Text(_email),
               currentAccountPicture: CircleAvatar(
-                child: Text('aa'),
+                child: Text(
+                  _name.isNotEmpty ? '${_fname[0]}${_lname[0]}' : '',
+                ),
               ),
             ),
             ListTile(
@@ -165,7 +167,11 @@ class _UserMainPageState extends State<UserMainPage> {
                           ListTile(
                               trailing: CircleAvatar(
                                 radius: 25,
-                                child: Text('aa'),
+                                child: Text(
+                                  _name.isNotEmpty
+                                      ? '${_fname[0]}${_lname[0]}'
+                                      : '',
+                                ),
                               ),
                               title: Text(
                                 _name,
@@ -274,7 +280,11 @@ class _UserMainPageState extends State<UserMainPage> {
                         ListTile(
                             trailing: CircleAvatar(
                               radius: 25,
-                              child: Text('aa'),
+                              child: Text(
+                                _name.isNotEmpty
+                                    ? '${_fname[0]}${_lname[0]}'
+                                    : '',
+                              ),
                             ),
                             title: Text(
                               _name,

@@ -114,8 +114,7 @@ class _BidsPageState extends State<BidsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Bids'),
-        backgroundColor: Color(0xFF099378),
+        title: const Text('Bids'),
       ),
       body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
         stream: FirebaseFirestore.instance

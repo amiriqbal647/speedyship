@@ -5,6 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:path/path.dart';
+import 'package:speedyship/components/my_button.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 class DocumentUploader extends StatefulWidget {
   @override
@@ -78,66 +80,108 @@ class _DocumentUploaderState extends State<DocumentUploader> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Upload Your Documents'),
-        backgroundColor: Colors.teal,
+        title: const Text('Upload Your Documents'),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Card(
-              elevation: 5,
-              child: ListTile(
-                leading: Icon(Icons.drive_file_rename_outline,
-                    color: Color(0xFFF57C00), size: 30),
-                title: Text('Drivers License',
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                subtitle: _file1 == null
-                    ? Text("No file selected")
-                    : Text(basename(_file1!.path)),
-                trailing: IconButton(
-                  icon: Icon(Icons.file_upload, color: Color(0xFFF57C00)),
-                  onPressed: _pickFile1,
-                ),
-              ),
-            ),
-            SizedBox(height: 20),
-            Card(
-              elevation: 5,
-              child: ListTile(
-                leading: Icon(Icons.drive_file_rename_outline,
-                    color: Color(0xFFF57C00), size: 30),
-                title: Text('Conviction Record',
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                subtitle: _file2 == null
-                    ? Text("No file selected")
-                    : Text(basename(_file2!.path)),
-                trailing: IconButton(
-                  icon: Icon(Icons.file_upload, color: Color(0xFFF57C00)),
-                  onPressed: _pickFile2,
-                ),
-              ),
-            ),
-            SizedBox(height: 32),
-            ElevatedButton(
-              onPressed: () => _uploadFiles(context),
-              child: Text("Submit Documents"),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.all(16),
-                primary: Colors.teal,
-                textStyle: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+          padding: const EdgeInsets.all(16.0),
+          child: Device.screenType == ScreenType.tablet
+              ?
+              // Desktop view************************************************************
+              Center(
+                  child: SizedBox(
+                    width: 50.w,
+                    child: Column(
+                      children: [
+                        Card(
+                          elevation: 5,
+                          child: ListTile(
+                            leading: const Icon(Icons.drive_file_rename_outline,
+                                size: 30),
+                            title: Text('Drivers License',
+                                style: Theme.of(context).textTheme.titleLarge),
+                            subtitle: _file1 == null
+                                ? Text("No file selected")
+                                : Text(basename(_file1!.path)),
+                            trailing: IconButton(
+                              icon: const Icon(Icons.file_upload),
+                              onPressed: _pickFile1,
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        Card(
+                          elevation: 5,
+                          child: ListTile(
+                            leading: const Icon(Icons.drive_file_rename_outline,
+                                size: 30),
+                            title: Text('Conviction Record',
+                                style: Theme.of(context).textTheme.titleLarge),
+                            subtitle: _file2 == null
+                                ? Text("No file selected")
+                                : Text(basename(_file2!.path)),
+                            trailing: IconButton(
+                              icon: const Icon(
+                                Icons.file_upload,
+                              ),
+                              onPressed: _pickFile2,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 32),
+                        MyButton(
+                          buttonText: 'Submit Documents',
+                          onTap: () => _uploadFiles(context),
+                        )
+                      ],
+                    ),
+                  ),
+                )
+              :
+              // Mobile view**************************************************************
+              Column(
+                  children: [
+                    Card(
+                      elevation: 5,
+                      child: ListTile(
+                        leading: const Icon(Icons.drive_file_rename_outline,
+                            size: 30),
+                        title: Text('Drivers License',
+                            style: Theme.of(context).textTheme.titleLarge),
+                        subtitle: _file1 == null
+                            ? Text("No file selected")
+                            : Text(basename(_file1!.path)),
+                        trailing: IconButton(
+                          icon: const Icon(Icons.file_upload),
+                          onPressed: _pickFile1,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    Card(
+                      elevation: 5,
+                      child: ListTile(
+                        leading: const Icon(Icons.drive_file_rename_outline,
+                            size: 30),
+                        title: Text('Conviction Record',
+                            style: Theme.of(context).textTheme.titleLarge),
+                        subtitle: _file2 == null
+                            ? Text("No file selected")
+                            : Text(basename(_file2!.path)),
+                        trailing: IconButton(
+                          icon: const Icon(
+                            Icons.file_upload,
+                          ),
+                          onPressed: _pickFile2,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                    MyButton(
+                      buttonText: 'Submit Documents',
+                      onTap: () => _uploadFiles(context),
+                    )
+                  ],
+                )),
     );
   }
 }

@@ -89,18 +89,35 @@ class OrderList extends StatelessWidget {
             final courierId = shipment['courierId'] as String? ?? '';
 
             return Card(
-              child: ListTile(
-                title: Text('Shipment ID: $shipmentId'),
-                subtitle: Column(
+              margin: const EdgeInsets.all(15.0),
+              child: Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Location: $location'),
-                    Text('Destination: $destination'),
-                    ElevatedButton(
+                    Text(
+                      'Shipment ID: $shipmentId',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    Text(
+                      'Location: $location',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    Text(
+                      'Destination: $destination',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(
+                      height: 10.0,
+                    ),
+                    FilledButton(
                       onPressed: () {
                         _showRatingDialog(context, shipmentId, courierId);
                       },
-                      child: Text("Rate Courier"),
+                      style: FilledButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8))),
+                      child: const Text("Rate Courier"),
                     ),
                   ],
                 ),

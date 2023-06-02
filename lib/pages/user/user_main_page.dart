@@ -247,17 +247,25 @@ class _UserMainPageState extends State<UserMainPage> {
                             scrollDirection: Axis.horizontal,
                             child: Row(
                               children: [
+                                //Fast and safe shipping
                                 OurServiceCard(
-                                  cardText: 'Hi there',
+                                  imagepath: 'lib/images/img5-1.png',
+                                  cardText: 'Fast and safe shipping',
                                 ),
+                                //become courier
                                 OurServiceCard(
-                                  cardText: 'Hi there',
+                                  imagepath: 'lib/images/become-courier.png',
+                                  cardText: 'Become a courier!',
                                 ),
+                                //accept decline bids
                                 OurServiceCard(
-                                  cardText: 'Hi there',
+                                  imagepath: 'lib/images/choose-price.png',
+                                  cardText: 'Accept or decline bids',
                                 ),
+                                //rate shipment
                                 OurServiceCard(
-                                  cardText: 'Hi there',
+                                  imagepath: 'lib/images/rate-shipment.png',
+                                  cardText: 'Rate your shipment',
                                 ),
                               ],
                             ),
@@ -355,17 +363,25 @@ class _UserMainPageState extends State<UserMainPage> {
                           scrollDirection: Axis.horizontal,
                           child: Row(
                             children: [
+                              //Fast and safe shipping
                               OurServiceCard(
-                                cardText: 'Hi there',
+                                imagepath: 'lib/images/img5-1.png',
+                                cardText: 'Fast and safe shipping',
                               ),
+                              //become courier
                               OurServiceCard(
-                                cardText: 'Hi there',
+                                imagepath: 'lib/images/become-courier.png',
+                                cardText: 'Become a courier!',
                               ),
+                              //accept decline bids
                               OurServiceCard(
-                                cardText: 'Hi there',
+                                imagepath: 'lib/images/choose-price.png',
+                                cardText: 'Accept or decline bids',
                               ),
+                              //rate shipment
                               OurServiceCard(
-                                cardText: 'Hi there',
+                                imagepath: 'lib/images/rate-shipment.png',
+                                cardText: 'Rate your shipment',
                               ),
                             ],
                           ),

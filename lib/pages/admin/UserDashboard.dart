@@ -25,7 +25,7 @@ class _UserDashboardState extends State<UserDashboard> {
         backgroundColor: primaryColor,
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: usersRef.snapshots(),
+        stream: usersRef.where('role', isEqualTo: 'user').snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Center(
@@ -58,9 +58,6 @@ class _UserDashboardState extends State<UserDashboard> {
                   ? user['DateOfBirth'].toString()
                   : (user as dynamic)[4].toString();
 
-              final imageUrl =
-                  user is Map ? user['image'] : (user as dynamic)[5];
-
               return Card(
                 elevation: 5.0, // This gives a shadow to the card.
                 margin: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
@@ -76,13 +73,14 @@ class _UserDashboardState extends State<UserDashboard> {
                           CircleAvatar(
                             radius: 30,
                             backgroundColor: accentColor,
-                            child: imageUrl != null
-                                ? ClipRRect(
-                                    borderRadius: BorderRadius.circular(30),
-                                    child: Image.network(imageUrl,
-                                        fit: BoxFit.cover),
-                                  )
-                                : Icon(Icons.person, color: Colors.white),
+                            child: Text(
+                              '${firstName[0]}${lastName[0]}',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18.0,
+                              ),
+                            ),
                           ),
                           SizedBox(width: 10),
                           Expanded(
@@ -91,29 +89,30 @@ class _UserDashboardState extends State<UserDashboard> {
                               children: [
                                 Text('$firstName $lastName',
                                     style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize:
-                                            18.0)), // Increased font size.
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18.0,
+                                    )),
                                 SizedBox(height: 10),
                                 Text('Email: $email',
                                     style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize:
-                                            16.0)), // Increased font size.
+                                      color: Colors.black,
+                                      fontSize: 16.0,
+                                    )),
                                 SizedBox(height: 5),
                                 Text(
-                                    'Phone: ${phoneNumber ?? 'No phone number'}',
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize:
-                                            16.0)), // Increased font size.
+                                  'Phone: ${phoneNumber ?? 'No phone number'}',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16.0,
+                                  ),
+                                ),
                                 SizedBox(height: 5),
                                 Text('DOB: ${dateOfBirth}',
                                     style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize:
-                                            16.0)), // Increased font size.
+                                      color: Colors.black,
+                                      fontSize: 16.0,
+                                    )),
                               ],
                             ),
                           ),
@@ -136,7 +135,6 @@ class _UserDashboardState extends State<UserDashboard> {
                                     email: email,
                                     phoneNumber: phoneNumber,
                                     dateOfBirth: dateOfBirth,
-                                    imageUrl: imageUrl,
                                   ),
                                 ),
                               );
@@ -144,7 +142,33 @@ class _UserDashboardState extends State<UserDashboard> {
                           ),
                           IconButton(
                             icon: Icon(Icons.delete, color: Colors.red),
-                            onPressed: () => deleteUser(userId),
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text('Confirm Deletion'),
+                                    content: Text(
+                                        'Are you sure you want to delete this user?'),
+                                    actions: [
+                                      TextButton(
+                                        child: Text('Cancel'),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                      TextButton(
+                                        child: Text('Delete'),
+                                        onPressed: () {
+                                          deleteUser(userId);
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
                           ),
                         ],
                       ),

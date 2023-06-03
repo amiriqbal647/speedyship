@@ -288,7 +288,7 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                                   ),
                                   // Height
                                   MyTextField(
-                                    controller: weightController,
+                                    controller: heightController,
                                     hintText: 'Height',
                                     obscureText: false,
                                     readOnly: false,
@@ -371,6 +371,11 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                                   obscureText: false,
                                   keyboardType: TextInputType.none,
                                   readOnly: true,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return "Please fill the location field";
+                                    }
+                                  },
                                   onTap: () async {
                                     String? selectedAddress =
                                         await Navigator.push(
@@ -396,6 +401,11 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                                   obscureText: false,
                                   keyboardType: TextInputType.none,
                                   readOnly: true,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return "Please fill the destination field";
+                                    }
+                                  },
                                   onTap: () async {
                                     String? selectedAddress =
                                         await Navigator.push(
@@ -648,7 +658,7 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                               ),
                               // Height
                               MyTextField(
-                                controller: weightController,
+                                controller: heightController,
                                 hintText: 'Height',
                                 obscureText: false,
                                 readOnly: false,
@@ -727,6 +737,11 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                               obscureText: false,
                               keyboardType: TextInputType.none,
                               readOnly: true,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Please fill the location field";
+                                }
+                              },
                               onTap: () async {
                                 String? selectedAddress = await Navigator.push(
                                   context,
@@ -750,6 +765,11 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                               obscureText: false,
                               keyboardType: TextInputType.none,
                               readOnly: true,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Please fill the destination field";
+                                }
+                              },
                               onTap: () async {
                                 String? selectedAddress = await Navigator.push(
                                   context,

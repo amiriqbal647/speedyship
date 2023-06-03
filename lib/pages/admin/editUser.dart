@@ -6,15 +6,16 @@ class EditUserPage extends StatefulWidget {
   final String firstName;
   final String lastName;
   final String email;
+  final String phoneNumber;
+  final String dateOfBirth;
 
   EditUserPage({
     required this.userId,
     required this.firstName,
     required this.lastName,
     required this.email,
-    required phoneNumber,
-    required dateOfBirth,
-    required imageUrl,
+    required this.phoneNumber,
+    required this.dateOfBirth,
   });
 
   @override
@@ -29,6 +30,8 @@ class _EditUserPageState extends State<EditUserPage> {
   late String _firstName;
   late String _lastName;
   late String _email;
+  late String _phoneNumber;
+  late String _dateOfBirth;
 
   final Color primaryColor = Color.fromRGBO(0, 147, 120, 1);
   final Color secondaryColor = Color.fromRGBO(231, 123, 0, 1);
@@ -39,6 +42,8 @@ class _EditUserPageState extends State<EditUserPage> {
     _firstName = widget.firstName;
     _lastName = widget.lastName;
     _email = widget.email;
+    _phoneNumber = widget.phoneNumber;
+    _dateOfBirth = widget.dateOfBirth;
   }
 
   void updateUser() {
@@ -46,6 +51,8 @@ class _EditUserPageState extends State<EditUserPage> {
       'firstName': _firstName,
       'lastName': _lastName,
       'email': _email,
+      'phoneNumber': _phoneNumber,
+      'dateOfBirth': _dateOfBirth,
     });
   }
 
@@ -80,6 +87,18 @@ class _EditUserPageState extends State<EditUserPage> {
               buildTextFormField('Email', _email, (value) {
                 setState(() {
                   _email = value;
+                });
+              }),
+              SizedBox(height: 16.0),
+              buildTextFormField('Phone Number', _phoneNumber, (value) {
+                setState(() {
+                  _phoneNumber = value;
+                });
+              }),
+              SizedBox(height: 16.0),
+              buildTextFormField('Date of Birth', _dateOfBirth, (value) {
+                setState(() {
+                  _dateOfBirth = value;
                 });
               }),
               SizedBox(height: 32.0),

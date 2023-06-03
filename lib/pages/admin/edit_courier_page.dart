@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class EditProfilePage extends StatefulWidget {
+class EditCourierPage extends StatefulWidget {
   final String userId;
   final String firstName;
   final String lastName;
@@ -9,7 +9,7 @@ class EditProfilePage extends StatefulWidget {
   final String phoneNumber;
   final String dateOfBirth;
 
-  EditProfilePage({
+  EditCourierPage({
     required this.userId,
     required this.firstName,
     required this.lastName,
@@ -19,10 +19,10 @@ class EditProfilePage extends StatefulWidget {
   });
 
   @override
-  _EditProfilePageState createState() => _EditProfilePageState();
+  _EditCourierPageState createState() => _EditCourierPageState();
 }
 
-class _EditProfilePageState extends State<EditProfilePage> {
+class _EditCourierPageState extends State<EditCourierPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final CollectionReference usersRef =
       FirebaseFirestore.instance.collection('users');
@@ -61,7 +61,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Edit Profile', style: TextStyle(color: primaryColor)),
+        title: Text('Edit Courier', style: TextStyle(color: primaryColor)),
         backgroundColor: Colors.white,
         iconTheme: IconThemeData(color: primaryColor),
       ),
@@ -103,20 +103,22 @@ class _EditProfilePageState extends State<EditProfilePage> {
               }),
               SizedBox(height: 32.0),
               ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  primary: primaryColor,
-                  onPrimary: Colors.white,
-                ),
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     updateUser();
-                    Navigator.pop(context,
-                        true); // Return true to indicate successful update
+                    Navigator.pop(context, true);
                   }
                 },
+                style: ElevatedButton.styleFrom(
+                  primary: secondaryColor, // background
+                  onPrimary: Colors.white, // foreground
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30), // round corners
+                  ),
+                ),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  child: Text('Update', style: TextStyle(fontSize: 18.0)),
+                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                  child: Text('Save Changes'),
                 ),
               ),
             ],
@@ -130,19 +132,20 @@ class _EditProfilePageState extends State<EditProfilePage> {
       String label, String initialValue, Function(String) onChanged) {
     return TextFormField(
       initialValue: initialValue,
+      style: TextStyle(color: Colors.black),
       decoration: InputDecoration(
         labelText: label,
         labelStyle: TextStyle(color: primaryColor),
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: primaryColor),
+          borderSide: BorderSide(color: primaryColor, width: 2.0),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: primaryColor),
+          borderSide: BorderSide(color: primaryColor, width: 2.0),
         ),
       ),
       validator: (value) {
-        if (value!.isEmpty) {
-          return 'Please enter $label';
+        if (value == null || value.isEmpty) {
+          return 'Please enter a $label';
         }
         return null;
       },

@@ -3,41 +3,24 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:speedyship/pages/introduction/login.dart';
 import 'package:speedyship/pages/user/user_main_page.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class AuthService {
-  handleAuthState() {
-    return StreamBuilder(
-        stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (BuildContext context, snapshot) {
-          if (snapshot.hasData) {
-            return UserMainPage();
-          } else {
-            return const LoginPage();
-          }
-        });
-  }
-
   signInWithGoogle() async {
-    // Trigger the authentication flow
-    final GoogleSignInAccount? googleUser =
-        await GoogleSignIn(scopes: <String>["email"]).signIn();
+    if (kIsWeb) {
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser!.authentication;
 
-    // Obtain the auth details from the request
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser!.authentication;
+      final OAuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
 
-    // Create a new credential
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    // Once signed in, return the UserCredential
-    return await FirebaseAuth.instance.signInWithCredential(credential);
-  }
-
-  //Sign out
-  signOut() {
-    FirebaseAuth.instance.signOut();
+      return await FirebaseAuth.instance.signInWithCredential(credential);
+    } else {
+      throw Exception('signInWithGoogle is only supported on the web.');
+    }
   }
 }

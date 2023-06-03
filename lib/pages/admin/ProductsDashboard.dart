@@ -7,6 +7,9 @@ class Shipment {
   final double weight;
   final String pickUp;
   final String destination;
+  final String recipientName;
+  final String recipientPhone;
+  final String status;
 
   Shipment({
     required this.shipmentId,
@@ -14,6 +17,9 @@ class Shipment {
     required this.weight,
     required this.pickUp,
     required this.destination,
+    required this.recipientName,
+    required this.recipientPhone,
+    required this.status,
   });
 }
 
@@ -41,8 +47,11 @@ class _ProductsDashboardState extends State<ProductsDashboard> {
         shipmentId: doc.id,
         userName: userData?['RecipientName'] as String? ?? '',
         weight: (userData?['weight'] as num?)?.toDouble() ?? 0.0,
-        pickUp: userData?['pickUp'] as String? ?? '',
+        pickUp: userData?['location'] as String? ?? '',
         destination: userData?['destination'] as String? ?? '',
+        recipientName: userData?['RecipientName'] as String? ?? '',
+        recipientPhone: userData?['RecipientPhone'] as String? ?? '',
+        status: userData?['status'] as String? ?? '',
       );
     }).toList();
 
@@ -52,14 +61,37 @@ class _ProductsDashboardState extends State<ProductsDashboard> {
   }
 
   void deleteShipment(Shipment shipment) {
-    FirebaseFirestore.instance
-        .collection('shipments')
-        .doc(shipment.shipmentId)
-        .delete();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirm Deletion'),
+          content: Text('Are you sure you want to delete this shipment?'),
+          actions: [
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Delete'),
+              onPressed: () {
+                FirebaseFirestore.instance
+                    .collection('shipments')
+                    .doc(shipment.shipmentId)
+                    .delete();
 
-    setState(() {
-      shipments.remove(shipment);
-    });
+                setState(() {
+                  shipments.remove(shipment);
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -110,6 +142,21 @@ class _ProductsDashboardState extends State<ProductsDashboard> {
                     SizedBox(height: 4),
                     Text(
                       'Destination: ${shipment.destination}',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      'Recipient Name: ${shipment.recipientName}',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      'Recipient Phone: ${shipment.recipientPhone}',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      'Status: ${shipment.status}',
                       style: TextStyle(fontSize: 16),
                     ),
                     SizedBox(height: 12),

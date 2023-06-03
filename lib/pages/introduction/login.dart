@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:speedyship/components/my_textfield.dart';
 import 'package:speedyship/components/square_tile.dart';
 import 'package:speedyship/components/my_button.dart';
-import 'package:speedyship/pages/introduction/ForgotPassword.dart';
+import 'package:speedyship/services/auth_service.dart';
 import 'signup.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:speedyship/components/my_elevated_button.dart';
+import 'package:email_validator/email_validator.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -92,12 +93,21 @@ class _LoginPageState extends State<LoginPage> {
                               height: 15.0,
                             ),
                             //Email input
+
                             MyTextField(
                               keyboardType: TextInputType.emailAddress,
                               controller: emailController,
                               hintText: 'Email',
                               obscureText: false,
                               readOnly: false,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please fill the email field';
+                                } else if (!EmailValidator.validate(value)) {
+                                  return 'Invalid email format';
+                                }
+                                return null; // Return null if the email is valid
+                              },
                             ),
 
                             const SizedBox(height: 15),
@@ -109,6 +119,11 @@ class _LoginPageState extends State<LoginPage> {
                               hintText: 'password',
                               obscureText: true,
                               readOnly: false,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Please fill the password field";
+                                }
+                              },
                             ),
 
                             const SizedBox(height: 15),
@@ -131,7 +146,11 @@ class _LoginPageState extends State<LoginPage> {
                             //sign in button
                             Center(
                                 child: MyButton(
-                              onTap: () => signin(),
+                              onTap: () {
+                                if (_formKey.currentState!.validate()) {
+                                  signin();
+                                }
+                              },
                               buttonText: 'Sign in',
                             )),
                             const SizedBox(height: 15),
@@ -163,7 +182,10 @@ class _LoginPageState extends State<LoginPage> {
                             // google button
                             Center(
                                 child: MyElevatedButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                print("hello google is pressed");
+                                AuthService().signInWithGoogle();
+                              },
                               imagepath: 'lib/images/google.png',
                               buttonText: 'Google',
                             )),
@@ -222,12 +244,21 @@ class _LoginPageState extends State<LoginPage> {
                       height: 15.0,
                     ),
                     //Email input
+
                     MyTextField(
                       keyboardType: TextInputType.emailAddress,
                       controller: emailController,
                       hintText: 'Email',
                       obscureText: false,
                       readOnly: false,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please fill the email field';
+                        } else if (!EmailValidator.validate(value)) {
+                          return 'Invalid email format';
+                        }
+                        return null; // Return null if the email is valid
+                      },
                     ),
 
                     const SizedBox(height: 15),
@@ -239,6 +270,11 @@ class _LoginPageState extends State<LoginPage> {
                       hintText: 'Password',
                       obscureText: true,
                       readOnly: false,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Please fill the email field";
+                        }
+                      },
                     ),
 
                     const SizedBox(height: 15),
@@ -247,19 +283,10 @@ class _LoginPageState extends State<LoginPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => ForgotPasswordPage(),
-                              ),
-                            );
-                          },
-                          child: Text(
-                            'Forgot password?',
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary),
-                          ),
+                        Text(
+                          'Forgot password?',
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary),
                         ),
                       ],
                     ),
@@ -268,7 +295,11 @@ class _LoginPageState extends State<LoginPage> {
                     //sign in button
                     Center(
                         child: MyButton(
-                      onTap: () => signin(),
+                      onTap: () {
+                        if (_formKey.currentState!.validate()) {
+                          signin();
+                        }
+                      },
                       buttonText: 'Sign in',
                     )),
                     const SizedBox(height: 15),
@@ -299,7 +330,11 @@ class _LoginPageState extends State<LoginPage> {
                     // google button
                     Center(
                         child: MyElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        print("hello google is pressed");
+
+                        AuthService().signInWithGoogle();
+                      },
                       imagepath: 'lib/images/google.png',
                       buttonText: 'Google',
                     )),

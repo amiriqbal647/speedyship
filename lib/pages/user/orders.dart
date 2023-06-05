@@ -44,7 +44,7 @@ class _OrdersPageState extends State<OrdersPage>
             child: TabBarView(
               controller: _tabController,
               children: [
-                OrderList(status: 'pending'),
+                OrderList(status: 'approval_pending'),
                 OrderList(status: 'delivered'),
                 OrderList(status: 'cancelled'),
               ],
@@ -87,6 +87,7 @@ class OrderList extends StatelessWidget {
             final location = shipment['location'] as String? ?? '';
             final destination = shipment['destination'] as String? ?? '';
             final courierId = shipment['courierId'] as String? ?? '';
+            final shipmentStatus = shipment['status'] as String? ?? '';
 
             return Card(
               margin: const EdgeInsets.all(15.0),
@@ -97,33 +98,85 @@ class OrderList extends StatelessWidget {
                   children: [
                     Text(
                       'Shipment ID: $shipmentId',
-                      style: Theme.of(context).textTheme.titleMedium,
+                      style: Theme.of(context).textTheme.subtitle1,
                     ),
                     Text(
                       'Location: $location',
-                      style: Theme.of(context).textTheme.titleMedium,
+                      style: Theme.of(context).textTheme.subtitle1,
                     ),
                     Text(
                       'Destination: $destination',
-                      style: Theme.of(context).textTheme.titleMedium,
+                      style: Theme.of(context).textTheme.subtitle1,
                     ),
-                    const SizedBox(
-                      height: 10.0,
-                    ),
-                    FilledButton(
+                    const SizedBox(height: 10.0),
+                    if (status == 'approval_pending' &&
+                        shipmentStatus == 'approval_pending')
+                      ElevatedButton(
+                        onPressed: () {
+                          _confirmDelivery(context, shipmentId);
+                        },
+                        child: const Text("Approve"),
+                      )
+                    else
+                      IgnorePointer(
+                        ignoring: true,
+                        child: ElevatedButton(
+                          onPressed: () {},
+                          child: const Text("Approve"),
+                        ),
+                      ),
+                    const SizedBox(height: 10.0),
+                    ElevatedButton(
                       onPressed: () {
                         _showRatingDialog(context, shipmentId, courierId);
                       },
-                      style: FilledButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8))),
                       child: const Text("Rate Courier"),
+                    ),
+                    const SizedBox(height: 10.0),
+                    ElevatedButton(
+                      onPressed: () {
+                        _showSupportDialog(context);
+                      },
+                      child: const Text("Support"),
                     ),
                   ],
                 ),
               ),
             );
           },
+        );
+      },
+    );
+  }
+
+  void _confirmDelivery(BuildContext context, String shipmentId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Confirm Delivery"),
+          content:
+              Text("Are you sure you want to mark this shipment as delivered?"),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                // Update the status to "delivered" in Firestore
+                FirebaseFirestore.instance
+                    .collection('shipments')
+                    .doc(shipmentId)
+                    .update({'status': 'delivered'});
+
+                Navigator.of(context).pop();
+              },
+              child: Text("Confirm"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("Cancel"),
+            ),
+          ],
         );
       },
     );
@@ -187,6 +240,26 @@ class OrderList extends StatelessWidget {
                 Navigator.of(context).pop();
               },
               child: Text("Submit"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showSupportDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Support"),
+          content: Text("Please contact our support team for assistance."),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("Close"),
             ),
           ],
         );

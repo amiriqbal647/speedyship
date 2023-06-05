@@ -158,46 +158,108 @@ class _BidsPageState extends State<BidsPage> {
                 return SizedBox.shrink();
               }
 
-              return Card(
-                elevation: 2,
-                margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                child: ListTile(
-                  title: Text('Shipment ID: $shipmentId'),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Courier ID: $courierId'),
-                      Text('Price: $bidPrice'),
-                      Text('Date: $bidDate'),
-                    ],
-                  ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          _onBidAccepted(shipmentId, bidId);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          primary: Color(0xFF12AE6D),
+              return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                future: FirebaseFirestore.instance
+                    .collection('shipments')
+                    .doc(shipmentId)
+                    .get(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>>
+                        shipmentSnapshot) {
+                  if (shipmentSnapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    return SizedBox.shrink();
+                  }
+
+                  if (shipmentSnapshot.hasError || !shipmentSnapshot.hasData) {
+                    return SizedBox.shrink();
+                  }
+
+                  final Map<String, dynamic>? shipmentData =
+                      shipmentSnapshot.data!.data();
+                  if (shipmentData == null) {
+                    return SizedBox.shrink();
+                  }
+
+                  final String recipientName =
+                      shipmentData['RecipientName'] as String? ?? '';
+                  final String destination =
+                      shipmentData['destination'] as String? ?? '';
+
+                  return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                    future: FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(courierId)
+                        .get(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>>
+                            courierSnapshot) {
+                      if (courierSnapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        return SizedBox.shrink();
+                      }
+
+                      if (courierSnapshot.hasError ||
+                          !courierSnapshot.hasData) {
+                        return SizedBox.shrink();
+                      }
+
+                      final Map<String, dynamic>? courierData =
+                          courierSnapshot.data!.data();
+                      if (courierData == null) {
+                        return SizedBox.shrink();
+                      }
+
+                      final String courierName =
+                          courierData['firstName'] as String? ?? '';
+
+                      return Card(
+                        elevation: 2,
+                        margin:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        child: ListTile(
+                          title: Text('Shipment ID: $shipmentId'),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Courier Name: $courierName'),
+                              Text('Recipient Name: $recipientName'),
+                              Text('Destination: $destination'),
+                              Text('Price: $bidPrice'),
+                              Text('Date: $bidDate'),
+                            ],
+                          ),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  _onBidAccepted(shipmentId, bidId);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  primary: Color(0xFF12AE6D),
+                                ),
+                                child: Text('Accept'),
+                              ),
+                              SizedBox(width: 10),
+                              ElevatedButton(
+                                onPressed: () {
+                                  _onBidDeclined(bidId);
+                                  BidOperations.declineBid(context, bidId,
+                                      courierId, bidPrice, bidDate, shipmentId);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  primary: Color(0xFFEF8024),
+                                ),
+                                child: Text('Decline'),
+                              ),
+                            ],
+                          ),
                         ),
-                        child: Text('Accept'),
-                      ),
-                      SizedBox(width: 10),
-                      ElevatedButton(
-                        onPressed: () {
-                          _onBidDeclined(bidId);
-                          BidOperations.declineBid(context, bidId, courierId,
-                              bidPrice, bidDate, shipmentId);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          primary: Color(0xFFEF8024),
-                        ),
-                        child: Text('Decline'),
-                      ),
-                    ],
-                  ),
-                ),
+                      );
+                    },
+                  );
+                },
               );
             },
           );

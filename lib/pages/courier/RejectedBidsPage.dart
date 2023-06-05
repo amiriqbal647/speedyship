@@ -10,8 +10,10 @@ class RejectedBidsPage extends StatelessWidget {
     if (currentUser == null) {
       return Scaffold(
         body: Center(
-          child: Text('User not logged in.',
-              style: TextStyle(fontSize: 24, color: Colors.red)),
+          child: Text(
+            'User not logged in.',
+            style: TextStyle(fontSize: 24, color: Colors.red),
+          ),
         ),
       );
     }
@@ -36,22 +38,27 @@ class RejectedBidsPage extends StatelessWidget {
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasError) {
             return Center(
-              child: Text('Error: ${snapshot.error}',
-                  style: TextStyle(fontSize: 18, color: Colors.red)),
+              child: Text(
+                'Error: ${snapshot.error}',
+                style: TextStyle(fontSize: 18, color: Colors.red),
+              ),
             );
           }
 
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
               child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.black)),
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
+              ),
             );
           }
 
           if (snapshot.data == null || snapshot.data!.docs.isEmpty) {
             return Center(
-              child: Text('No declined bids available.',
-                  style: TextStyle(fontSize: 18, color: Colors.grey)),
+              child: Text(
+                'No declined bids available.',
+                style: TextStyle(fontSize: 18, color: Colors.grey),
+              ),
             );
           }
 
@@ -67,50 +74,73 @@ class RejectedBidsPage extends StatelessWidget {
               final String date = data['date'];
               final String shipmentId = data['shipmentId'];
 
-              return FutureBuilder<DocumentSnapshot>(
-                future: FirebaseFirestore.instance
-                    .collection('users')
-                    .doc(userId)
-                    .get(),
-                builder: (BuildContext context,
-                    AsyncSnapshot<DocumentSnapshot> userSnapshot) {
-                  String title = 'Shipment ID: $shipmentId';
-                  List<Widget> subtitle = [
-                    Text('User ID: $userId', style: TextStyle(fontSize: 16)),
-                    Text('Price: $price', style: TextStyle(fontSize: 16)),
-                    Text('Date: $date', style: TextStyle(fontSize: 16)),
-                  ];
-
-                  if (userSnapshot.hasData && userSnapshot.data != null) {
-                    final Map<String, dynamic> userData =
-                        userSnapshot.data!.data() as Map<String, dynamic>;
-                    final String firstName = userData['firstName'];
-                    final String lastName = userData['lastName'];
-                    subtitle = [
-                      Text('User: $firstName $lastName',
-                          style: TextStyle(fontSize: 16)),
-                      Text('Price:$price', style: TextStyle(fontSize: 16)),
+              return Dismissible(
+                key: Key(bidId),
+                direction: DismissDirection.endToStart,
+                onDismissed: (direction) {
+                  // Perform your action when the card is dismissed
+                  // For example, you can remove the bid from the database
+                  FirebaseFirestore.instance
+                      .collection('declinedBids')
+                      .doc(bidId)
+                      .delete();
+                },
+                background: Container(
+                  alignment: Alignment.centerRight,
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  color: Colors.red,
+                  child: Icon(
+                    Icons.delete,
+                    color: Colors.white,
+                  ),
+                ),
+                child: FutureBuilder<DocumentSnapshot>(
+                  future: FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(userId)
+                      .get(),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<DocumentSnapshot> userSnapshot) {
+                    String title = 'Shipment ID: $shipmentId';
+                    List<Widget> subtitle = [
+                      Text('User ID: $userId', style: TextStyle(fontSize: 16)),
+                      Text('Price: $price', style: TextStyle(fontSize: 16)),
                       Text('Date: $date', style: TextStyle(fontSize: 16)),
                     ];
-                  }
 
-                  return Card(
-                    elevation: 2.0,
-                    margin:
-                        EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                    child: ListTile(
-                      title: Text(
-                        title,
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
+                    if (userSnapshot.hasData && userSnapshot.data != null) {
+                      final Map<String, dynamic> userData =
+                          userSnapshot.data!.data() as Map<String, dynamic>;
+                      final String firstName = userData['firstName'];
+                      final String lastName = userData['lastName'];
+                      subtitle = [
+                        Text(
+                          'User: $firstName $lastName',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        Text('Price:$price', style: TextStyle(fontSize: 16)),
+                        Text('Date: $date', style: TextStyle(fontSize: 16)),
+                      ];
+                    }
+
+                    return Card(
+                      elevation: 2.0,
+                      margin:
+                          EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                      child: ListTile(
+                        title: Text(
+                          title,
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: subtitle,
+                        ),
                       ),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: subtitle,
-                      ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               );
             },
           );

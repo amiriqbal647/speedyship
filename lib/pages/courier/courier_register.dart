@@ -44,8 +44,13 @@ class _DocumentUploaderState extends State<DocumentUploader> {
     }
   }
 
+  bool _isFileTypeAccepted(File? file) {
+    if (file == null) return false;
+    String fileExtension = extension(file.path).toLowerCase();
+    return fileExtension == '.jpg';
+  }
+
   void _uploadFiles(BuildContext context) async {
-    // Add BuildContext as a parameter
     if (_file1 != null && _file2 != null) {
       final currentUser = FirebaseAuth.instance.currentUser;
       final uid = currentUser!.uid;
@@ -83,105 +88,142 @@ class _DocumentUploaderState extends State<DocumentUploader> {
         title: const Text('Upload Your Documents'),
       ),
       body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Device.screenType == ScreenType.tablet
-              ?
-              // Desktop view************************************************************
-              Center(
-                  child: SizedBox(
-                    width: 50.w,
-                    child: Column(
-                      children: [
-                        Card(
-                          elevation: 5,
-                          child: ListTile(
-                            leading: const Icon(Icons.drive_file_rename_outline,
-                                size: 30),
-                            title: Text('Drivers License',
-                                style: Theme.of(context).textTheme.titleLarge),
-                            subtitle: _file1 == null
-                                ? Text("No file selected")
-                                : Text(basename(_file1!.path)),
-                            trailing: IconButton(
-                              icon: const Icon(Icons.file_upload),
-                              onPressed: _pickFile1,
-                            ),
+        padding: const EdgeInsets.all(16.0),
+        child: Device.screenType == ScreenType.tablet
+            ? Center(
+                child: SizedBox(
+                  width: 50.w,
+                  child: Column(
+                    children: [
+                      Card(
+                        elevation: 5,
+                        child: ListTile(
+                          leading: const Icon(
+                            Icons.drive_file_rename_outline,
+                            size: 30,
+                          ),
+                          title: Text(
+                            'Drivers License',
+                            style: Theme.of(context).textTheme.titleLarge,
+                          ),
+                          subtitle: _file1 == null
+                              ? Text("No file selected")
+                              : Text(basename(_file1!.path)),
+                          tileColor: _isFileTypeAccepted(_file1)
+                              ? null
+                              : Colors.red.shade100,
+                          trailing: IconButton(
+                            icon: const Icon(Icons.file_upload),
+                            onPressed: _pickFile1,
                           ),
                         ),
-                        SizedBox(height: 20),
-                        Card(
-                          elevation: 5,
-                          child: ListTile(
-                            leading: const Icon(Icons.drive_file_rename_outline,
-                                size: 30),
-                            title: Text('Conviction Record',
-                                style: Theme.of(context).textTheme.titleLarge),
-                            subtitle: _file2 == null
-                                ? Text("No file selected")
-                                : Text(basename(_file2!.path)),
-                            trailing: IconButton(
-                              icon: const Icon(
-                                Icons.file_upload,
-                              ),
-                              onPressed: _pickFile2,
-                            ),
+                      ),
+                      SizedBox(height: 20),
+                      Card(
+                        elevation: 5,
+                        child: ListTile(
+                          leading: const Icon(
+                            Icons.drive_file_rename_outline,
+                            size: 30,
+                          ),
+                          title: Text(
+                            'Conviction Record',
+                            style: Theme.of(context).textTheme.titleLarge,
+                          ),
+                          subtitle: _file2 == null
+                              ? Text("No file selected")
+                              : Text(basename(_file2!.path)),
+                          tileColor: _isFileTypeAccepted(_file2)
+                              ? null
+                              : Colors.red.shade100,
+                          trailing: IconButton(
+                            icon: const Icon(Icons.file_upload),
+                            onPressed: _pickFile2,
                           ),
                         ),
-                        const SizedBox(height: 32),
-                        MyButton(
-                          buttonText: 'Submit Documents',
-                          onTap: () => _uploadFiles(context),
-                        )
-                      ],
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Only JPG files are accepted',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.red,
+                        ),
+                      ),
+                      const SizedBox(height: 32),
+                      MyButton(
+                        buttonText: 'Submit Documents',
+                        onTap: () => _uploadFiles(context),
+                      )
+                    ],
+                  ),
+                ),
+              )
+            : Column(
+                children: [
+                  Card(
+                    elevation: 5,
+                    child: ListTile(
+                      leading: const Icon(
+                        Icons.drive_file_rename_outline,
+                        size: 30,
+                      ),
+                      title: Text(
+                        'Drivers License',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      subtitle: _file1 == null
+                          ? Text("No file selected")
+                          : Text(basename(_file1!.path)),
+                      tileColor: _isFileTypeAccepted(_file1)
+                          ? null
+                          : Colors.red.shade100,
+                      trailing: IconButton(
+                        icon: const Icon(Icons.file_upload),
+                        onPressed: _pickFile1,
+                      ),
                     ),
                   ),
-                )
-              :
-              // Mobile view**************************************************************
-              Column(
-                  children: [
-                    Card(
-                      elevation: 5,
-                      child: ListTile(
-                        leading: const Icon(Icons.drive_file_rename_outline,
-                            size: 30),
-                        title: Text('Drivers License',
-                            style: Theme.of(context).textTheme.titleLarge),
-                        subtitle: _file1 == null
-                            ? Text("No file selected")
-                            : Text(basename(_file1!.path)),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.file_upload),
-                          onPressed: _pickFile1,
-                        ),
+                  SizedBox(height: 20),
+                  Card(
+                    elevation: 5,
+                    child: ListTile(
+                      leading: const Icon(
+                        Icons.drive_file_rename_outline,
+                        size: 30,
+                      ),
+                      title: Text(
+                        'Conviction Record',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      subtitle: _file2 == null
+                          ? Text("No file selected")
+                          : Text(basename(_file2!.path)),
+                      tileColor: _isFileTypeAccepted(_file2)
+                          ? null
+                          : Colors.red.shade100,
+                      trailing: IconButton(
+                        icon: const Icon(Icons.file_upload),
+                        onPressed: _pickFile2,
                       ),
                     ),
-                    SizedBox(height: 20),
-                    Card(
-                      elevation: 5,
-                      child: ListTile(
-                        leading: const Icon(Icons.drive_file_rename_outline,
-                            size: 30),
-                        title: Text('Conviction Record',
-                            style: Theme.of(context).textTheme.titleLarge),
-                        subtitle: _file2 == null
-                            ? Text("No file selected")
-                            : Text(basename(_file2!.path)),
-                        trailing: IconButton(
-                          icon: const Icon(
-                            Icons.file_upload,
-                          ),
-                          onPressed: _pickFile2,
-                        ),
-                      ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Only JPG files are accepted',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey,
                     ),
-                    const SizedBox(height: 32),
-                    MyButton(
-                      buttonText: 'Submit Documents',
-                      onTap: () => _uploadFiles(context),
-                    )
-                  ],
-                )),
+                  ),
+                  const SizedBox(height: 32),
+                  MyButton(
+                    buttonText: 'Submit Documents',
+                    onTap: () => _uploadFiles(context),
+                  )
+                ],
+              ),
+      ),
     );
   }
 }
@@ -211,7 +253,7 @@ Widget _buildDialogContent(BuildContext context) {
               BoxShadow(
                 color: Colors.black26,
                 blurRadius: 10.0,
-                offset: Offset(0.0, 10.0),
+                offset: const Offset(0.0, 10.0),
               ),
             ],
           ),
@@ -219,28 +261,34 @@ Widget _buildDialogContent(BuildContext context) {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Text(
-                'Thank You!',
+                'Documents Uploaded Successfully',
                 style: TextStyle(
                   fontSize: 24.0,
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16),
               Text(
-                'Your application has been submitted. Please wait until the admin approves your request.',
+                'Your documents have been uploaded successfully. Please wait for verification.',
+                textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 16.0,
                 ),
-                textAlign: TextAlign.center,
               ),
-              SizedBox(height: 24.0),
+              const SizedBox(height: 24),
               Align(
                 alignment: Alignment.bottomRight,
                 child: TextButton(
                   onPressed: () {
-                    Navigator.of(context).popUntil((route) => route.isFirst);
+                    Navigator.of(context).pop();
                   },
-                  child: Text('Close'),
+                  child: Text(
+                    'OK',
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -248,19 +296,30 @@ Widget _buildDialogContent(BuildContext context) {
         ),
         Positioned(
           top: 0,
-          left: 16,
-          right: 16,
+          left: 20,
+          right: 20,
           child: CircleAvatar(
-            backgroundColor: Colors.green,
+            backgroundColor: Colors.transparent,
             radius: 45,
-            child: Icon(
-              Icons.check,
-              color: Colors.white,
-              size: 50,
+            child: ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(45)),
+              child: Image.asset(
+                'assets/images/checkmark.png',
+                height: 80,
+                width: 80,
+              ),
             ),
           ),
         ),
       ],
     ),
   );
+}
+
+void main() {
+  runApp(ResponsiveSizer(builder: (context, orientation, deviceType) {
+    return MaterialApp(
+      home: DocumentUploader(),
+    );
+  }));
 }

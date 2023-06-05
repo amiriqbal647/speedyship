@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:speedyship/components/my_textfield.dart';
 import 'package:speedyship/components/square_tile.dart';
 import 'package:speedyship/components/my_button.dart';

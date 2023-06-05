@@ -1,10 +1,12 @@
 import 'dart:io';
 
 // import 'package:email_validator/email_validator.dart';
+import 'package:elegant_notification/elegant_notification.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:speedyship/components/date_picker2.dart';
 import 'package:speedyship/components/my_textfield.dart';
 import 'package:speedyship/components/square_tile.dart';
 import 'package:speedyship/components/my_button.dart';
@@ -45,6 +47,21 @@ class _SignupPageState extends State<SignupPage> {
 
   final phonecontroller = TextEditingController();
 
+  String? validateDate(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please select a date.';
+    }
+
+    final selectedDate = DateTime.parse(value);
+    final currentDate = DateTime.now();
+
+    if (selectedDate.isBefore(currentDate)) {
+      return 'Selected date cannot be before today.';
+    }
+
+    return null;
+  }
+
   //sign up a user
   Future<void> signup() async {
     try {
@@ -65,11 +82,10 @@ class _SignupPageState extends State<SignupPage> {
         'lastName': lnameController.text,
         'PhoneNumber': phonecontroller.text,
         'DateOfBirth': selectedDate,
-        // 'image': imageUrl,
         'role': 'user',
       });
 
-      //Login a user after they sign up
+      // Login a user after they sign up
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => AuthPage()),
       );
@@ -78,7 +94,16 @@ class _SignupPageState extends State<SignupPage> {
       if (e.code == 'weak-password') {
         print('The password provided is too weak.');
       } else if (e.code == 'email-already-in-use') {
-        print('The account already exists for that email.');
+        ElegantNotification.error(
+          title: Text('User Not Found'),
+          description: Text('The email you entered does not exist.'),
+        ).show(context);
+      } else if (e.code == 'network-request-failed') {
+        ElegantNotification.error(
+          title: Text('Network Error'),
+          description: Text(
+              'There was a problem with the network connection. Please check your internet connection.'),
+        ).show(context);
       }
     } catch (e) {
       print(e);
@@ -250,7 +275,7 @@ class _SignupPageState extends State<SignupPage> {
 
                             const SizedBox(height: 15),
                             //dob
-                            MyDatePicker(
+                            MyDatePickerTwo(
                               onDateSelected: (date) => setState(
                                 () => _selectedDate = date,
                               ),
@@ -472,10 +497,11 @@ class _SignupPageState extends State<SignupPage> {
 
                   const SizedBox(height: 15),
                   //dob
-                  MyDatePicker(
+                  MyDatePickerTwo(
                     onDateSelected: (date) => setState(
                       () => _selectedDate = date,
                     ),
+                    // lastDate: DateTime(2006, 1,1), // Set the last selectable date to January 1, 2006
                   ),
 
                   const SizedBox(height: 15),

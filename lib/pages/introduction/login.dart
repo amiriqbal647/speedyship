@@ -1,3 +1,4 @@
+import 'package:elegant_notification/resources/arrays.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'signup.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:speedyship/components/my_elevated_button.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:elegant_notification/elegant_notification.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -27,10 +29,28 @@ class _LoginPageState extends State<LoginPage> {
 
   //sign in a user
   Future signin() async {
-    await FirebaseAuth.instance.signInWithEmailAndPassword(
-      email: emailController.text,
-      password: passwordController.text,
-    );
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        ElegantNotification.error(
+          title: Text('User Not Found'),
+          description: Text('The email you entered does not exist.'),
+          animation: AnimationType.fromTop,
+          notificationPosition: NotificationPosition.topCenter,
+        ).show(context);
+      } else if (e.code == 'wrong-password') {
+        ElegantNotification.error(
+          title: Text('Invalid Password'),
+          description: Text('The password you entered is incorrect.'),
+          animation: AnimationType.fromTop,
+          notificationPosition: NotificationPosition.topCenter,
+        ).show(context);
+      }
+    }
   }
 
   @override

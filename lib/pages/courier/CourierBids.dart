@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
+import 'package:speedyship/components/date_picker.dart';
 import 'package:speedyship/components/my_textfield.dart';
+import 'package:intl/intl.dart';
 
 class CourierBidsForm extends StatefulWidget {
   final String userId;
@@ -109,15 +111,11 @@ class _CourierBidsFormState extends State<CourierBidsForm> {
                   },
                 ),
                 SizedBox(height: 16.0),
-                TextField(
-                  controller: dateController,
-                  decoration: InputDecoration(
-                    labelText: 'Date',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    contentPadding: EdgeInsets.all(15),
-                  ),
+                MyDatePicker(
+                  onDateSelected: (DateTime selectedDate) {
+                    dateController.text =
+                        DateFormat('yyyy-MM-dd').format(selectedDate);
+                  },
                 ),
                 SizedBox(height: 16.0),
                 Container(

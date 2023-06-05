@@ -122,13 +122,13 @@ class _EditUserInfoState extends State<EditUserInfo> {
             SizedBox(
               height: 10,
             ),
-            MyDatePicker(
-              onDateSelected: (newDate) {
-                setState(() {
-                  dateOfBirth = newDate;
-                });
-              },
-            ),
+            // MyDatePicker(
+            //   onDateSelected: (newDate) {
+            //     setState(() {
+            //       dateOfBirth = newDate;
+            //     });
+            //   },
+            // ),
             ElevatedButton(
               onPressed: () {
                 if (_formKey.currentState!.validate()) {

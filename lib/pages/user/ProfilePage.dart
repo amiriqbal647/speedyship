@@ -60,8 +60,8 @@ class _ProfilePageState extends State<ProfilePage> {
           final firstName = userData['firstName'];
           final lastName = userData['lastName'];
           final email = userData['email'];
-          final phoneNumber = userData['phoneNumber'];
-          final dateOfBirth = userData['dateOfBirth'].toString();
+          final phoneNumber = userData['PhoneNumber'];
+          final dateOfBirth = userData['DateOfBirth'].toString();
 
           return ListView(
             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
@@ -108,7 +108,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     )),
                                 SizedBox(height: 5),
                                 Text(
-                                  'Phone: ${phoneNumber ?? 'No phone number'}',
+                                  'Phone: ${phoneNumber ?? '00'}',
                                   style: TextStyle(
                                     color: Colors.black,
                                     fontSize: 16.0,

@@ -31,8 +31,11 @@ class _CourierDashboardState extends State<CourierDashboard> {
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Center(
-                child: Text('Something went wrong',
-                    style: TextStyle(color: Colors.black)));
+              child: Text(
+                'Something went wrong',
+                style: TextStyle(color: Colors.black),
+              ),
+            );
           }
 
           if (!snapshot.hasData) {
@@ -59,15 +62,16 @@ class _CourierDashboardState extends State<CourierDashboard> {
               final dateOfBirth = user is Map
                   ? user['DateOfBirth'].toString()
                   : (user as dynamic)[4].toString();
+              final overallRating = user is Map ? user['overallRating'] : null;
 
               return Card(
-                elevation: 5.0, // This gives a shadow to the card.
+                elevation: 5.0,
                 margin: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),
                 ),
                 child: Container(
-                  padding: EdgeInsets.all(15), // Increased padding.
+                  padding: EdgeInsets.all(15),
                   child: Column(
                     children: [
                       Row(
@@ -110,7 +114,14 @@ class _CourierDashboardState extends State<CourierDashboard> {
                                   ),
                                 ),
                                 SizedBox(height: 5),
-                                Text('DOB: ${dateOfBirth}',
+                                Text('DOB: $dateOfBirth',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 16.0,
+                                    )),
+                                SizedBox(height: 5),
+                                Text(
+                                    'Overall Rating: ${overallRating.toStringAsFixed(2) ?? "N/A"}',
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 16.0,

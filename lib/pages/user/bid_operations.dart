@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:elegant_notification/elegant_notification.dart';
+import 'package:elegant_notification/resources/arrays.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -72,10 +74,17 @@ class BidOperations {
         .delete(); // Remove the bid from the 'bids' collection
 
     // Show a confirmation snackbar
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Bid declined successfully.'),
-      ),
+    // ScaffoldMessenger.of(context).showSnackBar(
+    //   SnackBar(
+    //     content: Text('Bid declined successfully.'),
+    //   ),
+    // );
+
+    ElegantNotification.error(
+      title: Text("bid declined"),
+      description: Text("Bid Declined successfully."),
+      notificationPosition: NotificationPosition.topCenter,
+      animation: AnimationType.fromTop,
     );
   }
 }

@@ -1,3 +1,5 @@
+import 'package:elegant_notification/elegant_notification.dart';
+import 'package:elegant_notification/resources/arrays.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -86,16 +88,32 @@ class _BidsPageState extends State<BidsPage> {
     }
 
     batch.commit().then((_) {
-      // Show a confirmation snackbar
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Thank you for accepting a bid.')),
-      );
+      // Show a confirmation notification
+      ElegantNotification.success(
+        title: Text('Bid Accepted'),
+        description: Text('Thank you for accepting a bid.'),
+        notificationPosition: NotificationPosition.topCenter,
+        animation: AnimationType.fromTop,
+        // icon: Icon(Icons.check),
+        // color: Colors.green,
+      ).show(context);
     }).catchError((error) {
-      // Show an error snackbar
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error accepting bid: $error')),
-      );
+      // Show an error notification
+      ElegantNotification.error(
+        title: Text('Error Accepting Bid'),
+        description: Text('Error accepting bid: $error'),
+        // icon: Icon(Icons.error),
+        // color: Colors.red,
+      ).show(context);
     });
+  }
+
+  Future<Map<String, dynamic>?> _getUserData(String courierId) async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(courierId)
+        .get();
+    return snapshot.data() as Map<String, dynamic>?;
   }
 
   @override
@@ -135,6 +153,13 @@ class _BidsPageState extends State<BidsPage> {
             );
           }
 
+          if (snapshot.data!.size == 0) {
+            // Display "No available bids" message
+            return Center(
+              child: Text('No available bids'),
+            );
+          }
+
           return ListView.builder(
             itemCount: snapshot.data!.size,
             itemBuilder: (BuildContext context, int index) {
@@ -158,46 +183,66 @@ class _BidsPageState extends State<BidsPage> {
                 return SizedBox.shrink();
               }
 
-              return Card(
-                elevation: 2,
-                margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                child: ListTile(
-                  title: Text('Shipment ID: $shipmentId'),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Courier ID: $courierId'),
-                      Text('Price: $bidPrice'),
-                      Text('Date: $bidDate'),
-                    ],
-                  ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          _onBidAccepted(shipmentId, bidId);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          primary: Color(0xFF12AE6D),
-                        ),
-                        child: Text('Accept'),
+              return FutureBuilder<Map<String, dynamic>?>(
+                future: _getUserData(courierId),
+                builder: (BuildContext context,
+                    AsyncSnapshot<Map<String, dynamic>?> userDataSnapshot) {
+                  if (userDataSnapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    return SizedBox
+                        .shrink(); // Show a loading indicator if user data is still loading
+                  }
+
+                  final userData = userDataSnapshot.data;
+                  final firstName = userData?['firstName'] as String? ?? '';
+                  final lastName = userData?['lastName'] as String? ?? '';
+                  final overallRating =
+                      userData?['overallRating'] as double? ?? 0.0;
+
+                  return Card(
+                    elevation: 2,
+                    margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    child: ListTile(
+                      title: Text('Shipment ID: $shipmentId'),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Name: $firstName $lastName'),
+                          Text(
+                              'Overall Rating: ${overallRating.toStringAsFixed(2)}'),
+                          Text('Price: $bidPrice'),
+                          Text('Date: $bidDate'),
+                        ],
                       ),
-                      SizedBox(width: 10),
-                      ElevatedButton(
-                        onPressed: () {
-                          _onBidDeclined(bidId);
-                          BidOperations.declineBid(context, bidId, courierId,
-                              bidPrice, bidDate, shipmentId);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          primary: Color(0xFFEF8024),
-                        ),
-                        child: Text('Decline'),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              _onBidAccepted(shipmentId, bidId);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              primary: Color(0xFF12AE6D),
+                            ),
+                            child: Text('Accept'),
+                          ),
+                          SizedBox(width: 10),
+                          ElevatedButton(
+                            onPressed: () {
+                              _onBidDeclined(bidId);
+                              BidOperations.declineBid(context, bidId,
+                                  courierId, bidPrice, bidDate, shipmentId);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              primary: Color(0xFFEF8024),
+                            ),
+                            child: Text('Decline'),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
+                    ),
+                  );
+                },
               );
             },
           );

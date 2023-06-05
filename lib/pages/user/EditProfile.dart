@@ -51,8 +51,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
       'firstName': _firstName,
       'lastName': _lastName,
       'email': _email,
-      'phoneNumber': _phoneNumber,
-      'dateOfBirth': _dateOfBirth,
+      'PhoneNumber': _phoneNumber,
+      'DateOfBirth': _dateOfBirth,
     });
   }
 

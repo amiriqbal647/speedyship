@@ -107,13 +107,6 @@ class _UserMainPageState extends State<UserMainPage> {
               },
             ),
             ListTile(
-              leading: Icon(Icons.star_rate),
-              title: Text('Ratings'),
-              /*onTap: () {
-                // Add the desired functionality for Ratings here
-              },*/
-            ),
-            ListTile(
               leading: Icon(Icons.help),
               title: Text('Help'),
               /*onTap: () {

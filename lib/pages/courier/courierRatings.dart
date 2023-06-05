@@ -33,9 +33,10 @@ class _CourierRatingsPageState extends State<CourierRatingsPage> {
 
     ratingSnapshot.docs.forEach((doc) {
       final rating = doc.data() as Map<String, dynamic>;
-      final ratingValue = rating['rating'] as double?;
-      if (ratingValue != null) {
-        totalRating += ratingValue;
+      final ratingValue = rating['rating'];
+
+      if (ratingValue is int || ratingValue is double) {
+        totalRating += (ratingValue as num).toDouble();
         ratingCount++;
       }
     });
@@ -95,7 +96,13 @@ class _CourierRatingsPageState extends State<CourierRatingsPage> {
                     final userId = ratingData['userId'] as String? ?? '';
                     final shipmentId =
                         ratingData['shipmentId'] as String? ?? '';
-                    final rating = ratingData['rating'] as double? ?? 0.0;
+
+                    final rating = ratingData['rating'];
+                    double ratingValue = 0.0;
+                    if (rating is num) {
+                      ratingValue = (rating as num).toDouble();
+                    }
+
                     final comment = ratingData['comments'] as String? ?? '';
 
                     return Card(
@@ -126,7 +133,7 @@ class _CourierRatingsPageState extends State<CourierRatingsPage> {
                               },
                             ),
                             Text('Shipment ID: $shipmentId'),
-                            Text('Rating: $rating'),
+                            Text('Rating: $ratingValue'),
                             Text('Comment: $comment'),
                           ],
                         ),

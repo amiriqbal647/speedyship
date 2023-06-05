@@ -34,16 +34,16 @@ class _DeliveriesPageState extends State<DeliveriesPage>
     super.initState();
     Firebase.initializeApp();
     _tabController = TabController(length: 3, vsync: this);
-    _pendingDeliveries =
-        Future<List<Delivery>>.value([]); // Initialize as empty list
-    _completedDeliveries = fetchDeliveries('delivered');
-    _cancelledDeliveries = fetchDeliveries('cancelled');
+    _pendingDeliveries = fetchDeliveries(['pending', 'approval_pending']);
+    _completedDeliveries = fetchDeliveries(['delivered']);
+    _cancelledDeliveries = fetchDeliveries(['cancelled']);
     loadPendingDeliveries();
   }
 
   Future<void> loadPendingDeliveries() async {
     try {
-      List<Delivery> deliveries = await fetchDeliveries('pending');
+      List<Delivery> deliveries =
+          await fetchDeliveries(['pending', 'approval_pending']);
       setState(() {
         _pendingDeliveries = Future<List<Delivery>>.value(deliveries);
       });
@@ -54,7 +54,7 @@ class _DeliveriesPageState extends State<DeliveriesPage>
     }
   }
 
-  Future<List<Delivery>> fetchDeliveries(String status) async {
+  Future<List<Delivery>> fetchDeliveries(List<String> statuses) async {
     final User? user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       // User is not authenticated
@@ -65,7 +65,7 @@ class _DeliveriesPageState extends State<DeliveriesPage>
 
     final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('shipments')
-        .where('status', isEqualTo: status)
+        .where('status', whereIn: statuses)
         .where('courierId', isEqualTo: courierId)
         .get();
 
@@ -186,9 +186,36 @@ class _DeliveriesPageState extends State<DeliveriesPage>
                       if (showCompleteButton)
                         ElevatedButton(
                           onPressed: () {
-                            updateDeliveryStatus(
-                              delivery.shipmentId,
-                              'delivered',
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text('Complete Delivery'),
+                                  content: Text(
+                                    'Are you sure you want to complete this delivery?',
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(
+                                            context); // Close the dialog
+                                      },
+                                      child: Text('Cancel'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        updateDeliveryStatus(
+                                          delivery.shipmentId,
+                                          'approval_pending',
+                                        );
+                                        Navigator.pop(
+                                            context); // Close the dialog
+                                      },
+                                      child: Text('Complete'),
+                                    ),
+                                  ],
+                                );
+                              },
                             );
                           },
                           child: Text('Complete Delivery'),
@@ -196,9 +223,36 @@ class _DeliveriesPageState extends State<DeliveriesPage>
                       if (showCancelButton)
                         ElevatedButton(
                           onPressed: () {
-                            updateDeliveryStatus(
-                              delivery.shipmentId,
-                              'cancelled',
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text('Cancel Delivery'),
+                                  content: Text(
+                                    'Are you sure you want to cancel this delivery?',
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(
+                                            context); // Close the dialog
+                                      },
+                                      child: Text('No'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        updateDeliveryStatus(
+                                          delivery.shipmentId,
+                                          'cancelled',
+                                        );
+                                        Navigator.pop(
+                                            context); // Close the dialog
+                                      },
+                                      child: Text('Yes, Cancel'),
+                                    ),
+                                  ],
+                                );
+                              },
                             );
                           },
                           child: Text('Cancel'),

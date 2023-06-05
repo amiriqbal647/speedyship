@@ -1,123 +1,153 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
-class EditProfile extends StatefulWidget {
-  const EditProfile({Key? key}) : super(key: key);
+class EditCourierProfilePage extends StatefulWidget {
+  final String userId;
+  final String firstName;
+  final String lastName;
+  final String email;
+  final String phoneNumber;
+  final String dateOfBirth;
+
+  EditCourierProfilePage({
+    required this.userId,
+    required this.firstName,
+    required this.lastName,
+    required this.email,
+    required this.phoneNumber,
+    required this.dateOfBirth,
+  });
 
   @override
-  State<EditProfile> createState() => _EditProfileState();
+  _EditCourierProfilePageState createState() => _EditCourierProfilePageState();
 }
 
-class _EditProfileState extends State<EditProfile> {
-  TextEditingController firstNameController = TextEditingController();
-  TextEditingController lastNameController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController phoneNumberController = TextEditingController();
-  TextEditingController dateOfBirthController = TextEditingController();
+class _EditCourierProfilePageState extends State<EditCourierProfilePage> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final CollectionReference usersRef =
+      FirebaseFirestore.instance.collection('users');
 
-  late String userId;
+  late String _firstName;
+  late String _lastName;
+  late String _email;
+  late String _phoneNumber;
+  late String _dateOfBirth;
 
-  // Retrieve user information from Firestore
-  Future<void> retrieveUserInfo() async {
-    final DocumentSnapshot<Map<String, dynamic>> snapshot =
-        await FirebaseFirestore.instance.collection('users').doc(userId).get();
-
-    if (snapshot.exists) {
-      final data = snapshot.data();
-      if (data != null) {
-        setState(() {
-          firstNameController.text = data['firstName'];
-          lastNameController.text = data['lastName'];
-          emailController.text = data['email'];
-          phoneNumberController.text = data['PhoneNumber'];
-          dateOfBirthController.text = data['DateOfBirth'];
-        });
-      }
-    }
-  }
-
-  // Update user information in Firestore
-  Future<void> updateUserInfo() async {
-    await FirebaseFirestore.instance.collection('users').doc(userId).update({
-      'firstName': firstNameController.text,
-      'lastName': lastNameController.text,
-      'email': emailController.text,
-      'PhoneNumber': phoneNumberController.text,
-      'DateOfBirth': dateOfBirthController.text,
-    });
-
-    // Navigate back to the previous page
-    Navigator.pop(context);
-  }
-
-  // Retrieve the ID of the currently logged-in user
-  User? getCurrentUser() {
-    final FirebaseAuth auth = FirebaseAuth.instance;
-    final User? user = auth.currentUser;
-
-    if (user != null) {
-      return user;
-    } else {
-      return null;
-    }
-  }
+  final Color primaryColor = Color.fromRGBO(0, 147, 120, 1);
+  final Color secondaryColor = Color.fromRGBO(231, 123, 0, 1);
 
   @override
   void initState() {
     super.initState();
-    User? currentUser = getCurrentUser();
+    _firstName = widget.firstName;
+    _lastName = widget.lastName;
+    _email = widget.email;
+    _phoneNumber = widget.phoneNumber;
+    _dateOfBirth = widget.dateOfBirth;
+  }
 
-    if (currentUser != null) {
-      userId = currentUser.uid;
-      retrieveUserInfo();
-    } else {
-      // Handle the case where the user is not logged in
-    }
+  void updateUser() {
+    usersRef.doc(widget.userId).update({
+      'firstName': _firstName,
+      'lastName': _lastName,
+      'email': _email,
+      'phoneNumber': _phoneNumber,
+      'dateOfBirth': _dateOfBirth,
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text("Edit Profile"),
+        title:
+            Text('Edit Courier Profile', style: TextStyle(color: primaryColor)),
+        backgroundColor: Colors.white,
+        iconTheme: IconThemeData(color: primaryColor),
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: firstNameController,
-              decoration: InputDecoration(labelText: "First Name"),
-            ),
-            TextField(
-              controller: lastNameController,
-              decoration: InputDecoration(labelText: "Last Name"),
-            ),
-            TextField(
-              controller: emailController,
-              decoration: InputDecoration(labelText: "Email"),
-            ),
-            TextField(
-              controller: phoneNumberController,
-              decoration: InputDecoration(labelText: "Phone Number"),
-            ),
-            TextField(
-              controller: dateOfBirthController,
-              decoration: InputDecoration(labelText: "Date of Birth"),
-            ),
-            SizedBox(
-              height: 12,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                updateUserInfo();
-              },
-              child: Text("submit him"),
-            ),
-          ],
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              buildTextFormField('First Name', _firstName, (value) {
+                setState(() {
+                  _firstName = value;
+                });
+              }),
+              SizedBox(height: 16.0),
+              buildTextFormField('Last Name', _lastName, (value) {
+                setState(() {
+                  _lastName = value;
+                });
+              }),
+              SizedBox(height: 16.0),
+              buildTextFormField('Email', _email, (value) {
+                setState(() {
+                  _email = value;
+                });
+              }),
+              SizedBox(height: 16.0),
+              buildTextFormField('Phone Number', _phoneNumber, (value) {
+                setState(() {
+                  _phoneNumber = value;
+                });
+              }),
+              SizedBox(height: 16.0),
+              buildTextFormField('Date of Birth', _dateOfBirth, (value) {
+                setState(() {
+                  _dateOfBirth = value;
+                });
+              }),
+              SizedBox(height: 32.0),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  primary: primaryColor,
+                  onPrimary: Colors.white,
+                ),
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    updateUser();
+                    Navigator.pop(context,
+                        true); // Return true to indicate successful update
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: Text('Update', style: TextStyle(fontSize: 18.0)),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  TextFormField buildTextFormField(
+      String label, String initialValue, Function(String) onChanged) {
+    return TextFormField(
+      initialValue: initialValue,
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: TextStyle(color: primaryColor),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: primaryColor),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: primaryColor),
+        ),
+      ),
+      validator: (value) {
+        if (value!.isEmpty) {
+          return 'Please enter $label';
+        }
+        return null;
+      },
+      onChanged: onChanged,
     );
   }
 }

@@ -44,7 +44,7 @@ class _OrdersPageState extends State<OrdersPage>
             child: TabBarView(
               controller: _tabController,
               children: [
-                OrderList(status: 'pending'),
+                OrderList(status: 'approval_pending'),
                 OrderList(status: 'delivered'),
                 OrderList(status: 'cancelled'),
               ],
@@ -87,6 +87,7 @@ class OrderList extends StatelessWidget {
             final location = shipment['location'] as String? ?? '';
             final destination = shipment['destination'] as String? ?? '';
             final courierId = shipment['courierId'] as String? ?? '';
+            final shipmentStatus = shipment['status'] as String? ?? '';
 
             return Card(
               margin: const EdgeInsets.all(15.0),
@@ -97,27 +98,47 @@ class OrderList extends StatelessWidget {
                   children: [
                     Text(
                       'Shipment ID: $shipmentId',
-                      style: Theme.of(context).textTheme.titleMedium,
+                      style: Theme.of(context).textTheme.subtitle1,
                     ),
                     Text(
                       'Location: $location',
-                      style: Theme.of(context).textTheme.titleMedium,
+                      style: Theme.of(context).textTheme.subtitle1,
                     ),
                     Text(
                       'Destination: $destination',
-                      style: Theme.of(context).textTheme.titleMedium,
+                      style: Theme.of(context).textTheme.subtitle1,
                     ),
-                    const SizedBox(
-                      height: 10.0,
-                    ),
-                    FilledButton(
+                    const SizedBox(height: 10.0),
+                    if (status == 'approval_pending' &&
+                        shipmentStatus == 'approval_pending')
+                      ElevatedButton(
+                        onPressed: () {
+                          _confirmDelivery(context, shipmentId);
+                        },
+                        child: const Text("Approve"),
+                      )
+                    else
+                      IgnorePointer(
+                        ignoring: true,
+                        child: ElevatedButton(
+                          onPressed: () {},
+                          child: const Text("Approve"),
+                        ),
+                      ),
+                    const SizedBox(height: 10.0),
+                    ElevatedButton(
                       onPressed: () {
-                        _showRatingDialog(context, shipmentId, courierId);
+                        _checkAndShowRatingDialog(
+                            context, shipmentId, courierId);
                       },
-                      style: FilledButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8))),
                       child: const Text("Rate Courier"),
+                    ),
+                    const SizedBox(height: 10.0),
+                    ElevatedButton(
+                      onPressed: () {
+                        _showSupportDialog(context);
+                      },
+                      child: const Text("Support"),
                     ),
                   ],
                 ),
@@ -127,6 +148,76 @@ class OrderList extends StatelessWidget {
         );
       },
     );
+  }
+
+  void _confirmDelivery(BuildContext context, String shipmentId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Confirm Delivery"),
+          content:
+              Text("Are you sure you want to mark this shipment as delivered?"),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                // Update the status to "delivered" in Firestore
+                FirebaseFirestore.instance
+                    .collection('shipments')
+                    .doc(shipmentId)
+                    .update({'status': 'delivered'});
+
+                Navigator.of(context).pop();
+              },
+              child: Text("Confirm"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("Cancel"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _checkAndShowRatingDialog(
+      BuildContext context, String shipmentId, String courierId) async {
+    // Check if the user has already rated the courier for this shipment
+    final user = FirebaseAuth.instance.currentUser;
+    final ratingsSnapshot = await FirebaseFirestore.instance
+        .collection('ratings')
+        .where('userId', isEqualTo: user!.uid)
+        .where('shipmentId', isEqualTo: shipmentId)
+        .limit(1)
+        .get();
+
+    if (ratingsSnapshot.docs.isNotEmpty) {
+      // User has already rated the courier for this shipment
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Rating Error"),
+            content:
+                Text("You have already rated the courier for this shipment."),
+            actions: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text("OK"),
+              ),
+            ],
+          );
+        },
+      );
+      return; // Exit the method
+    }
+
+    _showRatingDialog(context, shipmentId, courierId);
   }
 
   void _showRatingDialog(
@@ -177,16 +268,94 @@ class OrderList extends StatelessWidget {
                   'shipmentId': shipmentId,
                   'courierId': courierId,
                   'rating': rating,
-                  'comments': commentController.text,
+                  'comment': commentController.text,
                 };
 
+                // Add the rating data to the 'ratings' collection in Firestore
                 FirebaseFirestore.instance
                     .collection('ratings')
-                    .add(ratingData);
+                    .add(ratingData)
+                    .then((_) {
+                  // Update the courier's overall rating
+                  _updateCourierOverallRating(courierId, rating);
 
-                Navigator.of(context).pop();
+                  Navigator.of(context).pop();
+                }).catchError((error) {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text("Rating Error"),
+                        content: Text(
+                          "An error occurred while submitting your rating. Please try again later.",
+                        ),
+                        actions: [
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text("OK"),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                });
               },
               child: Text("Submit"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("Cancel"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _updateCourierOverallRating(String courierId, double newRating) {
+    final ratingsRef = FirebaseFirestore.instance.collection('ratings');
+    final courierRatingsQuery =
+        ratingsRef.where('courierId', isEqualTo: courierId);
+
+    courierRatingsQuery.get().then((snapshot) {
+      if (snapshot.docs.isNotEmpty) {
+        double totalRating = 0.0;
+        int totalRatings = snapshot.docs.length;
+
+        for (var doc in snapshot.docs) {
+          final ratingData = doc.data() as Map<String, dynamic>;
+          final rating = ratingData['rating'] as double;
+          totalRating += rating;
+        }
+
+        final overallRating = totalRating / totalRatings;
+
+        // Update the overallRating field in the courier's document
+        FirebaseFirestore.instance
+            .collection('users')
+            .doc(courierId)
+            .update({'overallRating': overallRating});
+      }
+    });
+  }
+
+  void _showSupportDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Support"),
+          content: Text("For support, please contact our customer service."),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("OK"),
             ),
           ],
         );

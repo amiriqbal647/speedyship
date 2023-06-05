@@ -2,110 +2,163 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:speedyship/pages/courier/editCourierAccount.dart';
+import 'package:speedyship/pages/user/EditProfile.dart';
 
-class ProfilePage extends StatefulWidget {
+class CourierProfilePage extends StatefulWidget {
   @override
-  _ProfilePageState createState() => _ProfilePageState();
+  _CourierProfilePageState createState() => _CourierProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
-  late User? _user;
-  late DocumentSnapshot<Map<String, dynamic>>? _userData;
-
-  @override
-  void initState() {
-    super.initState();
-    _getUserData();
-  }
-
-  Future<void> _getUserData() async {
-    _user = _auth.currentUser;
-    if (_user != null) {
-      _userData = await _firestore.collection('users').doc(_user!.uid).get();
-      setState(() {});
-    }
-  }
+class _CourierProfilePageState extends State<CourierProfilePage> {
+  final Color primaryColor = Color(0xFF009378);
+  final Color accentColor = Color(0xFFE77B00);
 
   @override
   Widget build(BuildContext context) {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    User? currentUser = auth.currentUser;
+
+    if (currentUser == null) {
+      // User is not logged in
+      return Scaffold(
+        body: Center(
+          child: Text('Courier not logged in'),
+        ),
+      );
+    }
+
+    String loggedInUserId = currentUser.uid;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Profile'),
+        title: Text('Courier Profile', style: TextStyle(color: Colors.white)),
+        backgroundColor: primaryColor,
       ),
-      body: _user != null && _userData != null
-          ? Center(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CircleAvatar(
-                      radius: 80,
-                      backgroundColor: Colors.blue,
-                      child: Text(
-                        '${_userData!.get('firstName')[0]}${_userData!.get('lastName')[0]}'
-                            .toUpperCase(),
-                        style: TextStyle(fontSize: 40, color: Colors.white),
+      body: StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('users')
+            .doc(loggedInUserId)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+                child: Text('Something went wrong',
+                    style: TextStyle(color: Colors.black)));
+          }
+
+          if (!snapshot.hasData) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          final userData = snapshot.data!.data() as Map<String, dynamic>?;
+
+          if (userData == null) {
+            return Center(
+                child: Text('Courier data not found',
+                    style: TextStyle(color: Colors.black)));
+          }
+
+          final firstName = userData['firstName'];
+          final lastName = userData['lastName'];
+          final email = userData['email'];
+          final phoneNumber = userData['phoneNumber'];
+          final dateOfBirth = userData['dateOfBirth'].toString();
+
+          return ListView(
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            children: [
+              Card(
+                elevation: 5.0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Container(
+                  padding: EdgeInsets.all(15),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 30,
+                            backgroundColor: accentColor,
+                            child: Text(
+                              '${firstName[0]}${lastName[0]}',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18.0,
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('$firstName $lastName',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18.0,
+                                    )),
+                                SizedBox(height: 10),
+                                Text('Email: $email',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 16.0,
+                                    )),
+                                SizedBox(height: 5),
+                                Text(
+                                  'Phone: ${phoneNumber ?? 'No phone number'}',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16.0,
+                                  ),
+                                ),
+                                SizedBox(height: 5),
+                                Text('DOB: $dateOfBirth',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 16.0,
+                                    )),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                    SizedBox(height: 16),
-                    Text(
-                      'Full Name:',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                      IconButton(
+                        icon: Icon(Icons.edit, color: primaryColor),
+                        onPressed: () async {
+                          bool result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EditCourierProfilePage(
+                                userId: currentUser.uid,
+                                firstName: firstName,
+                                lastName: lastName,
+                                email: email,
+                                phoneNumber: phoneNumber,
+                                dateOfBirth: dateOfBirth,
+                              ),
+                            ),
+                          );
+
+                          if (result == true) {
+                            // Refresh the profile page or perform any other action
+                            setState(() {
+                              // Update the profile page with new data
+                            });
+                          }
+                        },
                       ),
-                    ),
-                    Text(
-                      '${_userData!.get('firstName')} ${_userData!.get('lastName')}',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      'Email:',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      _userData!.get('email'),
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      'Phone Number:',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      _userData!.get('PhoneNumber'),
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => EditProfile()),
-                        );
-                      },
-                      child: Text('Edit Profile info'),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            )
-          : Center(
-              child: CircularProgressIndicator(),
-            ),
+            ],
+          );
+        },
+      ),
     );
   }
 }

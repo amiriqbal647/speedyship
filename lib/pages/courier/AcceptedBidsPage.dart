@@ -106,55 +106,167 @@ class AcceptedBidsPage extends StatelessWidget {
                         'User: $firstName $lastName',
                         style: TextStyle(fontSize: 16),
                       ),
-                      Text('Price:$price', style: TextStyle(fontSize: 16)),
+                      Text('Price: $price', style: TextStyle(fontSize: 16)),
                       Text('Date: $date', style: TextStyle(fontSize: 16)),
                     ];
                   }
 
-                  return Card(
-                    elevation: 2.0,
-                    margin:
-                        EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                    child: ListTile(
-                      title: Text(
-                        title,
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
+                  return Dismissible(
+                    key: Key(bidId),
+                    direction: DismissDirection.endToStart,
+                    background: Container(
+                      color: Colors.red,
+                      alignment: Alignment.centerRight,
+                      padding: EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Icon(
+                        Icons.delete,
+                        color: Colors.white,
                       ),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ...subtitle,
-                          SizedBox(
-                              height:
-                                  8.0), // Add some spacing between the subtitle and buttons
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              ElevatedButton(
-                                onPressed: () {
-                                  // Begin Delivery button logic
-                                  FirebaseFirestore.instance
-                                      .collection('shipments')
-                                      .doc(document['shipmentId'])
-                                      .update({'status': 'pending'});
-                                },
-                                child: Text('Begin Delivery'),
+                    ),
+                    confirmDismiss: (direction) async {
+                      return await showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('Confirm Action'),
+                            content: Text(
+                                'Are you sure you want to begin delivery?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () =>
+                                    Navigator.of(context).pop(false),
+                                child: Text('Cancel'),
                               ),
-                              SizedBox(width: 8.0),
-                              ElevatedButton(
-                                onPressed: () {
-                                  // Cancel Delivery button logic
-                                  FirebaseFirestore.instance
-                                      .collection('shipments')
-                                      .doc(document['shipmentId'])
-                                      .update({'status': 'cancelled'});
-                                },
-                                child: Text('Cancel Delivery'),
+                              TextButton(
+                                onPressed: () =>
+                                    Navigator.of(context).pop(true),
+                                child: Text('Yes'),
                               ),
                             ],
-                          ),
-                        ],
+                          );
+                        },
+                      );
+                    },
+                    onDismissed: (direction) {
+                      // Remove the entry from the list
+                      FirebaseFirestore.instance
+                          .collection('acceptedBids')
+                          .doc(document.id)
+                          .delete();
+                    },
+                    child: Card(
+                      elevation: 2.0,
+                      margin:
+                          EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                      child: ListTile(
+                        title: Text(
+                          title,
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ...subtitle,
+                            SizedBox(
+                                height:
+                                    8.0), // Add some spacing between the subtitle and buttons
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    // Show a confirmation dialog
+                                    bool confirmAction = await showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: Text('Confirm Action'),
+                                          content: Text(
+                                              'Are you sure you want to begin delivery?'),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.of(context)
+                                                      .pop(false),
+                                              child: Text('Cancel'),
+                                            ),
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.of(context)
+                                                      .pop(true),
+                                              child: Text('Yes'),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+
+                                    if (confirmAction == true) {
+                                      // Begin Delivery button logic
+                                      FirebaseFirestore.instance
+                                          .collection('shipments')
+                                          .doc(document['shipmentId'])
+                                          .update({'status': 'pending'});
+
+                                      // Remove the entry from the list
+                                      FirebaseFirestore.instance
+                                          .collection('acceptedBids')
+                                          .doc(document.id)
+                                          .delete();
+                                    }
+                                  },
+                                  child: Text('Begin Delivery'),
+                                ),
+                                SizedBox(width: 8.0),
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    // Show a confirmation dialog
+                                    bool confirmAction = await showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: Text('Confirm Action'),
+                                          content: Text(
+                                              'Are you sure you want to cancel delivery?'),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.of(context)
+                                                      .pop(false),
+                                              child: Text('Cancel'),
+                                            ),
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.of(context)
+                                                      .pop(true),
+                                              child: Text('Yes'),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+
+                                    if (confirmAction == true) {
+                                      // Cancel Delivery button logic
+                                      FirebaseFirestore.instance
+                                          .collection('shipments')
+                                          .doc(document['shipmentId'])
+                                          .update({'status': 'cancelled'});
+
+                                      // Remove the entry from the list
+                                      FirebaseFirestore.instance
+                                          .collection('acceptedBids')
+                                          .doc(document.id)
+                                          .delete();
+                                    }
+                                  },
+                                  child: Text('Cancel Delivery'),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   );

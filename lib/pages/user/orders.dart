@@ -194,28 +194,28 @@ class OrderList extends StatelessWidget {
         .limit(1)
         .get();
 
-    if (ratingsSnapshot.docs.isNotEmpty) {
-      // User has already rated the courier for this shipment
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("Rating Error"),
-            content:
-                Text("You have already rated the courier for this shipment."),
-            actions: [
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text("OK"),
-              ),
-            ],
-          );
-        },
-      );
-      return; // Exit the method
-    }
+    // if (ratingsSnapshot.docs.isNotEmpty) {
+    //   // User has already rated the courier for this shipment
+    //   showDialog(
+    //     context: context,
+    //     builder: (BuildContext context) {
+    //       return AlertDialog(
+    //         title: Text("Rating Error"),
+    //         content:
+    //             Text("You have already rated the courier for this shipment."),
+    //         actions: [
+    //           ElevatedButton(
+    //             onPressed: () {
+    //               Navigator.of(context).pop();
+    //             },
+    //             child: Text("OK"),
+    //           ),
+    //         ],
+    //       );
+    //     },
+    //   );
+    //   return; // Exit the method
+    // }
 
     _showRatingDialog(context, shipmentId, courierId);
   }

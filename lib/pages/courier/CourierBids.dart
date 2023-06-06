@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 
 import 'package:intl/intl.dart';
+import 'package:speedyship/components/date_picker2.dart';
 
 class CourierBidsForm extends StatefulWidget {
   final String userId;

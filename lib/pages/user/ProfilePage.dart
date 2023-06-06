@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:speedyship/components/my_button.dart';
 import 'package:speedyship/pages/user/EditProfile.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -9,9 +11,6 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  final Color primaryColor = Color(0xFF009378);
-  final Color accentColor = Color(0xFFE77B00);
-
   @override
   Widget build(BuildContext context) {
     FirebaseAuth auth = FirebaseAuth.instance;
@@ -29,10 +28,7 @@ class _ProfilePageState extends State<ProfilePage> {
     String loggedInUserId = currentUser.uid;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('User Profile', style: TextStyle(color: Colors.white)),
-        backgroundColor: primaryColor,
-      ),
+      appBar: AppBar(title: const Text('User account')),
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
             .collection('users')
@@ -63,71 +59,188 @@ class _ProfilePageState extends State<ProfilePage> {
           final phoneNumber = userData['PhoneNumber'];
           final dateOfBirth = userData['DateOfBirth'].toString();
 
-          return ListView(
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-            children: [
-              Card(
-                elevation: 5.0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: Container(
-                  padding: EdgeInsets.all(15),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          CircleAvatar(
-                            radius: 30,
-                            backgroundColor: accentColor,
-                            child: Text(
-                              '${firstName[0]}${lastName[0]}',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18.0,
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 10),
-                          Expanded(
+          return Device.screenType == ScreenType.tablet
+              ?
+              //Desktop view*********************************************************************
+              Center(
+                  child: SizedBox(
+                    width: 50.w,
+                    child: ListView(
+                      children: [
+                        //Full name and circular avatar card
+                        Card(
+                          color:
+                              Theme.of(context).colorScheme.secondaryContainer,
+                          elevation: 2,
+                          margin: const EdgeInsets.all(15.0),
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.fromLTRB(15.0, 30, 15.0, 30),
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('$firstName $lastName',
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18.0,
-                                    )),
-                                SizedBox(height: 10),
-                                Text('Email: $email',
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 16.0,
-                                    )),
-                                SizedBox(height: 5),
-                                Text(
-                                  'Phone: ${phoneNumber ?? '00'}',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16.0,
+                                //Circular Avatar
+                                CircleAvatar(
+                                  radius: 50,
+                                  child: Text(
+                                    '${firstName[0]}${lastName[0]}',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall,
                                   ),
                                 ),
-                                SizedBox(height: 5),
-                                Text('DOB: $dateOfBirth',
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 16.0,
-                                    )),
+                                const SizedBox(
+                                  height: 10.0,
+                                ),
+                                //Full Name
+                                Text('$firstName $lastName',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall),
                               ],
                             ),
                           ),
-                        ],
+                        ),
+
+                        // Email phone dob card
+                        Card(
+                          elevation: 2,
+                          color:
+                              Theme.of(context).colorScheme.secondaryContainer,
+                          margin: const EdgeInsets.all(15.0),
+                          child: Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: Column(
+                              children: [
+                                //Email
+                                ListTile(
+                                  leading: const Icon(Icons.email),
+                                  title: const Text('Email'),
+                                  subtitle: Text('$email'),
+                                ),
+                                //Phone
+                                ListTile(
+                                  leading: const Icon(Icons.phone),
+                                  title: const Text('Phone'),
+                                  subtitle: Text(
+                                      '${phoneNumber ?? 'No phone number'}'),
+                                ),
+                                //Dob
+                                ListTile(
+                                  leading: const Icon(Icons.date_range),
+                                  title: const Text('Date of birth'),
+                                  subtitle: Text('$dateOfBirth'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        //Edit button
+                        Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: MyButton(
+                            buttonText: 'Edit',
+                            onTap: () async {
+                              bool result = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => EditProfilePage(
+                                    userId: currentUser.uid,
+                                    firstName: firstName,
+                                    lastName: lastName,
+                                    email: email,
+                                    phoneNumber: phoneNumber,
+                                    dateOfBirth: dateOfBirth,
+                                  ),
+                                ),
+                              );
+
+                              if (result == true) {
+                                // Refresh the profile page or perform any other action
+                                setState(() {
+                                  // Update the profile page with new data
+                                });
+                              }
+                            },
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                )
+              :
+              //Mobile view****************************************************************
+              ListView(
+                  children: [
+                    //Full name and circular avatar card
+                    Card(
+                      color: Theme.of(context).colorScheme.secondaryContainer,
+                      elevation: 2,
+                      margin: const EdgeInsets.all(15.0),
+                      child: Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Column(
+                          children: [
+                            //Circular Avatar
+                            CircleAvatar(
+                              radius: 50,
+                              child: Text(
+                                '${firstName[0]}${lastName[0]}',
+                                style:
+                                    Theme.of(context).textTheme.headlineSmall,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10.0,
+                            ),
+                            //Full Name
+                            Text('$firstName $lastName',
+                                style:
+                                    Theme.of(context).textTheme.headlineSmall),
+                          ],
+                        ),
                       ),
-                      IconButton(
-                        icon: Icon(Icons.edit, color: primaryColor),
-                        onPressed: () async {
+                    ),
+
+                    // Email phone dob card
+                    Card(
+                      color: Theme.of(context).colorScheme.secondaryContainer,
+                      elevation: 2,
+                      margin: const EdgeInsets.all(15.0),
+                      child: Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Column(
+                          children: [
+                            //Email
+                            ListTile(
+                              leading: const Icon(Icons.email),
+                              title: const Text('Email'),
+                              subtitle: Text('$email'),
+                            ),
+                            //Phone
+                            ListTile(
+                              leading: const Icon(Icons.phone),
+                              title: const Text('Phone'),
+                              subtitle:
+                                  Text('${phoneNumber ?? 'No phone number'}'),
+                            ),
+                            //Dob
+                            ListTile(
+                              leading: const Icon(Icons.date_range),
+                              title: const Text('Date of birth'),
+                              subtitle: Text('$dateOfBirth'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    //Edit button
+                    Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: MyButton(
+                        buttonText: 'Edit',
+                        onTap: () async {
                           bool result = await Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -150,12 +263,9 @@ class _ProfilePageState extends State<ProfilePage> {
                           }
                         },
                       ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          );
+                    )
+                  ],
+                );
         },
       ),
     );

@@ -90,7 +90,7 @@ class OrderList extends StatelessWidget {
             final shipmentStatus = shipment['status'] as String? ?? '';
 
             return Card(
-              margin: const EdgeInsets.all(15.0),
+              margin: const EdgeInsets.all(12.0),
               child: Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: Column(
@@ -98,15 +98,15 @@ class OrderList extends StatelessWidget {
                   children: [
                     Text(
                       'Shipment ID: $shipmentId',
-                      style: Theme.of(context).textTheme.subtitle1,
+                      style: Theme.of(context).textTheme.titleMedium,
                     ),
                     Text(
                       'Location: $location',
-                      style: Theme.of(context).textTheme.subtitle1,
+                      style: Theme.of(context).textTheme.titleMedium,
                     ),
                     Text(
                       'Destination: $destination',
-                      style: Theme.of(context).textTheme.subtitle1,
+                      style: Theme.of(context).textTheme.titleMedium,
                     ),
                     const SizedBox(height: 10.0),
                     if (status == 'approval_pending' &&
@@ -126,7 +126,7 @@ class OrderList extends StatelessWidget {
                         ),
                       ),
                     const SizedBox(height: 10.0),
-                    ElevatedButton(
+                    FilledButton(
                       onPressed: () {
                         _checkAndShowRatingDialog(
                             context, shipmentId, courierId);
@@ -194,28 +194,28 @@ class OrderList extends StatelessWidget {
         .limit(1)
         .get();
 
-    if (ratingsSnapshot.docs.isNotEmpty) {
-      // User has already rated the courier for this shipment
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("Rating Error"),
-            content:
-                Text("You have already rated the courier for this shipment."),
-            actions: [
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text("OK"),
-              ),
-            ],
-          );
-        },
-      );
-      return; // Exit the method
-    }
+    // if (ratingsSnapshot.docs.isNotEmpty) {
+    //   // User has already rated the courier for this shipment
+    //   showDialog(
+    //     context: context,
+    //     builder: (BuildContext context) {
+    //       return AlertDialog(
+    //         title: Text("Rating Error"),
+    //         content:
+    //             Text("You have already rated the courier for this shipment."),
+    //         actions: [
+    //           ElevatedButton(
+    //             onPressed: () {
+    //               Navigator.of(context).pop();
+    //             },
+    //             child: Text("OK"),
+    //           ),
+    //         ],
+    //       );
+    //     },
+    //   );
+    //   return; // Exit the method
+    // }
 
     _showRatingDialog(context, shipmentId, courierId);
   }
@@ -261,7 +261,7 @@ class OrderList extends StatelessWidget {
             ],
           ),
           actions: [
-            ElevatedButton(
+            FilledButton(
               onPressed: () {
                 final ratingData = {
                   'userId': FirebaseAuth.instance.currentUser!.uid,

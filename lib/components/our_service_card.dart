@@ -12,8 +12,9 @@ class OurServiceCard extends StatelessWidget {
       height: 225,
       width: 220,
       child: Card(
+        color: Theme.of(context).colorScheme.secondaryContainer,
         surfaceTintColor: Theme.of(context).colorScheme.surfaceTint,
-        elevation: 5,
+        elevation: 2,
         margin: const EdgeInsets.fromLTRB(0, 10, 15, 10),
         child: Padding(
           padding: const EdgeInsets.all(12.0),

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:speedyship/components/my_textfield.dart';
 import 'package:speedyship/components/square_tile.dart';
 import 'package:speedyship/components/my_button.dart';
+import 'package:speedyship/pages/introduction/ForgotPassword.dart';
 import 'package:speedyship/services/auth_service.dart';
 import 'signup.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -152,12 +153,21 @@ class _LoginPageState extends State<LoginPage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                Text(
-                                  'Forgot password?',
-                                  style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .primary),
+                                InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                ForgotPasswordPage()));
+                                  },
+                                  child: Text(
+                                    'Forgot password?',
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary),
+                                  ),
                                 ),
                               ],
                             ),

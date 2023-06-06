@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:speedyship/components/my_button.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 class EditProfilePage extends StatefulWidget {
   final String userId;
@@ -33,9 +35,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
   late String _phoneNumber;
   late String _dateOfBirth;
 
-  final Color primaryColor = Color.fromRGBO(0, 147, 120, 1);
-  final Color secondaryColor = Color.fromRGBO(231, 123, 0, 1);
-
   @override
   void initState() {
     super.initState();
@@ -59,93 +58,303 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: Text('Edit Profile', style: TextStyle(color: primaryColor)),
-        backgroundColor: Colors.white,
-        iconTheme: IconThemeData(color: primaryColor),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      appBar: AppBar(title: const Text('Edit account')),
+      body: SingleChildScrollView(
         child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              buildTextFormField('First Name', _firstName, (value) {
-                setState(() {
-                  _firstName = value;
-                });
-              }),
-              SizedBox(height: 16.0),
-              buildTextFormField('Last Name', _lastName, (value) {
-                setState(() {
-                  _lastName = value;
-                });
-              }),
-              SizedBox(height: 16.0),
-              buildTextFormField('Email', _email, (value) {
-                setState(() {
-                  _email = value;
-                });
-              }),
-              SizedBox(height: 16.0),
-              buildTextFormField('Phone Number', _phoneNumber, (value) {
-                setState(() {
-                  _phoneNumber = value;
-                });
-              }),
-              SizedBox(height: 16.0),
-              buildTextFormField('Date of Birth', _dateOfBirth, (value) {
-                setState(() {
-                  _dateOfBirth = value;
-                });
-              }),
-              SizedBox(height: 32.0),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  primary: primaryColor,
-                  onPrimary: Colors.white,
-                ),
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    updateUser();
-                    Navigator.pop(context,
-                        true); // Return true to indicate successful update
-                  }
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  child: Text('Update', style: TextStyle(fontSize: 18.0)),
-                ),
-              ),
-            ],
-          ),
-        ),
+            key: _formKey,
+            child: Device.screenType == ScreenType.tablet
+                ?
+                //Desktop view***********************************************************************
+                Center(
+                    child: SizedBox(
+                      width: 50.w,
+                      child: Column(
+                        children: [
+                          //Full name card
+                          Card(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .secondaryContainer,
+                            elevation: 2,
+                            margin: const EdgeInsets.all(15),
+                            child: Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  //Full name text
+                                  Text(
+                                    'Full name',
+                                    style:
+                                        Theme.of(context).textTheme.titleLarge,
+                                  ),
+
+                                  //First name
+                                  Text(
+                                    'First name',
+                                    style:
+                                        Theme.of(context).textTheme.titleMedium,
+                                  ),
+                                  const SizedBox(
+                                    height: 10.0,
+                                  ),
+                                  buildTextFormField(_firstName, (value) {
+                                    setState(() {
+                                      _firstName = value;
+                                    });
+                                  }),
+                                  const SizedBox(height: 10.0),
+
+                                  //Last name
+                                  Text(
+                                    'Last name',
+                                    style:
+                                        Theme.of(context).textTheme.titleMedium,
+                                  ),
+                                  const SizedBox(
+                                    height: 10.0,
+                                  ),
+                                  buildTextFormField(_lastName, (value) {
+                                    setState(() {
+                                      _lastName = value;
+                                    });
+                                  }),
+                                ],
+                              ),
+                            ),
+                          ),
+
+                          // Email dob phone no card
+                          Card(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .secondaryContainer,
+                            elevation: 2,
+                            margin: const EdgeInsets.all(15.0),
+                            child: Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  //Email
+                                  Text(
+                                    'Email',
+                                    style:
+                                        Theme.of(context).textTheme.titleMedium,
+                                  ),
+                                  const SizedBox(
+                                    height: 10.0,
+                                  ),
+                                  buildTextFormField(_email, (value) {
+                                    setState(() {
+                                      _email = value;
+                                    });
+                                  }),
+                                  const SizedBox(height: 10.0),
+
+                                  //Phone number
+                                  Text(
+                                    'Phone number',
+                                    style:
+                                        Theme.of(context).textTheme.titleMedium,
+                                  ),
+                                  const SizedBox(
+                                    height: 10.0,
+                                  ),
+                                  buildTextFormField(_phoneNumber, (value) {
+                                    setState(() {
+                                      _phoneNumber = value;
+                                    });
+                                  }),
+                                  const SizedBox(height: 10.0),
+                                  //Date of birth
+                                  Text(
+                                    'Date of birth',
+                                    style:
+                                        Theme.of(context).textTheme.titleMedium,
+                                  ),
+                                  const SizedBox(
+                                    height: 10.0,
+                                  ),
+                                  buildTextFormField(_dateOfBirth, (value) {
+                                    setState(() {
+                                      _dateOfBirth = value;
+                                    });
+                                  }),
+                                ],
+                              ),
+                            ),
+                          ),
+
+                          //Save chnages button
+                          Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: MyButton(
+                              buttonText: 'Save changes',
+                              onTap: () {
+                                if (_formKey.currentState!.validate()) {
+                                  updateUser();
+                                  Navigator.pop(context,
+                                      true); // Return true to indicate successful update
+                                }
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                :
+                //Mobile view**************************************************************************
+                Column(
+                    children: [
+                      //Full name card
+                      Card(
+                        color: Theme.of(context).colorScheme.secondaryContainer,
+                        elevation: 2,
+                        margin: const EdgeInsets.all(15),
+                        child: Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              //Full name text
+                              Text(
+                                'Full name',
+                                style: Theme.of(context).textTheme.titleLarge,
+                              ),
+
+                              //First name
+                              Text(
+                                'First name',
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                              const SizedBox(
+                                height: 10.0,
+                              ),
+                              buildTextFormField(_firstName, (value) {
+                                setState(() {
+                                  _firstName = value;
+                                });
+                              }),
+                              const SizedBox(height: 10.0),
+
+                              //Last name
+                              Text(
+                                'Last name',
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                              const SizedBox(
+                                height: 10.0,
+                              ),
+                              buildTextFormField(_lastName, (value) {
+                                setState(() {
+                                  _lastName = value;
+                                });
+                              }),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      // Email dob phone no card
+                      Card(
+                        color: Theme.of(context).colorScheme.secondaryContainer,
+                        elevation: 2,
+                        margin: const EdgeInsets.all(15.0),
+                        child: Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              //Email
+                              Text(
+                                'Email',
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                              const SizedBox(
+                                height: 10.0,
+                              ),
+                              buildTextFormField(_email, (value) {
+                                setState(() {
+                                  _email = value;
+                                });
+                              }),
+                              const SizedBox(height: 10.0),
+
+                              //Phone number
+                              Text(
+                                'Phone number',
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                              const SizedBox(
+                                height: 10.0,
+                              ),
+                              buildTextFormField(_phoneNumber, (value) {
+                                setState(() {
+                                  _phoneNumber = value;
+                                });
+                              }),
+                              const SizedBox(height: 10.0),
+                              //Date of birth
+                              Text(
+                                'Date of birth',
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                              const SizedBox(
+                                height: 10.0,
+                              ),
+                              buildTextFormField(_dateOfBirth, (value) {
+                                setState(() {
+                                  _dateOfBirth = value;
+                                });
+                              }),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      //Save chnages button
+                      Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: MyButton(
+                          buttonText: 'Save changes',
+                          onTap: () {
+                            if (_formKey.currentState!.validate()) {
+                              updateUser();
+                              Navigator.pop(context,
+                                  true); // Return true to indicate successful update
+                            }
+                          },
+                        ),
+                      ),
+                    ],
+                  )),
       ),
     );
   }
 
   TextFormField buildTextFormField(
-      String label, String initialValue, Function(String) onChanged) {
+      String initialValue, Function(String) onChanged) {
     return TextFormField(
       initialValue: initialValue,
       decoration: InputDecoration(
-        labelText: label,
-        labelStyle: TextStyle(color: primaryColor),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: Colors.transparent, width: 0),
+        ),
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: primaryColor),
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: Colors.transparent, width: 0),
         ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: primaryColor),
-        ),
+        filled: true,
       ),
-      validator: (value) {
-        if (value!.isEmpty) {
-          return 'Please enter $label';
-        }
-        return null;
-      },
+      // validator: (value) {
+      //   if (value!.isEmpty) {
+      //     return 'Please enter $label';
+      //   }
+      //   return null;
+      // },
       onChanged: onChanged,
     );
   }

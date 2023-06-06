@@ -65,6 +65,7 @@ class _BidsPageState extends State<BidsPage> {
           final shipmentRef = firestore.collection('shipments').doc(shipmentId);
           batch.update(shipmentRef, {
             'courierId': courierId,
+            'status': 'pending', // Update the status field to "pending"
             // Include any other fields you want to update in the shipment document
           });
         } else {
@@ -210,36 +211,20 @@ class _BidsPageState extends State<BidsPage> {
                           Text('Name: $firstName $lastName'),
                           Text(
                               'Overall Rating: ${overallRating.toStringAsFixed(2)}'),
-                          Text('Price: $bidPrice'),
-                          Text('Date: $bidDate'),
+                          Text('Bid Price: $bidPrice'),
+                          Text('Bid Date: $bidDate'),
                         ],
                       ),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          ElevatedButton(
-                            onPressed: () {
-                              _onBidAccepted(shipmentId, bidId);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              primary: Color(0xFF12AE6D),
-                            ),
-                            child: Text('Accept'),
-                          ),
-                          SizedBox(width: 10),
-                          ElevatedButton(
-                            onPressed: () {
-                              _onBidDeclined(bidId);
-                              BidOperations.declineBid(context, bidId,
-                                  courierId, bidPrice, bidDate, shipmentId);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              primary: Color(0xFFEF8024),
-                            ),
-                            child: Text('Decline'),
-                          ),
-                        ],
+                      trailing: IconButton(
+                        icon: Icon(Icons.check),
+                        color: Colors.green,
+                        onPressed: () {
+                          _onBidAccepted(shipmentId, bidId);
+                        },
                       ),
+                      onTap: () {
+                        _onBidDeclined(bidId);
+                      },
                     ),
                   );
                 },

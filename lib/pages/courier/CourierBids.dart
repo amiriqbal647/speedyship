@@ -196,52 +196,6 @@ class _CourierBidsFormState extends State<CourierBidsForm> {
   }
 }
 
-typedef OnDateSelected = void Function(DateTime selectedDate);
-
-class MyDatePickerTwo extends StatelessWidget {
-  final OnDateSelected onDateSelected;
-  final TextEditingController _textEditingController = TextEditingController();
-
-  MyDatePickerTwo({required this.onDateSelected});
-
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      controller: _textEditingController,
-      onTap: () async {
-        final selectedDate = await showDatePicker(
-          context: context,
-          initialDate: DateTime.now(),
-          firstDate: DateTime.now(),
-          lastDate: DateTime(2100),
-        );
-        if (selectedDate != null) {
-          onDateSelected(selectedDate);
-          _textEditingController.text = selectedDate.toString();
-        }
-      },
-      decoration: InputDecoration(
-        labelText: 'Select Date',
-        suffixIcon: IconButton(
-          icon: Icon(Icons.calendar_today),
-          onPressed: () async {
-            final selectedDate = await showDatePicker(
-              context: context,
-              initialDate: DateTime.now(),
-              firstDate: DateTime.now(),
-              lastDate: DateTime(2100),
-            );
-            if (selectedDate != null) {
-              onDateSelected(selectedDate);
-              _textEditingController.text = selectedDate.toString();
-            }
-          },
-        ),
-      ),
-    );
-  }
-}
-
 class CustomThankYouDialog extends StatelessWidget {
   const CustomThankYouDialog({Key? key}) : super(key: key);
 

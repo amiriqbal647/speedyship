@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/services.dart';
-import 'package:speedyship/components/date_picker.dart';
-import 'package:speedyship/components/my_textfield.dart';
+
 import 'package:intl/intl.dart';
 
 class CourierBidsForm extends StatefulWidget {
   final String userId;
+
   final String shipmentId;
 
   const CourierBidsForm({required this.userId, required this.shipmentId});
@@ -18,13 +21,20 @@ class CourierBidsForm extends StatefulWidget {
 
 class _CourierBidsFormState extends State<CourierBidsForm> {
   final _formKey = GlobalKey<FormState>();
+
   final TextEditingController priceController = TextEditingController();
-  final TextEditingController dateController = TextEditingController();
+
+  DateTime? dateController;
+
+  _CourierBidsFormState() {
+    dateController = DateTime.now();
+  }
 
   Future<void> submitBid(BuildContext context) async {
     final int price = int.tryParse(priceController.text) ?? 0;
-    final String date = dateController.text.trim();
+
     final String selectedUserId = widget.userId;
+
     final String shipmentId = widget.shipmentId;
 
     final userData = await FirebaseFirestore.instance
@@ -36,26 +46,48 @@ class _CourierBidsFormState extends State<CourierBidsForm> {
         '${userData.get('firstName')} ${userData.get('lastName')}';
 
     final FirebaseAuth auth = FirebaseAuth.instance;
+
     final User? currentUser = auth.currentUser;
+
     if (currentUser != null) {
       final String currentUserId = currentUser.uid;
+
       final String bidId =
           FirebaseFirestore.instance.collection('bids').doc().id;
 
+      final dateControllerr =
+          dateController != null ? dateController!.toIso8601String() : null;
+
+      if (dateControllerr == null) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Error'),
+              content: Text('Please select a date.'),
+              actions: [
+                TextButton(
+                  child: Text('OK'),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ],
+            );
+          },
+        );
+
+        return;
+      }
+
       await FirebaseFirestore.instance.collection('bids').doc(bidId).set({
-        'courierId':
-            currentUserId, // Id of the user who placed the bid (courier)
-        'userId': selectedUserId, // Id of the user who the bid is for (user)
-        'shipmentId': shipmentId, // Id of the shipment
+        'courierId': currentUserId,
+        'userId': selectedUserId,
+        'shipmentId': shipmentId,
         'price': price,
-        'date': date,
+        'date': dateControllerr,
       });
 
-      // Clear the text fields after submitting
       priceController.clear();
-      dateController.clear();
 
-      // Show a confirmation dialog
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -91,12 +123,10 @@ class _CourierBidsFormState extends State<CourierBidsForm> {
                   ),
                 ),
                 SizedBox(height: 24.0),
-                MyTextField(
+                TextFormField(
                   controller: priceController,
-                  hintText: 'price',
-                  obscureText: false,
+                  decoration: InputDecoration(hintText: 'Price'),
                   keyboardType: TextInputType.number,
-                  readOnly: false,
                   inputFormatters: [
                     FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                   ],
@@ -104,18 +134,18 @@ class _CourierBidsFormState extends State<CourierBidsForm> {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a price.';
                     }
+
                     if (int.tryParse(value) == null) {
                       return 'Please enter a valid number.';
                     }
+
                     return null;
                   },
                 ),
                 SizedBox(height: 16.0),
-                MyDatePicker(
-                  onDateSelected: (DateTime selectedDate) {
-                    dateController.text =
-                        DateFormat('yyyy-MM-dd').format(selectedDate);
-                  },
+                MyDatePickerTwo(
+                  onDateSelected: (date) =>
+                      setState(() => dateController = date),
                 ),
                 SizedBox(height: 16.0),
                 Container(
@@ -162,6 +192,52 @@ class _CourierBidsFormState extends State<CourierBidsForm> {
         ),
       ),
       backgroundColor: Color.fromRGBO(255, 255, 255, 1),
+    );
+  }
+}
+
+typedef OnDateSelected = void Function(DateTime selectedDate);
+
+class MyDatePickerTwo extends StatelessWidget {
+  final OnDateSelected onDateSelected;
+  final TextEditingController _textEditingController = TextEditingController();
+
+  MyDatePickerTwo({required this.onDateSelected});
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: _textEditingController,
+      onTap: () async {
+        final selectedDate = await showDatePicker(
+          context: context,
+          initialDate: DateTime.now(),
+          firstDate: DateTime.now(),
+          lastDate: DateTime(2100),
+        );
+        if (selectedDate != null) {
+          onDateSelected(selectedDate);
+          _textEditingController.text = selectedDate.toString();
+        }
+      },
+      decoration: InputDecoration(
+        labelText: 'Select Date',
+        suffixIcon: IconButton(
+          icon: Icon(Icons.calendar_today),
+          onPressed: () async {
+            final selectedDate = await showDatePicker(
+              context: context,
+              initialDate: DateTime.now(),
+              firstDate: DateTime.now(),
+              lastDate: DateTime(2100),
+            );
+            if (selectedDate != null) {
+              onDateSelected(selectedDate);
+              _textEditingController.text = selectedDate.toString();
+            }
+          },
+        ),
+      ),
     );
   }
 }

@@ -1,6 +1,5 @@
 import 'dart:io';
 
-// import 'package:email_validator/email_validator.dart';
 import 'package:elegant_notification/elegant_notification.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_storage/firebase_storage.dart';

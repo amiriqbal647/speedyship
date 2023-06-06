@@ -471,25 +471,11 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                                       controller: _myLocationController,
                                       hintText: 'EMU,MAIN CAMPUS',
                                       obscureText: false,
-                                      keyboardType: TextInputType.none,
-                                      readOnly: true,
+                                      keyboardType: TextInputType.emailAddress,
+                                      readOnly: false,
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
                                           return "Please fill the location field";
-                                        }
-                                      },
-                                      onTap: () async {
-                                        String? selectedAddress =
-                                            await Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                SelectLocation(),
-                                          ),
-                                        );
-                                        if (selectedAddress != null) {
-                                          _myLocationController.text =
-                                              selectedAddress;
                                         }
                                       },
                                     ),
@@ -511,27 +497,27 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                                       controller: _destinationController,
                                       hintText: 'NICOSIA, MAIN STREET',
                                       obscureText: false,
-                                      keyboardType: TextInputType.none,
-                                      readOnly: true,
+                                      keyboardType: TextInputType.emailAddress,
+                                      readOnly: false,
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
                                           return "Please fill the destination field";
                                         }
                                       },
-                                      onTap: () async {
-                                        String? selectedAddress =
-                                            await Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                SelectLocation(),
-                                          ),
-                                        );
-                                        if (selectedAddress != null) {
-                                          _destinationController.text =
-                                              selectedAddress;
-                                        }
-                                      },
+                                      // onTap: () async {
+                                      //   String? selectedAddress =
+                                      //       await Navigator.push(
+                                      //     context,
+                                      //     MaterialPageRoute(
+                                      //       builder: (context) =>
+                                      //           SelectLocation(),
+                                      //     ),
+                                      //   );
+                                      //   if (selectedAddress != null) {
+                                      //     _destinationController.text =
+                                      //         selectedAddress;
+                                      //   }
+                                      // },
                                     ),
                                   ]),
                             ),
@@ -942,19 +928,19 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                                       return "Please fill the location field";
                                     }
                                   },
-                                  onTap: () async {
-                                    String? selectedAddress =
-                                        await Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => SelectLocation(),
-                                      ),
-                                    );
-                                    if (selectedAddress != null) {
-                                      _myLocationController.text =
-                                          selectedAddress;
-                                    }
-                                  },
+                                  // onTap: () async {
+                                  //   String? selectedAddress =
+                                  //       await Navigator.push(
+                                  //     context,
+                                  //     MaterialPageRoute(
+                                  //       builder: (context) => SelectLocation(),
+                                  //     ),
+                                  //   );
+                                  //   if (selectedAddress != null) {
+                                  //     _myLocationController.text =
+                                  //         selectedAddress;
+                                  //   }
+                                  // },
                                 ),
                                 const SizedBox(
                                   height: 15.0,
@@ -973,26 +959,26 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                                   controller: _destinationController,
                                   hintText: 'NICOSIA, MAIN STREET',
                                   obscureText: false,
-                                  keyboardType: TextInputType.none,
+                                  keyboardType: TextInputType.emailAddress,
                                   readOnly: true,
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
                                       return "Please fill the destination field";
                                     }
                                   },
-                                  onTap: () async {
-                                    String? selectedAddress =
-                                        await Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => SelectLocation(),
-                                      ),
-                                    );
-                                    if (selectedAddress != null) {
-                                      _destinationController.text =
-                                          selectedAddress;
-                                    }
-                                  },
+                                  // onTap: () async {
+                                  //   String? selectedAddress =
+                                  //       await Navigator.push(
+                                  //     context,
+                                  //     MaterialPageRoute(
+                                  //       builder: (context) => SelectLocation(),
+                                  //     ),
+                                  //   );
+                                  //   if (selectedAddress != null) {
+                                  //     _destinationController.text =
+                                  //         selectedAddress;
+                                  //   }
+                                  // },
                                 ),
                               ]),
                         ),

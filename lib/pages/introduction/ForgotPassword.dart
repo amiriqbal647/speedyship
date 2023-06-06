@@ -97,6 +97,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   'Please verify your email before resetting your password.',
                   style: TextStyle(color: Colors.red),
                 ),
+              Text(
+                'Did you forget your password? write your Email and we will send you a reset link.',
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
               TextFormField(
                 decoration: InputDecoration(labelText: 'Email'),
                 validator: (value) {
@@ -110,9 +114,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 },
               ),
               SizedBox(height: 16.0),
-              ElevatedButton(
+              FilledButton(
                 onPressed: _resetPassword,
-                child: Text('Send Password Reset Email'),
+                child: const Text('Reset Password'),
               ),
             ],
           ),

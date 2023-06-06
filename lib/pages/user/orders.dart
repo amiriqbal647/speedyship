@@ -90,7 +90,7 @@ class OrderList extends StatelessWidget {
             final shipmentStatus = shipment['status'] as String? ?? '';
 
             return Card(
-              margin: const EdgeInsets.all(15.0),
+              margin: const EdgeInsets.all(12.0),
               child: Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: Column(
@@ -98,15 +98,15 @@ class OrderList extends StatelessWidget {
                   children: [
                     Text(
                       'Shipment ID: $shipmentId',
-                      style: Theme.of(context).textTheme.subtitle1,
+                      style: Theme.of(context).textTheme.titleMedium,
                     ),
                     Text(
                       'Location: $location',
-                      style: Theme.of(context).textTheme.subtitle1,
+                      style: Theme.of(context).textTheme.titleMedium,
                     ),
                     Text(
                       'Destination: $destination',
-                      style: Theme.of(context).textTheme.subtitle1,
+                      style: Theme.of(context).textTheme.titleMedium,
                     ),
                     const SizedBox(height: 10.0),
                     if (status == 'approval_pending' &&
@@ -126,7 +126,7 @@ class OrderList extends StatelessWidget {
                         ),
                       ),
                     const SizedBox(height: 10.0),
-                    ElevatedButton(
+                    FilledButton(
                       onPressed: () {
                         _checkAndShowRatingDialog(
                             context, shipmentId, courierId);
@@ -261,7 +261,7 @@ class OrderList extends StatelessWidget {
             ],
           ),
           actions: [
-            ElevatedButton(
+            FilledButton(
               onPressed: () {
                 final ratingData = {
                   'userId': FirebaseAuth.instance.currentUser!.uid,

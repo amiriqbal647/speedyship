@@ -173,7 +173,10 @@ class SummaryPage extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20.0),
                           child: Card(
-                            elevation: 5,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .secondaryContainer,
+                            elevation: 2,
                             child: Padding(
                               padding: const EdgeInsets.all(15.0),
                               child: Column(
@@ -237,7 +240,8 @@ class SummaryPage extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20.0),
                       child: Card(
-                        elevation: 5,
+                        color: Theme.of(context).colorScheme.secondaryContainer,
+                        elevation: 2,
                         child: Padding(
                           padding: const EdgeInsets.all(15.0),
                           child: Column(

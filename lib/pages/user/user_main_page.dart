@@ -8,6 +8,7 @@ import 'package:speedyship/pages/courier/courier_main.dart';
 import 'package:speedyship/pages/shipments/shipmentForm.dart';
 import 'package:speedyship/pages/user/EditProfile.dart';
 import 'package:speedyship/pages/user/ProfilePage.dart';
+import 'package:speedyship/pages/user/help_page.dart';
 import 'package:speedyship/pages/user/orders.dart';
 
 import 'CourierRequsets.dart';
@@ -109,14 +110,14 @@ class _UserMainPageState extends State<UserMainPage> {
             ListTile(
               leading: Icon(Icons.help),
               title: Text('Help'),
-              /*onTap: () {
+              onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => HelpPage(),
+                    builder: (context) => const HelpPage(),
                   ),
                 );
-              },*/
+              },
             ),
             Divider(),
             ListTile(
@@ -179,7 +180,10 @@ class _UserMainPageState extends State<UserMainPage> {
                           ),
                           // start shipping card
                           Card(
-                            elevation: 5,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .secondaryContainer,
+                            elevation: 2,
                             child: Column(
                               children: [
                                 const SizedBox(
@@ -299,7 +303,9 @@ class _UserMainPageState extends State<UserMainPage> {
                         ),
                         // start shipping card
                         Card(
-                          elevation: 5,
+                          color:
+                              Theme.of(context).colorScheme.secondaryContainer,
+                          elevation: 2,
                           child: Column(
                             children: [
                               //box image

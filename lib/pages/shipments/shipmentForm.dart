@@ -102,23 +102,37 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                         children: [
                           //Shipment Details card
                           Card(
-                            elevation: 1,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .secondaryContainer,
+                            elevation: 2,
                             child: Padding(
                               padding: const EdgeInsets.all(15.0),
                               child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   //Shipment details
-                                  Text(
-                                    'Shipment details',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headlineSmall,
+                                  Center(
+                                    child: Text(
+                                      'Shipment details',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headlineSmall,
+                                    ),
                                   ),
                                   const SizedBox(
                                     height: 15,
                                   ),
 
                                   //Category
+                                  Text(
+                                    'Category',
+                                    style:
+                                        Theme.of(context).textTheme.titleMedium,
+                                  ),
+                                  const SizedBox(
+                                    height: 10.0,
+                                  ),
                                   DropdownButtonFormField(
                                     onChanged: (val) {
                                       setState(() {
@@ -126,20 +140,20 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                                       });
                                     },
                                     decoration: InputDecoration(
-                                        border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                            borderSide: const BorderSide(
-                                                color: Colors.transparent,
-                                                width: 0)),
-                                        enabledBorder: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                            borderSide: const BorderSide(
-                                                color: Colors.transparent,
-                                                width: 0)),
-                                        filled: true,
-                                        labelText: 'Category'),
+                                      border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          borderSide: const BorderSide(
+                                              color: Colors.transparent,
+                                              width: 0)),
+                                      enabledBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          borderSide: const BorderSide(
+                                              color: Colors.transparent,
+                                              width: 0)),
+                                      filled: true,
+                                    ),
                                     items: _CategoryList.map((item) {
                                       return DropdownMenuItem(
                                         child: Text(item),
@@ -154,9 +168,17 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                                   ),
 
                                   //Recipient Name
+                                  Text(
+                                    'Recepient name',
+                                    style:
+                                        Theme.of(context).textTheme.titleMedium,
+                                  ),
+                                  const SizedBox(
+                                    height: 10.0,
+                                  ),
                                   MyTextField(
                                     controller: recipientcontroller,
-                                    hintText: 'Recipient name',
+                                    hintText: 'John',
                                     obscureText: false,
                                     keyboardType: TextInputType.name,
                                     readOnly: false,
@@ -175,9 +197,17 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                                   ),
 
                                   //Recipient phone no
+                                  Text(
+                                    'Recepient phone',
+                                    style:
+                                        Theme.of(context).textTheme.titleMedium,
+                                  ),
+                                  const SizedBox(
+                                    height: 10.0,
+                                  ),
                                   MyTextField(
                                     controller: recipientphonecontroller,
-                                    hintText: 'Recipient phone number',
+                                    hintText: '+90 5xx xxx xxxx',
                                     obscureText: false,
                                     keyboardType: TextInputType.phone,
                                     readOnly: false,
@@ -198,9 +228,17 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                                   ),
 
                                   //Weight
+                                  Text(
+                                    'Weight',
+                                    style:
+                                        Theme.of(context).textTheme.titleMedium,
+                                  ),
+                                  const SizedBox(
+                                    height: 10.0,
+                                  ),
                                   MyTextField(
                                     controller: weightController,
-                                    hintText: 'Weight',
+                                    hintText: '30 KG',
                                     obscureText: false,
                                     readOnly: false,
                                     keyboardType: TextInputType.number,
@@ -223,16 +261,39 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                                     height: 15,
                                   ),
 
-                                  //Length & height
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      Text(
+                                        'Length',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium,
+                                      ),
+                                      Text(
+                                        'Width',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium,
+                                      )
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: 10.0,
+                                  ),
+
+                                  //Length & width
                                   Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
+                                      //Length
                                       Flexible(
                                         child: // Length
                                             MyTextField(
                                           controller: lengthController,
-                                          hintText: 'length',
+                                          hintText: '61 CM',
                                           obscureText: false,
                                           readOnly: false,
                                           keyboardType: TextInputType.number,
@@ -253,14 +314,16 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                                           },
                                         ),
                                       ),
+
                                       const SizedBox(
                                         width: 15,
                                       ),
+                                      //width
                                       Flexible(
                                         //width
                                         child: MyTextField(
                                           controller: widthController,
-                                          hintText: 'Width',
+                                          hintText: '46 CM',
                                           obscureText: false,
                                           readOnly: false,
                                           keyboardType: TextInputType.number,
@@ -286,10 +349,19 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                                   const SizedBox(
                                     height: 15,
                                   ),
+
                                   // Height
+                                  Text(
+                                    'Height',
+                                    style:
+                                        Theme.of(context).textTheme.titleMedium,
+                                  ),
+                                  const SizedBox(
+                                    height: 10.0,
+                                  ),
                                   MyTextField(
                                     controller: heightController,
-                                    hintText: 'Height',
+                                    hintText: '46 CM',
                                     obscureText: false,
                                     readOnly: false,
                                     keyboardType: TextInputType.number,
@@ -318,109 +390,150 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
 
                           // Shipping Address card
                           Card(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .secondaryContainer,
+                            elevation: 2,
                             child: Padding(
                               padding: const EdgeInsets.all(15.0),
-                              child: Column(children: [
-                                //Shipping address
-                                Text(
-                                  'Shipping address',
-                                  style:
-                                      Theme.of(context).textTheme.headlineSmall,
-                                ),
-                                const SizedBox(
-                                  height: 15,
-                                ),
-                                // City
-                                DropdownButtonFormField(
-                                  decoration: InputDecoration(
-                                    border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                        borderSide: const BorderSide(
-                                            color: Colors.transparent,
-                                            width: 0)),
-                                    enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                        borderSide: const BorderSide(
-                                            color: Colors.transparent,
-                                            width: 0)),
-                                    filled: true,
-                                    labelText: "City",
-                                  ),
-                                  items: _cityList.map((item) {
-                                    return DropdownMenuItem(
-                                      child: Text(item),
-                                      value: item,
-                                    );
-                                  }).toList(),
-                                  onChanged: (val) {
-                                    setState(() {
-                                      _selectedVal2 = val!;
-                                    });
-                                  },
-                                  value: _selectedVal2,
-                                  icon: Icon(Icons.keyboard_arrow_down_sharp),
-                                ),
-                                const SizedBox(
-                                  height: 15.0,
-                                ),
-
-                                // My Location
-                                MyTextField(
-                                  controller: _myLocationController,
-                                  hintText: 'Location',
-                                  obscureText: false,
-                                  keyboardType: TextInputType.none,
-                                  readOnly: true,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return "Please fill the location field";
-                                    }
-                                  },
-                                  onTap: () async {
-                                    String? selectedAddress =
-                                        await Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => SelectLocation(),
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    //Shipping address
+                                    Center(
+                                      child: Text(
+                                        'Shipping address',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headlineSmall,
                                       ),
-                                    );
-                                    if (selectedAddress != null) {
-                                      _myLocationController.text =
-                                          selectedAddress;
-                                    }
-                                  },
-                                ),
-                                const SizedBox(
-                                  height: 15.0,
-                                ),
+                                    ),
+                                    const SizedBox(
+                                      height: 15,
+                                    ),
 
-                                //Destination
-                                MyTextField(
-                                  controller: _destinationController,
-                                  hintText: 'Destination',
-                                  obscureText: false,
-                                  keyboardType: TextInputType.none,
-                                  readOnly: true,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return "Please fill the destination field";
-                                    }
-                                  },
-                                  onTap: () async {
-                                    String? selectedAddress =
-                                        await Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => SelectLocation(),
+                                    // City
+                                    Text(
+                                      'City',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium,
+                                    ),
+                                    const SizedBox(
+                                      height: 10.0,
+                                    ),
+                                    DropdownButtonFormField(
+                                      decoration: InputDecoration(
+                                        border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            borderSide: const BorderSide(
+                                                color: Colors.transparent,
+                                                width: 0)),
+                                        enabledBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            borderSide: const BorderSide(
+                                                color: Colors.transparent,
+                                                width: 0)),
+                                        filled: true,
                                       ),
-                                    );
-                                    if (selectedAddress != null) {
-                                      _destinationController.text =
-                                          selectedAddress;
-                                    }
-                                  },
-                                ),
-                              ]),
+                                      items: _cityList.map((item) {
+                                        return DropdownMenuItem(
+                                          child: Text(item),
+                                          value: item,
+                                        );
+                                      }).toList(),
+                                      onChanged: (val) {
+                                        setState(() {
+                                          _selectedVal2 = val!;
+                                        });
+                                      },
+                                      value: _selectedVal2,
+                                      icon:
+                                          Icon(Icons.keyboard_arrow_down_sharp),
+                                    ),
+                                    const SizedBox(
+                                      height: 15.0,
+                                    ),
+
+                                    // My Location
+                                    Text(
+                                      'My location',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium,
+                                    ),
+                                    const SizedBox(
+                                      height: 10.0,
+                                    ),
+                                    MyTextField(
+                                      controller: _myLocationController,
+                                      hintText: 'EMU,MAIN CAMPUS',
+                                      obscureText: false,
+                                      keyboardType: TextInputType.none,
+                                      readOnly: true,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return "Please fill the location field";
+                                        }
+                                      },
+                                      onTap: () async {
+                                        String? selectedAddress =
+                                            await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                SelectLocation(),
+                                          ),
+                                        );
+                                        if (selectedAddress != null) {
+                                          _myLocationController.text =
+                                              selectedAddress;
+                                        }
+                                      },
+                                    ),
+                                    const SizedBox(
+                                      height: 15.0,
+                                    ),
+
+                                    //Destination
+                                    Text(
+                                      'Destination',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium,
+                                    ),
+                                    const SizedBox(
+                                      height: 10.0,
+                                    ),
+                                    MyTextField(
+                                      controller: _destinationController,
+                                      hintText: 'NICOSIA, MAIN STREET',
+                                      obscureText: false,
+                                      keyboardType: TextInputType.none,
+                                      readOnly: true,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return "Please fill the destination field";
+                                        }
+                                      },
+                                      onTap: () async {
+                                        String? selectedAddress =
+                                            await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                SelectLocation(),
+                                          ),
+                                        );
+                                        if (selectedAddress != null) {
+                                          _destinationController.text =
+                                              selectedAddress;
+                                        }
+                                      },
+                                    ),
+                                  ]),
                             ),
                           ),
                           const SizedBox(
@@ -478,22 +591,33 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                     children: [
                       //Shipment Details card
                       Card(
-                        elevation: 1,
+                        color: Theme.of(context).colorScheme.secondaryContainer,
+                        elevation: 2,
                         child: Padding(
                           padding: const EdgeInsets.all(15.0),
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               //Shipment details
-                              Text(
-                                'Shipment details',
-                                style:
-                                    Theme.of(context).textTheme.headlineSmall,
+                              Center(
+                                child: Text(
+                                  'Shipment details',
+                                  style:
+                                      Theme.of(context).textTheme.headlineSmall,
+                                ),
                               ),
                               const SizedBox(
                                 height: 15,
                               ),
 
                               //Category
+                              Text(
+                                'Category',
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                              const SizedBox(
+                                height: 10.0,
+                              ),
                               DropdownButtonFormField(
                                 onChanged: (val) {
                                   setState(() {
@@ -501,18 +625,16 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                                   });
                                 },
                                 decoration: InputDecoration(
-                                    border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                        borderSide: const BorderSide(
-                                            color: Colors.transparent,
-                                            width: 0)),
-                                    enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                        borderSide: const BorderSide(
-                                            color: Colors.transparent,
-                                            width: 0)),
-                                    filled: true,
-                                    labelText: 'Category'),
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: const BorderSide(
+                                          color: Colors.transparent, width: 0)),
+                                  enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: const BorderSide(
+                                          color: Colors.transparent, width: 0)),
+                                  filled: true,
+                                ),
                                 items: _CategoryList.map((item) {
                                   return DropdownMenuItem(
                                     child: Text(item),
@@ -527,9 +649,16 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                               ),
 
                               //Recipient Name
+                              Text(
+                                'Recepient name',
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                              const SizedBox(
+                                height: 10.0,
+                              ),
                               MyTextField(
                                 controller: recipientcontroller,
-                                hintText: 'Recipient name',
+                                hintText: 'John',
                                 obscureText: false,
                                 keyboardType: TextInputType.name,
                                 readOnly: false,
@@ -548,9 +677,16 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                               ),
 
                               //Recipient phone no
+                              Text(
+                                'Recepient phone',
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                              const SizedBox(
+                                height: 10.0,
+                              ),
                               MyTextField(
                                 controller: recipientphonecontroller,
-                                hintText: 'Recipient phone number',
+                                hintText: '+90 5xx xxx xxxx',
                                 obscureText: false,
                                 keyboardType: TextInputType.phone,
                                 readOnly: false,
@@ -571,9 +707,16 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                               ),
 
                               //Weight
+                              Text(
+                                'Weight',
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                              const SizedBox(
+                                height: 10.0,
+                              ),
                               MyTextField(
                                 controller: weightController,
-                                hintText: 'Weight',
+                                hintText: '30 kg',
                                 obscureText: false,
                                 readOnly: false,
                                 keyboardType: TextInputType.number,
@@ -595,16 +738,37 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                                 height: 15,
                               ),
 
-                              //Length & height
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  Text(
+                                    'Length',
+                                    style:
+                                        Theme.of(context).textTheme.titleMedium,
+                                  ),
+                                  Text(
+                                    'Width',
+                                    style:
+                                        Theme.of(context).textTheme.titleMedium,
+                                  )
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 10.0,
+                              ),
+
+                              //Length & width
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
+                                  //Length
                                   Flexible(
                                     child: // Length
                                         MyTextField(
                                       controller: lengthController,
-                                      hintText: 'length',
+                                      hintText: '61 CM',
                                       obscureText: false,
                                       readOnly: false,
                                       keyboardType: TextInputType.number,
@@ -624,14 +788,16 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                                       },
                                     ),
                                   ),
+
                                   const SizedBox(
                                     width: 15,
                                   ),
+                                  //width
                                   Flexible(
                                     //width
                                     child: MyTextField(
                                       controller: widthController,
-                                      hintText: 'Width',
+                                      hintText: '46 CM',
                                       obscureText: false,
                                       readOnly: false,
                                       keyboardType: TextInputType.number,
@@ -656,10 +822,18 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                               const SizedBox(
                                 height: 15,
                               ),
+
                               // Height
+                              Text(
+                                'Height',
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                              const SizedBox(
+                                height: 10.0,
+                              ),
                               MyTextField(
                                 controller: heightController,
-                                hintText: 'Height',
+                                hintText: '46 CM',
                                 obscureText: false,
                                 readOnly: false,
                                 keyboardType: TextInputType.number,
@@ -687,102 +861,140 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
 
                       // Shipping Address card
                       Card(
+                        color: Theme.of(context).colorScheme.secondaryContainer,
+                        elevation: 2,
                         child: Padding(
                           padding: const EdgeInsets.all(15.0),
-                          child: Column(children: [
-                            //Shipping address
-                            Text(
-                              'Shipping address',
-                              style: Theme.of(context).textTheme.headlineSmall,
-                            ),
-                            const SizedBox(
-                              height: 15,
-                            ),
-                            // City
-                            DropdownButtonFormField(
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: const BorderSide(
-                                        color: Colors.transparent, width: 0)),
-                                enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: const BorderSide(
-                                        color: Colors.transparent, width: 0)),
-                                filled: true,
-                                labelText: "City",
-                              ),
-                              items: _cityList.map((item) {
-                                return DropdownMenuItem(
-                                  child: Text(item),
-                                  value: item,
-                                );
-                              }).toList(),
-                              onChanged: (val) {
-                                setState(() {
-                                  _selectedVal2 = val!;
-                                });
-                              },
-                              value: _selectedVal2,
-                              icon: Icon(Icons.keyboard_arrow_down_sharp),
-                            ),
-                            const SizedBox(
-                              height: 15.0,
-                            ),
-
-                            // My Location
-                            MyTextField(
-                              controller: _myLocationController,
-                              hintText: 'Location',
-                              obscureText: false,
-                              keyboardType: TextInputType.none,
-                              readOnly: true,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "Please fill the location field";
-                                }
-                              },
-                              onTap: () async {
-                                String? selectedAddress = await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => SelectLocation(),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                //Shipping address
+                                Center(
+                                  child: Text(
+                                    'Shipping address',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall,
                                   ),
-                                );
-                                if (selectedAddress != null) {
-                                  _myLocationController.text = selectedAddress;
-                                }
-                              },
-                            ),
-                            const SizedBox(
-                              height: 15.0,
-                            ),
+                                ),
+                                const SizedBox(
+                                  height: 15,
+                                ),
 
-                            //Destination
-                            MyTextField(
-                              controller: _destinationController,
-                              hintText: 'Destination',
-                              obscureText: false,
-                              keyboardType: TextInputType.none,
-                              readOnly: true,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "Please fill the destination field";
-                                }
-                              },
-                              onTap: () async {
-                                String? selectedAddress = await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => SelectLocation(),
+                                // City
+                                Text(
+                                  'City',
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
+                                ),
+                                const SizedBox(
+                                  height: 10.0,
+                                ),
+                                DropdownButtonFormField(
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: const BorderSide(
+                                            color: Colors.transparent,
+                                            width: 0)),
+                                    enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: const BorderSide(
+                                            color: Colors.transparent,
+                                            width: 0)),
+                                    filled: true,
                                   ),
-                                );
-                                if (selectedAddress != null) {
-                                  _destinationController.text = selectedAddress;
-                                }
-                              },
-                            ),
-                          ]),
+                                  items: _cityList.map((item) {
+                                    return DropdownMenuItem(
+                                      child: Text(item),
+                                      value: item,
+                                    );
+                                  }).toList(),
+                                  onChanged: (val) {
+                                    setState(() {
+                                      _selectedVal2 = val!;
+                                    });
+                                  },
+                                  value: _selectedVal2,
+                                  icon: Icon(Icons.keyboard_arrow_down_sharp),
+                                ),
+                                const SizedBox(
+                                  height: 15.0,
+                                ),
+
+                                // My Location
+                                Text(
+                                  'My location',
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
+                                ),
+                                const SizedBox(
+                                  height: 10.0,
+                                ),
+                                MyTextField(
+                                  controller: _myLocationController,
+                                  hintText: 'EMU, MAIN CAMPUS',
+                                  obscureText: false,
+                                  keyboardType: TextInputType.none,
+                                  readOnly: true,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return "Please fill the location field";
+                                    }
+                                  },
+                                  onTap: () async {
+                                    String? selectedAddress =
+                                        await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => SelectLocation(),
+                                      ),
+                                    );
+                                    if (selectedAddress != null) {
+                                      _myLocationController.text =
+                                          selectedAddress;
+                                    }
+                                  },
+                                ),
+                                const SizedBox(
+                                  height: 15.0,
+                                ),
+
+                                //Destination
+                                Text(
+                                  'Destination',
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
+                                ),
+                                const SizedBox(
+                                  height: 10.0,
+                                ),
+                                MyTextField(
+                                  controller: _destinationController,
+                                  hintText: 'NICOSIA, MAIN STREET',
+                                  obscureText: false,
+                                  keyboardType: TextInputType.none,
+                                  readOnly: true,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return "Please fill the destination field";
+                                    }
+                                  },
+                                  onTap: () async {
+                                    String? selectedAddress =
+                                        await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => SelectLocation(),
+                                      ),
+                                    );
+                                    if (selectedAddress != null) {
+                                      _destinationController.text =
+                                          selectedAddress;
+                                    }
+                                  },
+                                ),
+                              ]),
                         ),
                       ),
                       const SizedBox(

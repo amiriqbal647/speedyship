@@ -4,6 +4,7 @@ import 'package:speedyship/components/my_button2.dart';
 import 'package:speedyship/pages/courier/courier_main.dart';
 import 'package:speedyship/pages/courier/courier_register.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:speedyship/components/my_expansiontile.dart';
 
 class BecomeCourierPage extends StatelessWidget {
   @override
@@ -113,33 +114,6 @@ class BecomeCourierPage extends StatelessWidget {
                 ),
         ),
       ),
-    );
-  }
-}
-
-class MyExpansionTile extends StatelessWidget {
-  final String title;
-  final List<String> details;
-
-  MyExpansionTile({required this.title, required this.details});
-
-  @override
-  Widget build(BuildContext context) {
-    return ExpansionTile(
-      title: Text(
-        title,
-        style: Theme.of(context).textTheme.headlineSmall,
-      ),
-      children: details
-          .map((detail) => Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                child: Text(
-                  detail,
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-              ))
-          .toList(),
     );
   }
 }

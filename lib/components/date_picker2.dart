@@ -26,7 +26,8 @@ class _MyDatePickerTwoState extends State<MyDatePickerTwo> {
       context: context,
       initialDate: _selectedDate,
       firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
+      lastDate: DateTime(
+          DateTime.now().year + 1), // Allow dates up to 1 year from now
     );
     if (picked != null && picked != _selectedDate) {
       setState(() {

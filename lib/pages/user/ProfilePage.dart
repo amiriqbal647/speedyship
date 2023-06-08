@@ -28,7 +28,7 @@ class _ProfilePageState extends State<ProfilePage> {
     String loggedInUserId = currentUser.uid;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('User account')),
+      appBar: AppBar(title: const Text('User accounts')),
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
             .collection('users')

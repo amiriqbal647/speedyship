@@ -11,8 +11,6 @@ class AdminHome extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<AdminHome> {
-  Color iconColor = Color.fromRGBO(231, 123, 0, 1.0);
-
   Widget _buildDashboardButton(
       String label, IconData icon, VoidCallback onPressed) {
     return Container(
@@ -32,17 +30,10 @@ class _MyHomePageState extends State<AdminHome> {
               Icon(
                 icon,
                 size: 100,
-                color: iconColor,
+                color: Theme.of(context).colorScheme.primary,
               ),
               SizedBox(height: 12),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromARGB(255, 75, 75, 75),
-                ),
-              ),
+              Text(label, style: Theme.of(context).textTheme.titleLarge),
             ],
           ),
         ),
@@ -54,7 +45,6 @@ class _MyHomePageState extends State<AdminHome> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromRGBO(9, 147, 120, 1.0),
         title: Center(child: Text('Welcome Admin')),
         actions: [
           IconButton(

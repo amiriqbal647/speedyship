@@ -94,8 +94,8 @@ class _SignupPageState extends State<SignupPage> {
         print('The password provided is too weak.');
       } else if (e.code == 'email-already-in-use') {
         ElegantNotification.error(
-          title: Text('User Not Found'),
-          description: Text('The email you entered does not exist.'),
+          title: Text('Email'),
+          description: Text('The email you entered already in use.'),
         ).show(context);
       } else if (e.code == 'network-request-failed') {
         ElegantNotification.error(
@@ -144,7 +144,7 @@ class _SignupPageState extends State<SignupPage> {
                                 ),
                                 InkWell(
                                   child: Text(
-                                    'Log in',
+                                    ' Log in',
                                     style: TextStyle(
                                         color: Theme.of(context)
                                             .colorScheme
@@ -214,20 +214,23 @@ class _SignupPageState extends State<SignupPage> {
                                 return null; // Return null if the password is valid
                               },
                             ),
-
                             const SizedBox(height: 15),
-                            //repeat
+// Repeat password
                             MyTextField(
-                                keyboardType: TextInputType.text,
-                                controller: repeatController,
-                                hintText: 'Repeat your password',
-                                obscureText: true,
-                                readOnly: false,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please fill the repeat password field';
-                                  }
-                                }),
+                              keyboardType: TextInputType.text,
+                              controller: repeatController,
+                              hintText: 'Repeat your password',
+                              obscureText: true,
+                              readOnly: false,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please fill the repeat password field';
+                                } else if (value != passwordController.text) {
+                                  return 'Passwords do not match';
+                                }
+                                return null; // Return null if the repeat password is valid
+                              },
+                            ),
 
                             const SizedBox(height: 15),
 
@@ -313,53 +316,53 @@ class _SignupPageState extends State<SignupPage> {
                             ),
                             const SizedBox(height: 15),
                             //or continue with
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: const Divider(
-                                    thickness: 1,
-                                  ),
-                                ),
-                                const Padding(
-                                  padding:
-                                      EdgeInsets.symmetric(horizontal: 10.0),
-                                  child: Text(
-                                    'Or continue using',
-                                  ),
-                                ),
-                                const Expanded(
-                                    child: Divider(
-                                  thickness: 1,
-                                ))
-                              ],
-                            ),
+                            // Row(
+                            //   children: [
+                            //     Expanded(
+                            //       child: const Divider(
+                            //         thickness: 1,
+                            //       ),
+                            //     ),
+                            //     const Padding(
+                            //       padding:
+                            //           EdgeInsets.symmetric(horizontal: 10.0),
+                            //       child: Text(
+                            //         'Or continue using',
+                            //       ),
+                            //     ),
+                            //     const Expanded(
+                            //         child: Divider(
+                            //       thickness: 1,
+                            //     ))
+                            //   ],
+                            // ),
 
                             const SizedBox(height: 15),
                             //google and apple sign in buttons
                             // google button
-                            Center(
-                              child: MyElevatedButton(
-                                onPressed: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          AuthService().signInWithGoogle(),
-                                    ),
-                                  );
-                                },
-                                imagepath: 'lib/images/google.png',
-                                buttonText: 'Google',
-                              ),
-                            ),
+                            // Center(
+                            //   child: MyElevatedButton(
+                            //     onPressed: () {
+                            //       Navigator.of(context).push(
+                            //         MaterialPageRoute(
+                            //           builder: (context) =>
+                            //               AuthService().signInWithGoogle(),
+                            //         ),
+                            //       );
+                            //     },
+                            //     imagepath: 'lib/images/google.png',
+                            //     buttonText: 'Google',
+                            //   ),
+                            // ),
 
                             const SizedBox(height: 15),
                             // apple button
-                            Center(
-                                child: MyElevatedButton(
-                              onPressed: () {},
-                              imagepath: 'lib/images/apple.png',
-                              buttonText: 'Apple',
-                            )),
+                            // Center(
+                            //     child: MyElevatedButton(
+                            //   onPressed: () {},
+                            //   imagepath: 'lib/images/apple.png',
+                            //   buttonText: 'Apple',
+                            // )),
                           ]),
                     ),
                   ),
@@ -381,7 +384,7 @@ class _SignupPageState extends State<SignupPage> {
                       ),
                       InkWell(
                         child: Text(
-                          'Log in',
+                          ' Log in',
                           style: TextStyle(
                               color: Theme.of(context).colorScheme.primary,
                               fontSize: 16),
@@ -444,20 +447,23 @@ class _SignupPageState extends State<SignupPage> {
                       return null; // Return null if the password is valid
                     },
                   ),
-
                   const SizedBox(height: 15),
-                  //repeat
+// Repeat password
                   MyTextField(
-                      keyboardType: TextInputType.text,
-                      controller: repeatController,
-                      hintText: 'Repeat your password',
-                      obscureText: true,
-                      readOnly: false,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please fill the repeat password field';
-                        }
-                      }),
+                    keyboardType: TextInputType.text,
+                    controller: repeatController,
+                    hintText: 'Repeat your password',
+                    obscureText: true,
+                    readOnly: false,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please fill the repeat password field';
+                      } else if (value != passwordController.text) {
+                        return 'Passwords do not match';
+                      }
+                      return null; // Return null if the repeat password is valid
+                    },
+                  ),
 
                   const SizedBox(height: 15),
 
@@ -530,44 +536,13 @@ class _SignupPageState extends State<SignupPage> {
                     ),
                   ),
                   const SizedBox(height: 15),
-                  //or continue with
-                  Row(
-                    children: [
-                      Expanded(
-                        child: const Divider(
-                          thickness: 1,
-                        ),
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10.0),
-                        child: Text(
-                          'Or continue using',
-                        ),
-                      ),
-                      const Expanded(
-                          child: Divider(
-                        thickness: 1,
-                      ))
-                    ],
-                  ),
+
                   const SizedBox(height: 15),
                   //google and apple sign in buttons
                   // google button
-                  Center(
-                      child: MyElevatedButton(
-                    onPressed: () {},
-                    imagepath: 'lib/images/google.png',
-                    buttonText: 'Google',
-                  )),
 
                   const SizedBox(height: 15),
                   // apple button
-                  Center(
-                      child: MyElevatedButton(
-                    onPressed: () {},
-                    imagepath: 'lib/images/apple.png',
-                    buttonText: 'Apple',
-                  )),
                 ]),
         ),
       ),

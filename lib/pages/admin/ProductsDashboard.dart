@@ -98,8 +98,7 @@ class _ProductsDashboardState extends State<ProductsDashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromRGBO(9, 147, 120, 1.0),
-        title: Text('Products Dashboard'),
+        title: const Text('Products Dashboard'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -108,10 +107,9 @@ class _ProductsDashboardState extends State<ProductsDashboard> {
           itemBuilder: (context, index) {
             final shipment = shipments[index];
             return Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
+              elevation: 2,
+              color: Theme.of(context).colorScheme.secondaryContainer,
+              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: Column(
@@ -163,10 +161,7 @@ class _ProductsDashboardState extends State<ProductsDashboard> {
                     Align(
                       alignment: Alignment.centerRight,
                       child: IconButton(
-                        icon: Icon(
-                          Icons.delete,
-                          color: Color.fromARGB(255, 222, 114, 25),
-                        ),
+                        icon: Icon(Icons.delete, color: Colors.red),
                         onPressed: () {
                           deleteShipment(shipment);
                         },

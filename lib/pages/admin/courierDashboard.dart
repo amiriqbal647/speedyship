@@ -12,8 +12,6 @@ class CourierDashboard extends StatefulWidget {
 class _CourierDashboardState extends State<CourierDashboard> {
   final CollectionReference usersRef =
       FirebaseFirestore.instance.collection('users');
-  final Color primaryColor = Color(0xFF009378);
-  final Color accentColor = Color(0xFFE77B00);
 
   void deleteUser(String userId) {
     usersRef.doc(userId).delete();
@@ -23,8 +21,7 @@ class _CourierDashboardState extends State<CourierDashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Courier List', style: TextStyle(color: Colors.white)),
-        backgroundColor: primaryColor,
+        title: const Text('Courier List'),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: usersRef.where('role', isEqualTo: 'courier').snapshots(),
@@ -33,7 +30,6 @@ class _CourierDashboardState extends State<CourierDashboard> {
             return Center(
               child: Text(
                 'Something went wrong',
-                style: TextStyle(color: Colors.black),
               ),
             );
           }
@@ -65,24 +61,24 @@ class _CourierDashboardState extends State<CourierDashboard> {
               final overallRating = user is Map ? user['overallRating'] : null;
 
               return Card(
-                elevation: 5.0,
-                margin: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                elevation: 2.0,
+                color: Theme.of(context).colorScheme.secondaryContainer,
+                margin:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),
                 ),
                 child: Container(
-                  padding: EdgeInsets.all(15),
+                  padding: const EdgeInsets.all(15),
                   child: Column(
                     children: [
                       Row(
                         children: [
                           CircleAvatar(
                             radius: 30,
-                            backgroundColor: accentColor,
                             child: Text(
                               '${firstName[0]}${lastName[0]}',
                               style: TextStyle(
-                                color: Colors.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18.0,
                               ),
@@ -95,35 +91,30 @@ class _CourierDashboardState extends State<CourierDashboard> {
                               children: [
                                 Text('$firstName $lastName',
                                     style: TextStyle(
-                                      color: Colors.black,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18.0,
                                     )),
                                 SizedBox(height: 10),
                                 Text('Email: $email',
                                     style: TextStyle(
-                                      color: Colors.black,
                                       fontSize: 16.0,
                                     )),
                                 SizedBox(height: 5),
                                 Text(
                                   'Phone: ${phoneNumber ?? 'No phone number'}',
                                   style: TextStyle(
-                                    color: Colors.black,
                                     fontSize: 16.0,
                                   ),
                                 ),
                                 SizedBox(height: 5),
                                 Text('DOB: $dateOfBirth',
                                     style: TextStyle(
-                                      color: Colors.black,
                                       fontSize: 16.0,
                                     )),
                                 SizedBox(height: 5),
                                 Text(
                                     'Overall Rating: ${overallRating.toStringAsFixed(2) ?? "N/A"}',
                                     style: TextStyle(
-                                      color: Colors.black,
                                       fontSize: 16.0,
                                     )),
                               ],
@@ -136,7 +127,7 @@ class _CourierDashboardState extends State<CourierDashboard> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           IconButton(
-                            icon: Icon(Icons.edit, color: primaryColor),
+                            icon: const Icon(Icons.edit),
                             onPressed: () {
                               Navigator.push(
                                 context,
@@ -160,7 +151,7 @@ class _CourierDashboardState extends State<CourierDashboard> {
                                 context: context,
                                 builder: (BuildContext context) {
                                   return AlertDialog(
-                                    title: Text('Confirm Deletion'),
+                                    title: const Text('Confirm Deletion'),
                                     content: Text(
                                         'Are you sure you want to delete this user?'),
                                     actions: [

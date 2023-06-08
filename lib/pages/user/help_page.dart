@@ -13,23 +13,21 @@ class HelpPage extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(15.0),
         child: ListView(children: [
-          MyExpansionTile(title: 'How do I track my delivery?', details: const [
-            'You can track your delivery through the "Orders" section in the app. Each order will have a tracking number and a link to follow the status of your delivery.'
+          MyExpansionTile(
+              title: 'How do I place a shipment order on the platform?',
+              details: const [
+                'To place a shipment order, navigate to the "Create Shipment" section, fill out the necessary information such as pick-up location, drop-off location, package details, and click on the "Create Shipment" button.'
+              ]),
+          MyExpansionTile(title: 'How do I track my shipment?', details: const [
+            'To track your shipment, navigate to the "Orders" in the drawer and veiw the processing or cancelled or delivered shipments. '
           ]),
           MyExpansionTile(
-              title: 'What are the delivery rates?',
+              title: 'How do I accept or reject a bid?',
               details: const [
-                'Delivery rates depend on the size, weight, and destination of the package. You can check the rates during the shipment creation process.'
+                'To accept or reject a bid, navigate to the “Requests” section, select the bid you want to respond to, and choose either "Accept" or "Reject".'
               ]),
-          MyExpansionTile(
-              title: 'How do I change my account information?',
-              details: const [
-                'To change your account information, go to the "Account" section in the app, and click on the "Edit Profile" button.'
-              ]),
-          MyExpansionTile(title: 'Need more help?', details: const [
-            'If you still have questions or need assistance, feel free to contact our support team:',
-            'Email: support@speedyship.com',
-            'Phone: +1 (555) 123-4567',
+          MyExpansionTile(title: 'How do I update my profile?', details: const [
+            'To update your profile, go to the "Profile" tab, click on "Edit Profile", make the necessary changes, and save the changes.',
           ])
         ]),
       ),

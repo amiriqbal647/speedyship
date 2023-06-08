@@ -73,30 +73,24 @@ class _NewCourierPageState extends State<NewCourierPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Color(0xFF009378),
-        title: Text('New Courier'),
+        title: const Text('New Courier'),
       ),
       body: ListView.builder(
         itemCount: _users.length,
         itemBuilder: (context, index) {
           final user = _users[index];
           return Card(
-            margin: EdgeInsets.all(10),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
+            margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+            color: Theme.of(context).colorScheme.secondaryContainer,
             elevation: 5, // Add shadow to the card
             child: Column(
               children: [
                 ListTile(
-                  title: Text('${user.firstName} ${user.lastName}',
-                      style: TextStyle(
-                          color:
-                              Colors.black)), // user name text color is black
-                  subtitle: Text('Status: ${user.status}',
-                      style: TextStyle(color: Color(0xFFE77B00))),
+                  title: Text('${user.firstName} ${user.lastName}'),
+                  subtitle: Text(
+                    'Status: ${user.status}',
+                  ),
                   onTap: () {
                     Navigator.push(
                       context,
@@ -112,19 +106,13 @@ class _NewCourierPageState extends State<NewCourierPage> {
                 ),
                 ButtonBar(
                   children: [
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        primary: Color(0xFF009378),
-                      ),
+                    FilledButton(
                       onPressed: () => _approveUser(user),
-                      child: Text('Approve'),
+                      child: const Text('Approve'),
                     ),
                     ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        primary: Color(0xFFE77B00),
-                      ),
                       onPressed: () => _denyUser(user),
-                      child: Text('Deny'),
+                      child: const Text('Deny'),
                     ),
                   ],
                 ),

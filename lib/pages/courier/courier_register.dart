@@ -104,7 +104,7 @@ class _DocumentUploaderState extends State<DocumentUploader> {
                           ),
                           title: Text(
                             'Drivers License',
-                            style: Theme.of(context).textTheme.titleLarge,
+                            style: Theme.of(context).textTheme.headline6,
                           ),
                           subtitle: _file1 == null
                               ? Text("No file selected")
@@ -128,7 +128,7 @@ class _DocumentUploaderState extends State<DocumentUploader> {
                           ),
                           title: Text(
                             'Conviction Record',
-                            style: Theme.of(context).textTheme.titleLarge,
+                            style: Theme.of(context).textTheme.headline6,
                           ),
                           subtitle: _file2 == null
                               ? Text("No file selected")
@@ -170,7 +170,7 @@ class _DocumentUploaderState extends State<DocumentUploader> {
                       ),
                       title: Text(
                         'Drivers License',
-                        style: Theme.of(context).textTheme.titleLarge,
+                        style: Theme.of(context).textTheme.headline6,
                       ),
                       subtitle: _file1 == null
                           ? Text("No file selected")
@@ -194,7 +194,7 @@ class _DocumentUploaderState extends State<DocumentUploader> {
                       ),
                       title: Text(
                         'Conviction Record',
-                        style: Theme.of(context).textTheme.titleLarge,
+                        style: Theme.of(context).textTheme.headline6,
                       ),
                       subtitle: _file2 == null
                           ? Text("No file selected")
@@ -261,21 +261,21 @@ Widget _buildDialogContent(BuildContext context) {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Text(
-                'Documents Uploaded Successfully',
+                'Success',
                 style: TextStyle(
                   fontSize: 24.0,
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16.0),
               Text(
-                'Your documents have been uploaded successfully. Please wait for verification.',
+                'Documents uploaded successfully!',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 16.0,
                 ),
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: 24.0),
               Align(
                 alignment: Alignment.bottomRight,
                 child: TextButton(
@@ -286,7 +286,7 @@ Widget _buildDialogContent(BuildContext context) {
                     'OK',
                     style: TextStyle(
                       fontSize: 16.0,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
@@ -296,18 +296,15 @@ Widget _buildDialogContent(BuildContext context) {
         ),
         Positioned(
           top: 0,
-          left: 20,
-          right: 20,
+          left: 16,
+          right: 16,
           child: CircleAvatar(
-            backgroundColor: Colors.transparent,
+            backgroundColor: Colors.green,
             radius: 45,
-            child: ClipRRect(
-              borderRadius: BorderRadius.all(Radius.circular(45)),
-              child: Image.asset(
-                'assets/images/checkmark.png',
-                height: 80,
-                width: 80,
-              ),
+            child: Icon(
+              Icons.check,
+              color: Colors.white,
+              size: 50,
             ),
           ),
         ),
@@ -317,9 +314,18 @@ Widget _buildDialogContent(BuildContext context) {
 }
 
 void main() {
-  runApp(ResponsiveSizer(builder: (context, orientation, deviceType) {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'Document Uploader',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
       home: DocumentUploader(),
     );
-  }));
+  }
 }

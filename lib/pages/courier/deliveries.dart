@@ -109,7 +109,7 @@ class _DeliveriesPageState extends State<DeliveriesPage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Deliveries'),
+        title: const Text('Deliveries'),
         bottom: TabBar(
           controller: _tabController,
           tabs: [
@@ -168,6 +168,9 @@ class _DeliveriesPageState extends State<DeliveriesPage>
           itemBuilder: (BuildContext context, int index) {
             Delivery delivery = snapshot.data![index];
             return Card(
+              margin:
+                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+              color: Theme.of(context).colorScheme.secondaryContainer,
               child: Column(
                 children: [
                   ListTile(
@@ -181,10 +184,10 @@ class _DeliveriesPageState extends State<DeliveriesPage>
                     ),
                   ),
                   ButtonBar(
-                    alignment: MainAxisAlignment.end,
+                    alignment: MainAxisAlignment.start,
                     children: [
                       if (showCompleteButton)
-                        ElevatedButton(
+                        FilledButton(
                           onPressed: () {
                             showDialog(
                               context: context,
@@ -218,7 +221,11 @@ class _DeliveriesPageState extends State<DeliveriesPage>
                               },
                             );
                           },
-                          child: Text('Complete Delivery'),
+                          style: FilledButton.styleFrom(
+                              fixedSize: const Size.fromHeight(40),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8))),
+                          child: const Text('Complete Delivery'),
                         ),
                       if (showCancelButton)
                         ElevatedButton(
@@ -255,7 +262,11 @@ class _DeliveriesPageState extends State<DeliveriesPage>
                               },
                             );
                           },
-                          child: Text('Cancel'),
+                          style: FilledButton.styleFrom(
+                              fixedSize: const Size.fromHeight(40),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8))),
+                          child: const Text('Cancel'),
                         ),
                       ElevatedButton(
                         onPressed: () {
@@ -263,10 +274,17 @@ class _DeliveriesPageState extends State<DeliveriesPage>
                           // Replace with your own logic
                           print('Support clicked');
                         },
-                        child: Text('Support'),
+                        style: FilledButton.styleFrom(
+                            fixedSize: const Size.fromHeight(40),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8))),
+                        child: const Text('Support'),
                       ),
                     ],
                   ),
+                  const SizedBox(
+                    height: 10.0,
+                  )
                 ],
               ),
             );

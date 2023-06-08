@@ -178,6 +178,7 @@ class _LoginPageState extends State<LoginPage> {
                                 child: MyButton(
                               onTap: () {
                                 if (_formKey.currentState!.validate()) {
+                                  print("You Logged in successfully");
                                   signin();
                                 }
                               },
@@ -186,48 +187,48 @@ class _LoginPageState extends State<LoginPage> {
                             const SizedBox(height: 15),
 
                             //or continue using
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: const Divider(
-                                    thickness: 1,
-                                  ),
-                                ),
-                                const Padding(
-                                  padding:
-                                      EdgeInsets.symmetric(horizontal: 10.0),
-                                  child: Text(
-                                    'Or continue using',
-                                  ),
-                                ),
-                                const Expanded(
-                                    child: Divider(
-                                  thickness: 1,
-                                ))
-                              ],
-                            ),
+                            // Row(
+                            //   children: [
+                            //     Expanded(
+                            //       child: const Divider(
+                            //         thickness: 1,
+                            //       ),
+                            //     ),
+                            //     const Padding(
+                            //       padding:
+                            //           EdgeInsets.symmetric(horizontal: 10.0),
+                            //       child: Text(
+                            //         'Or continue using',
+                            //       ),
+                            //     ),
+                            //     const Expanded(
+                            //         child: Divider(
+                            //       thickness: 1,
+                            //     ))
+                            //   ],
+                            // ),
 
                             const SizedBox(height: 15),
 
                             // google button
-                            Center(
-                                child: MyElevatedButton(
-                              onPressed: () {
-                                print("hello google is pressed");
-                                AuthService().signInWithGoogle();
-                              },
-                              imagepath: 'lib/images/google.png',
-                              buttonText: 'Google',
-                            )),
+                            // Center(
+                            //     child: MyElevatedButton(
+                            //   onPressed: () {
+                            //     print("hello google is pressed");
+                            //     AuthService().signInWithGoogle();
+                            //   },
+                            //   imagepath: 'lib/images/google.png',
+                            //   buttonText: 'Google',
+                            // )),
 
                             const SizedBox(height: 15),
                             // apple button
-                            Center(
-                                child: MyElevatedButton(
-                              onPressed: () {},
-                              imagepath: 'lib/images/apple.png',
-                              buttonText: 'Apple',
-                            )),
+                            // Center(
+                            //     child: MyElevatedButton(
+                            //   onPressed: () {},
+                            //   imagepath: 'lib/images/apple.png',
+                            //   buttonText: 'Apple',
+                            // )),
                           ]),
                     ),
                   )
@@ -313,10 +314,19 @@ class _LoginPageState extends State<LoginPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Text(
-                          'Forgot password?',
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.primary),
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        ForgotPasswordPage()));
+                          },
+                          child: Text(
+                            'Forgot password?',
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.primary),
+                          ),
                         ),
                       ],
                     ),
@@ -335,48 +345,48 @@ class _LoginPageState extends State<LoginPage> {
                     const SizedBox(height: 15),
 
                     //or continue using
-                    Row(
-                      children: [
-                        Expanded(
-                          child: const Divider(
-                            thickness: 1,
-                          ),
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 10.0),
-                          child: Text(
-                            'Or continue using',
-                          ),
-                        ),
-                        const Expanded(
-                            child: Divider(
-                          thickness: 1,
-                        ))
-                      ],
-                    ),
+                    // Row(
+                    //   children: [
+                    //     Expanded(
+                    //       child: const Divider(
+                    //         thickness: 1,
+                    //       ),
+                    //     ),
+                    //     const Padding(
+                    //       padding: EdgeInsets.symmetric(horizontal: 10.0),
+                    //       child: Text(
+                    //         'Or continue using',
+                    //       ),
+                    //     ),
+                    //     const Expanded(
+                    //         child: Divider(
+                    //       thickness: 1,
+                    //     ))
+                    //   ],
+                    // ),
 
                     const SizedBox(height: 15),
 
                     // google button
-                    Center(
-                        child: MyElevatedButton(
-                      onPressed: () {
-                        print("hello google is pressed");
+                    // Center(
+                    //     child: MyElevatedButton(
+                    //   onPressed: () {
+                    //     print("hello google is pressed");
 
-                        AuthService().signInWithGoogle();
-                      },
-                      imagepath: 'lib/images/google.png',
-                      buttonText: 'Google',
-                    )),
+                    //     AuthService().signInWithGoogle();
+                    //   },
+                    //   imagepath: 'lib/images/google.png',
+                    //   buttonText: 'Google',
+                    // )),
 
                     const SizedBox(height: 15),
-                    // apple button
-                    Center(
-                        child: MyElevatedButton(
-                      onPressed: () {},
-                      imagepath: 'lib/images/apple.png',
-                      buttonText: 'Apple',
-                    )),
+                    // // apple button
+                    // Center(
+                    //     child: MyElevatedButton(
+                    //   onPressed: () {},
+                    //   imagepath: 'lib/images/apple.png',
+                    //   buttonText: 'Apple',
+                    // )),
                   ]),
           ),
         ),

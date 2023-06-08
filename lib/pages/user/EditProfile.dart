@@ -149,7 +149,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                     setState(() {
                                       _email = value;
                                     });
-                                  }),
+                                  }, readOnly: true),
                                   const SizedBox(height: 10.0),
 
                                   //Phone number
@@ -279,7 +279,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                 setState(() {
                                   _email = value;
                                 });
-                              }),
+                              }, readOnly: true),
                               const SizedBox(height: 10.0),
 
                               //Phone number
@@ -335,9 +335,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   TextFormField buildTextFormField(
-      String initialValue, Function(String) onChanged) {
+      String initialValue, Function(String) onChanged,
+      {bool readOnly = false}) {
     return TextFormField(
       initialValue: initialValue,
+      readOnly: readOnly,
       decoration: InputDecoration(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
@@ -349,12 +351,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
         ),
         filled: true,
       ),
-      // validator: (value) {
-      //   if (value!.isEmpty) {
-      //     return 'Please enter $label';
-      //   }
-      //   return null;
-      // },
       onChanged: onChanged,
     );
   }

@@ -8,6 +8,7 @@ import 'AcceptedBidsPage.dart';
 import 'IndvidualUserSh.dart';
 import 'RejectedBidsPage.dart';
 import 'editCourierAccount.dart';
+import 'package:speedyship/pages/courier/courier_help_page.dart';
 
 class CourierMain extends StatefulWidget {
   @override
@@ -70,26 +71,23 @@ class _CourierMainState extends State<CourierMain> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        iconTheme: IconThemeData(color: Colors.black),
-      ),
-      backgroundColor: Colors.white,
+      appBar: AppBar(),
       drawer: Drawer(
         child: ListView(
           children: [
             UserAccountsDrawerHeader(
-              decoration: BoxDecoration(color: Colors.teal),
               accountName: Text(_name),
               accountEmail: Text(_email),
               currentAccountPicture: CircleAvatar(
-                child: Text('MA'),
+                //need to be fixed
+                child: Text(
+                  _name.isNotEmpty ? '${_fname[0]}${_lname[0]}' : '',
+                ),
               ),
             ),
             ListTile(
-              leading: Icon(Icons.account_circle),
-              title: Text('Account'),
+              leading: const Icon(Icons.account_circle),
+              title: const Text('Account'),
               onTap: () {
                 Navigator.push(
                   context,
@@ -100,8 +98,8 @@ class _CourierMainState extends State<CourierMain> {
               },
             ),
             ListTile(
-              leading: Icon(Icons.done_all_rounded),
-              title: Text('accepted Requests'),
+              leading: const Icon(Icons.done_all_rounded),
+              title: const Text('accepted Requests'),
               onTap: () {
                 Navigator.push(
                   context,
@@ -112,8 +110,8 @@ class _CourierMainState extends State<CourierMain> {
               },
             ),
             ListTile(
-              leading: Icon(Icons.block_flipped),
-              title: Text('Rejected Requests'),
+              leading: const Icon(Icons.block_flipped),
+              title: const Text('Rejected Requests'),
               onTap: () {
                 Navigator.push(
                   context,
@@ -124,8 +122,8 @@ class _CourierMainState extends State<CourierMain> {
               },
             ),
             ListTile(
-              leading: Icon(Icons.local_shipping),
-              title: Text('Deliveries'),
+              leading: const Icon(Icons.local_shipping),
+              title: const Text('Deliveries'),
               onTap: () {
                 Navigator.push(
                   context,
@@ -136,8 +134,8 @@ class _CourierMainState extends State<CourierMain> {
               },
             ),
             ListTile(
-              leading: Icon(Icons.star_rate),
-              title: Text('Ratings'),
+              leading: const Icon(Icons.star_rate),
+              title: const Text('Ratings'),
               onTap: () {
                 Navigator.push(
                   context,
@@ -150,20 +148,19 @@ class _CourierMainState extends State<CourierMain> {
             ListTile(
               leading: Icon(Icons.help),
               title: Text('Help'),
-              /*onTap: () {
+              onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => HelpPage(),
+                    builder: (context) => CourierHelpPage(),
                   ),
                 );
-              },*/
+              },
             ),
-            Divider(),
-            Divider(),
+            const Divider(),
             ListTile(
-              leading: Icon(Icons.logout),
-              title: Text('Sign Out'),
+              leading: const Icon(Icons.logout),
+              title: const Text('Sign Out'),
               onTap: () {
                 FirebaseAuth.instance.signOut();
               },
@@ -182,14 +179,15 @@ class _CourierMainState extends State<CourierMain> {
                 return GestureDetector(
                   onTap: () => filterShipments(cityNames[index]),
                   child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: 8.0),
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    margin: const EdgeInsets.symmetric(horizontal: 8.0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20.0),
                       color: _selectedCity == cityNames[index]
-                          ? Color.fromRGBO(
-                              9, 147, 120, 1) // Selected city color
+                          ? Theme.of(context)
+                              .colorScheme
+                              .primary // Selected city color
                           : Colors.grey[300], // Unselected city color
                     ),
                     child: Center(
@@ -253,137 +251,149 @@ class _CourierMainState extends State<CourierMain> {
                             final username =
                                 userSnapshot.data!.get('firstName');
 
-                            return Container(
-                              margin: EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 20),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Color.fromARGB(255, 0, 0, 0)
-                                        .withOpacity(0.2),
-                                    blurRadius: 20,
-                                    offset: Offset(0, 3),
-                                  ),
-                                ],
-                              ),
-                              child: ListTile(
-                                contentPadding: EdgeInsets.all(15.0),
-                                title: Text(
-                                  username,
-                                  style: TextStyle(
-                                    color: Color.fromRGBO(9, 147, 120, 1),
-                                    fontSize: 20.0,
-                                    fontWeight: FontWeight.bold,
+                            return GestureDetector(
+                              child: Container(
+                                margin: EdgeInsets.symmetric(
+                                    vertical: 10, horizontal: 20),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .secondaryContainer,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(15.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      //List tile
+                                      ListTile(
+                                        leading: CircleAvatar(
+                                          child: Text(username[0]),
+                                        ),
+                                        title: Text(username),
+                                      ),
+                                      const SizedBox(
+                                        height: 10.0,
+                                      ),
+
+                                      //Location and destination
+                                      Text(
+                                        'Location & Destination',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleSmall,
+                                      ),
+                                      const SizedBox(
+                                        height: 10.0,
+                                      ),
+
+                                      //City
+                                      ListTile(
+                                        leading:
+                                            const Icon(Icons.location_city),
+                                        title: Text(city),
+                                      ),
+
+                                      //Location
+                                      ListTile(
+                                        leading: const Icon(Icons.location_pin),
+                                        title: Text('$location'),
+                                      ),
+                                      //destination
+                                      ListTile(
+                                        leading: const Icon(Icons.location_on),
+                                        title: Text('$destination'),
+                                      ),
+
+                                      const SizedBox(
+                                        height: 10.0,
+                                      ),
+                                      const Divider(),
+
+                                      //Shipment details
+                                      Text(
+                                        'Shipment Details',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleSmall,
+                                      ),
+                                      const SizedBox(
+                                        height: 10.0,
+                                      ),
+
+                                      const SizedBox(height: 10),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          //Category
+                                          Column(
+                                            children: [
+                                              const Icon(Icons.category),
+                                              Text(
+                                                '$category',
+                                              ),
+                                            ],
+                                          ),
+
+                                          //Weight
+                                          Column(
+                                            children: [
+                                              const Icon(Icons.line_weight),
+                                              Text(
+                                                '$weight KG',
+                                              ),
+                                            ],
+                                          ),
+
+                                          //Width
+                                          Column(
+                                            children: [
+                                              const Icon(Icons.width_full),
+                                              Text(
+                                                '$width CM',
+                                              ),
+                                            ],
+                                          ),
+
+                                          //Height
+                                          Column(
+                                            children: [
+                                              const Icon(Icons.height),
+                                              Text(
+                                                '$height CM',
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Align(
-                                      alignment: Alignment.topRight,
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                          vertical: 5,
-                                          horizontal: 10,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: Colors
-                                              .white, // Updated the background color
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                        ),
-                                        child: Text(
-                                          city,
-                                          style: TextStyle(
-                                            color: Color.fromRGBO(231, 123, 0,
-                                                1), // Updated the text color
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(height: 10),
-                                    Text(
-                                      'Location: $location',
-                                      style: TextStyle(
-                                        color:
-                                            Color.fromARGB(255, 106, 106, 106),
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Text(
-                                      'Destination: $destination',
-                                      style: TextStyle(
-                                        color:
-                                            Color.fromARGB(255, 106, 106, 106),
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Text(
-                                      'Category: $category',
-                                      style: TextStyle(
-                                        color:
-                                            Color.fromARGB(255, 106, 106, 106),
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    SizedBox(height: 10),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          'Height: $height',
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                        Text(
-                                          'Weight: $weight',
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                        Text(
-                                          'Width: $width',
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                        Text(
-                                          'Length: $length',
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          IndividualUserShipment(
-                                        city: city,
-                                        location: location,
-                                        destination: destination,
-                                        category: category,
-                                        height: height,
-                                        weight: weight,
-                                        width: width,
-                                        length: length,
-                                        username: username,
-                                        userId: userId,
-                                        shipmentId: shipment.id,
-                                      ),
-                                    ),
-                                  );
-                                },
                               ),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        IndividualUserShipment(
+                                      city: city,
+                                      location: location,
+                                      destination: destination,
+                                      category: category,
+                                      height: height,
+                                      weight: weight,
+                                      width: width,
+                                      length: length,
+                                      username: username,
+                                      userId: userId,
+                                      shipmentId: shipment.id,
+                                    ),
+                                  ),
+                                );
+                              },
                             );
                           }
                           if (userSnapshot.hasError) {

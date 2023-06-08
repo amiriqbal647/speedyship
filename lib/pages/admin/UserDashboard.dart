@@ -10,8 +10,6 @@ class UserDashboard extends StatefulWidget {
 class _UserDashboardState extends State<UserDashboard> {
   final CollectionReference usersRef =
       FirebaseFirestore.instance.collection('users');
-  final Color primaryColor = Color(0xFF009378);
-  final Color accentColor = Color(0xFFE77B00);
 
   void deleteUser(String userId) {
     usersRef.doc(userId).delete();
@@ -21,16 +19,16 @@ class _UserDashboardState extends State<UserDashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('User List', style: TextStyle(color: Colors.white)),
-        backgroundColor: primaryColor,
+        title: const Text('Users List'),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: usersRef.where('role', isEqualTo: 'user').snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Center(
-                child: Text('Something went wrong',
-                    style: TextStyle(color: Colors.black)));
+                child: Text(
+              'Something went wrong',
+            ));
           }
 
           if (!snapshot.hasData) {
@@ -59,8 +57,9 @@ class _UserDashboardState extends State<UserDashboard> {
                   : (user as dynamic)[4].toString();
 
               return Card(
-                elevation: 5.0, // This gives a shadow to the card.
-                margin: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                elevation: 2.0,
+                color: Theme.of(context).colorScheme.secondaryContainer,
+                margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 15),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),
                 ),
@@ -72,45 +71,39 @@ class _UserDashboardState extends State<UserDashboard> {
                         children: [
                           CircleAvatar(
                             radius: 30,
-                            backgroundColor: accentColor,
                             child: Text(
                               '${firstName[0]}${lastName[0]}',
                               style: TextStyle(
-                                color: Colors.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18.0,
                               ),
                             ),
                           ),
-                          SizedBox(width: 10),
+                          const SizedBox(width: 10),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text('$firstName $lastName',
                                     style: TextStyle(
-                                      color: Colors.black,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18.0,
                                     )),
                                 SizedBox(height: 10),
                                 Text('Email: $email',
                                     style: TextStyle(
-                                      color: Colors.black,
                                       fontSize: 16.0,
                                     )),
                                 SizedBox(height: 5),
                                 Text(
                                   'Phone: ${phoneNumber ?? 'No phone number'}',
                                   style: TextStyle(
-                                    color: Colors.black,
                                     fontSize: 16.0,
                                   ),
                                 ),
                                 SizedBox(height: 5),
                                 Text('DOB: ${dateOfBirth}',
                                     style: TextStyle(
-                                      color: Colors.black,
                                       fontSize: 16.0,
                                     )),
                               ],
@@ -123,7 +116,7 @@ class _UserDashboardState extends State<UserDashboard> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           IconButton(
-                            icon: Icon(Icons.edit, color: primaryColor),
+                            icon: const Icon(Icons.edit),
                             onPressed: () {
                               Navigator.push(
                                 context,

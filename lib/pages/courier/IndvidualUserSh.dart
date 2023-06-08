@@ -35,43 +35,31 @@ class IndividualUserShipment extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           'Individual Shipment',
-          style: TextStyle(color: Colors.black),
         ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        iconTheme: IconThemeData(color: Colors.black),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              padding: const EdgeInsets.symmetric(horizontal: 15.0),
               child: Container(
-                padding: EdgeInsets.all(20.0),
+                padding: const EdgeInsets.all(20.0),
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: Colors.teal,
+                  color: Theme.of(context).colorScheme.secondaryContainer,
                   borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.shade600,
-                      spreadRadius: 1,
-                      blurRadius: 15,
-                    ),
-                  ],
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Shipment Details',
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     _buildSummaryItem('Location', location),
                     _buildSummaryItem('Destination', destination),
                     _buildSummaryItem('Category', category),
@@ -84,10 +72,9 @@ class IndividualUserShipment extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 15),
             Center(
-              child: ElevatedButton(
-                child: Text("Make a bid"),
+              child: FilledButton(
                 onPressed: () async {
                   final currentUser = FirebaseAuth.instance.currentUser;
                   if (currentUser != null) {
@@ -133,14 +120,15 @@ class IndividualUserShipment extends StatelessWidget {
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  fixedSize: Size(350, 60),
-                  backgroundColor: Colors.orange,
+                  fixedSize: const Size(350, 60),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                 ),
+                child: const Text("Make a bid"),
               ),
             ),
+            const SizedBox(height: 15),
           ],
         ),
       ),
@@ -151,20 +139,16 @@ class IndividualUserShipment extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: TextStyle(color: Colors.white)),
-        SizedBox(height: 10),
+        Text(title),
+        const SizedBox(height: 10),
         Text(
           value,
-          style: TextStyle(
-            color: Colors.white,
+          style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 15,
           ),
         ),
-        Divider(
-          height: 30,
-          color: Colors.white,
-        ),
+        const Divider(height: 30),
       ],
     );
   }

@@ -185,13 +185,14 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
                                         return 'Please enter a name';
-                                      } else if (!RegExp(r'^[a-zA-Z]{1,20}$')
+                                      } else if (!RegExp(r'^[a-zA-Z ]{1,20}$')
                                           .hasMatch(value)) {
-                                        return 'Please enter a valid name with maximum 20 letters';
+                                        return 'Please enter a valid name with a maximum of 20 letters';
                                       }
                                       return null;
                                     },
                                   ),
+
                                   const SizedBox(
                                     height: 15,
                                   ),
@@ -207,20 +208,19 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                                   ),
                                   MyTextField(
                                     controller: recipientphonecontroller,
-                                    hintText: '+90 5xx xxx xxxx',
+                                    hintText: '+905xxxxxxxxx',
                                     obscureText: false,
                                     keyboardType: TextInputType.phone,
                                     readOnly: false,
                                     // placeholder: '',
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
-                                        return 'Please enter a phone number';
-                                      } else if (!RegExp(
-                                              r'^\+90\s(5\d{2})\s(\d{3})\s(\d{4})$')
+                                        return 'Please fill the phone number field';
+                                      } else if (!RegExp(r'^\+90[1-9]\d{9}$')
                                           .hasMatch(value)) {
-                                        return 'the format of the number should be +90 5xx xxx xxxx';
+                                        return 'Please enter a valid Turkish phone number\n(e.g., +905xxxxxxxxx)';
                                       }
-                                      return null;
+                                      return null; // Return null if the phone number is valid
                                     },
                                   ),
                                   const SizedBox(
@@ -238,7 +238,7 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                                   ),
                                   MyTextField(
                                     controller: weightController,
-                                    hintText: '30 KG',
+                                    hintText: 'KG',
                                     obscureText: false,
                                     readOnly: false,
                                     keyboardType: TextInputType.number,
@@ -251,8 +251,8 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                                         return "Please enter a weight";
                                       } else if (double.tryParse(value) ==
                                               null ||
-                                          double.parse(value) > 50) {
-                                        return "Please enter a valid weight less than or equal to 50";
+                                          double.parse(value) > 100) {
+                                        return "Please enter a valid weight less than or equal to 100";
                                       }
                                       return null;
                                     },
@@ -293,7 +293,7 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                                         child: // Length
                                             MyTextField(
                                           controller: lengthController,
-                                          hintText: '61 CM',
+                                          hintText: 'CM',
                                           obscureText: false,
                                           readOnly: false,
                                           keyboardType: TextInputType.number,
@@ -307,8 +307,8 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                                               return "Please enter a length";
                                             } else if (double.tryParse(value) ==
                                                     null ||
-                                                double.parse(value) > 50) {
-                                              return "Please enter a valid length less than or equal to 50";
+                                                double.parse(value) > 150) {
+                                              return "Please enter a valid length less than or equal to 150";
                                             }
                                             return null;
                                           },
@@ -323,7 +323,7 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                                         //width
                                         child: MyTextField(
                                           controller: widthController,
-                                          hintText: '46 CM',
+                                          hintText: 'CM',
                                           obscureText: false,
                                           readOnly: false,
                                           keyboardType: TextInputType.number,
@@ -337,8 +337,8 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                                               return "Please enter a width";
                                             } else if (double.tryParse(value) ==
                                                     null ||
-                                                double.parse(value) > 50) {
-                                              return "Please enter a valid width less than or equal to 50";
+                                                double.parse(value) > 150) {
+                                              return "Please enter a valid width less than or equal to 150";
                                             }
                                             return null;
                                           },
@@ -361,7 +361,7 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                                   ),
                                   MyTextField(
                                     controller: heightController,
-                                    hintText: '46 CM',
+                                    hintText: 'CM',
                                     obscureText: false,
                                     readOnly: false,
                                     keyboardType: TextInputType.number,
@@ -374,8 +374,8 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                                         return "Please enter a Height";
                                       } else if (double.tryParse(value) ==
                                               null ||
-                                          double.parse(value) > 50) {
-                                        return "Please enter a valid Height less than or equal to 50";
+                                          double.parse(value) > 150) {
+                                        return "Please enter a valid Height less than or equal to 150";
                                       }
                                       return null;
                                     },
@@ -469,9 +469,9 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                                     ),
                                     MyTextField(
                                       controller: _myLocationController,
-                                      hintText: 'EMU,MAIN CAMPUS',
+                                      hintText: 'Senders Exact Location',
                                       obscureText: false,
-                                      keyboardType: TextInputType.emailAddress,
+                                      keyboardType: TextInputType.text,
                                       readOnly: false,
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
@@ -495,9 +495,9 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                                     ),
                                     MyTextField(
                                       controller: _destinationController,
-                                      hintText: 'NICOSIA, MAIN STREET',
+                                      hintText: 'Receivers Exact Location',
                                       obscureText: false,
-                                      keyboardType: TextInputType.emailAddress,
+                                      keyboardType: TextInputType.text,
                                       readOnly: false,
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
@@ -533,6 +533,8 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                               onTap: () {
                                 if (_formKey.currentState != null &&
                                     _formKey.currentState!.validate()) {
+                                  print(
+                                      "You successfully added placed your shipment");
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -644,7 +646,7 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                               ),
                               MyTextField(
                                 controller: recipientcontroller,
-                                hintText: 'John',
+                                hintText: 'Recipient Name',
                                 obscureText: false,
                                 keyboardType: TextInputType.name,
                                 readOnly: false,
@@ -672,20 +674,19 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                               ),
                               MyTextField(
                                 controller: recipientphonecontroller,
-                                hintText: '+90 5xx xxx xxxx',
+                                hintText: '+905xxxxxxxxx',
                                 obscureText: false,
                                 keyboardType: TextInputType.phone,
                                 readOnly: false,
                                 // placeholder: '',
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
-                                    return 'Please enter a phone number';
-                                  } else if (!RegExp(
-                                          r'^\+90\s(5\d{2})\s(\d{3})\s(\d{4})$')
+                                    return 'Please fill the phone number field';
+                                  } else if (!RegExp(r'^\+90[1-9]\d{9}$')
                                       .hasMatch(value)) {
-                                    return 'the format of the number should be +90 5xx xxx xxxx';
+                                    return 'Please enter a valid Turkish phone number\n(e.g., +905xxxxxxxxx)';
                                   }
-                                  return null;
+                                  return null; // Return null if the phone number is valid
                                 },
                               ),
                               const SizedBox(
@@ -702,7 +703,7 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                               ),
                               MyTextField(
                                 controller: weightController,
-                                hintText: '30 kg',
+                                hintText: 'kg',
                                 obscureText: false,
                                 readOnly: false,
                                 keyboardType: TextInputType.number,
@@ -714,8 +715,8 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                                   if (value == null || value.isEmpty) {
                                     return "Please enter a weight";
                                   } else if (double.tryParse(value) == null ||
-                                      double.parse(value) > 50) {
-                                    return "Please enter a valid weight less than or equal to 50";
+                                      double.parse(value) > 100) {
+                                    return "Please enter a valid weight less than or equal to 100";
                                   }
                                   return null;
                                 },
@@ -754,7 +755,7 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                                     child: // Length
                                         MyTextField(
                                       controller: lengthController,
-                                      hintText: '61 CM',
+                                      hintText: 'CM',
                                       obscureText: false,
                                       readOnly: false,
                                       keyboardType: TextInputType.number,
@@ -767,8 +768,8 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                                           return "Please enter a length";
                                         } else if (double.tryParse(value) ==
                                                 null ||
-                                            double.parse(value) > 50) {
-                                          return "Please enter a valid length less than or equal to 50";
+                                            double.parse(value) > 150) {
+                                          return "Please enter a valid length less than or equal to 150";
                                         }
                                         return null;
                                       },
@@ -783,7 +784,7 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                                     //width
                                     child: MyTextField(
                                       controller: widthController,
-                                      hintText: '46 CM',
+                                      hintText: 'CM',
                                       obscureText: false,
                                       readOnly: false,
                                       keyboardType: TextInputType.number,
@@ -797,7 +798,7 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                                         } else if (double.tryParse(value) ==
                                                 null ||
                                             double.parse(value) > 50) {
-                                          return "Please enter a valid width less than or equal to 50";
+                                          return "Please enter a valid width less than or equal to 150";
                                         }
                                         return null;
                                       },
@@ -819,7 +820,7 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                               ),
                               MyTextField(
                                 controller: heightController,
-                                hintText: '46 CM',
+                                hintText: 'CM',
                                 obscureText: false,
                                 readOnly: false,
                                 keyboardType: TextInputType.number,
@@ -831,8 +832,8 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                                   if (value == null || value.isEmpty) {
                                     return "Please enter a Height";
                                   } else if (double.tryParse(value) == null ||
-                                      double.parse(value) > 50) {
-                                    return "Please enter a valid Height less than or equal to 50";
+                                      double.parse(value) > 150) {
+                                    return "Please enter a valid Height less than or equal to 150";
                                   }
                                   return null;
                                 },
@@ -919,10 +920,10 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                                 ),
                                 MyTextField(
                                   controller: _myLocationController,
-                                  hintText: 'EMU, MAIN CAMPUS',
+                                  hintText: 'Senders Exact Location',
                                   obscureText: false,
-                                  keyboardType: TextInputType.none,
-                                  readOnly: true,
+                                  keyboardType: TextInputType.text,
+                                  readOnly: false,
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
                                       return "Please fill the location field";
@@ -957,10 +958,10 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                                 ),
                                 MyTextField(
                                   controller: _destinationController,
-                                  hintText: 'NICOSIA, MAIN STREET',
+                                  hintText: 'Recievers Exact Location',
                                   obscureText: false,
-                                  keyboardType: TextInputType.emailAddress,
-                                  readOnly: true,
+                                  keyboardType: TextInputType.text,
+                                  readOnly: false,
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
                                       return "Please fill the destination field";
@@ -994,6 +995,7 @@ class _ShipmentInformationState extends State<ShipmentInformation> {
                           onTap: () {
                             if (_formKey.currentState != null &&
                                 _formKey.currentState!.validate()) {
+                              print("you successfully placed your shipment");
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(

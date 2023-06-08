@@ -22,13 +22,7 @@ class AcceptedBidsPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        elevation: 0.0,
-        backgroundColor: Color.fromRGBO(9, 147, 120, 1.0),
-        title: Text(
-          'Accepted Bids',
-          style: TextStyle(color: Colors.white),
-        ),
-        iconTheme: IconThemeData(color: Colors.white),
+        title: const Text('Accepted Bids'),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
@@ -155,9 +149,10 @@ class AcceptedBidsPage extends StatelessWidget {
                           .delete();
                     },
                     child: Card(
-                      elevation: 2.0,
-                      margin:
-                          EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                      elevation: 2,
+                      color: Theme.of(context).colorScheme.secondaryContainer,
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 15.0),
                       child: ListTile(
                         title: Text(
                           title,
@@ -174,7 +169,7 @@ class AcceptedBidsPage extends StatelessWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                ElevatedButton(
+                                FilledButton(
                                   onPressed: () async {
                                     // Show a confirmation dialog
                                     bool confirmAction = await showDialog(
@@ -216,9 +211,14 @@ class AcceptedBidsPage extends StatelessWidget {
                                           .delete();
                                     }
                                   },
-                                  child: Text('Begin Delivery'),
+                                  style: FilledButton.styleFrom(
+                                      fixedSize: const Size.fromHeight(40),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8))),
+                                  child: const Text('Begin Delivery'),
                                 ),
-                                SizedBox(width: 8.0),
+                                const SizedBox(width: 10.0),
                                 ElevatedButton(
                                   onPressed: () async {
                                     // Show a confirmation dialog
@@ -261,10 +261,18 @@ class AcceptedBidsPage extends StatelessWidget {
                                           .delete();
                                     }
                                   },
-                                  child: Text('Cancel Delivery'),
+                                  style: FilledButton.styleFrom(
+                                      fixedSize: const Size.fromHeight(40),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8))),
+                                  child: const Text('Cancel Delivery'),
                                 ),
                               ],
                             ),
+                            const SizedBox(
+                              height: 10.0,
+                            )
                           ],
                         ),
                       ),

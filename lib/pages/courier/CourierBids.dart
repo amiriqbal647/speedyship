@@ -102,31 +102,39 @@ class _CourierBidsFormState extends State<CourierBidsForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:
-            Text("Courier Bid", style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: Color.fromRGBO(9, 147, 120, 1),
-        elevation: 0,
+        title: const Text("Courier Bid"),
       ),
       body: Center(
         child: Container(
           padding: const EdgeInsets.all(16.0),
+          margin: const EdgeInsets.all(15),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.secondaryContainer,
+            borderRadius: BorderRadius.circular(10),
+          ),
           child: Form(
             key: _formKey,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  "Add Your Bid",
-                  style: TextStyle(
-                    fontSize: 24.0,
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromRGBO(9, 147, 120, 1),
-                  ),
-                ),
+                Text("Add Your Bid",
+                    style: Theme.of(context).textTheme.titleLarge),
                 SizedBox(height: 24.0),
                 TextFormField(
                   controller: priceController,
-                  decoration: InputDecoration(hintText: 'Price'),
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: const BorderSide(
+                            color: Colors.transparent, width: 0),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: const BorderSide(
+                            color: Colors.transparent, width: 0),
+                      ),
+                      filled: true,
+                      hintText: 'Price'),
                   keyboardType: TextInputType.number,
                   inputFormatters: [
                     FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
@@ -143,56 +151,31 @@ class _CourierBidsFormState extends State<CourierBidsForm> {
                     return null;
                   },
                 ),
-                SizedBox(height: 16.0),
+                const SizedBox(height: 16.0),
+
                 MyDatePickerTwo(
                   onDateSelected: (date) =>
                       setState(() => dateController = date),
                 ),
-                SizedBox(height: 16.0),
-                Container(
-                  height: 50,
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        submitBid(context);
-                      }
-                    },
-                    child: Text('Submit'),
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                          Color.fromRGBO(231, 123, 0, 1)),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                      ),
-                      padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                        EdgeInsets.all(10),
-                      ),
-                      elevation: MaterialStateProperty.all<double>(5),
-                    ),
-                  ),
+                const SizedBox(height: 16.0),
+                //submit button
+                FilledButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      submitBid(context);
+                    }
+                  },
+                  style: FilledButton.styleFrom(
+                      fixedSize: const Size(360, 60),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8))),
+                  child: const Text('Submit'),
                 ),
               ],
             ),
           ),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(15),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 5,
-                blurRadius: 7,
-                offset: Offset(0, 3),
-              ),
-            ],
-          ),
-          margin: EdgeInsets.all(15),
         ),
       ),
-      backgroundColor: Color.fromRGBO(255, 255, 255, 1),
     );
   }
 }

@@ -103,39 +103,47 @@ class _CourierRatingsPageState extends State<CourierRatingsPage> {
                       ratingValue = (rating as num).toDouble();
                     }
 
-                    final comment = ratingData['comments'] as String? ?? '';
+                    final comment = ratingData['comment'] as String? ?? '';
+                    // comment fixed
 
                     return Card(
+                      elevation: 2,
+                      color: Theme.of(context).colorScheme.secondaryContainer,
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 15.0),
                       child: ListTile(
-                        title: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            FutureBuilder<DocumentSnapshot>(
-                              future: FirebaseFirestore.instance
-                                  .collection('users')
-                                  .doc(userId)
-                                  .get(),
-                              builder: (context, snapshot) {
-                                final userData = snapshot.data?.data()
-                                    as Map<String, dynamic>?;
+                        title: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              FutureBuilder<DocumentSnapshot>(
+                                future: FirebaseFirestore.instance
+                                    .collection('users')
+                                    .doc(userId)
+                                    .get(),
+                                builder: (context, snapshot) {
+                                  final userData = snapshot.data?.data()
+                                      as Map<String, dynamic>?;
 
-                                if (userData != null) {
-                                  final firstName =
-                                      userData['firstName'] as String? ?? '';
-                                  final lastName =
-                                      userData['lastName'] as String? ?? '';
+                                  if (userData != null) {
+                                    final firstName =
+                                        userData['firstName'] as String? ?? '';
+                                    final lastName =
+                                        userData['lastName'] as String? ?? '';
 
-                                  return Text('$firstName $lastName');
-                                }
+                                    return Text('$firstName $lastName');
+                                  }
 
-                                return Text(
-                                    'N/A'); // Display a fallback value if userData is null
-                              },
-                            ),
-                            Text('Shipment ID: $shipmentId'),
-                            Text('Rating: $ratingValue'),
-                            Text('Comment: $comment'),
-                          ],
+                                  return Text(
+                                      'N/A'); // Display a fallback value if userData is null
+                                },
+                              ),
+                              Text('Shipment ID: $shipmentId'),
+                              Text('Rating: $ratingValue'),
+                              Text('Comment: $comment'),
+                            ],
+                          ),
                         ),
                       ),
                     );

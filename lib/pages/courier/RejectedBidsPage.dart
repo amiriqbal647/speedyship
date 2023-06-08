@@ -22,13 +22,9 @@ class RejectedBidsPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        elevation: 0.0,
-        backgroundColor: Color.fromRGBO(9, 147, 120, 1.0),
-        title: Text(
+        title: const Text(
           'Declined Bids',
-          style: TextStyle(color: Colors.white),
         ),
-        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
@@ -125,17 +121,21 @@ class RejectedBidsPage extends StatelessWidget {
 
                     return Card(
                       elevation: 2.0,
-                      margin:
-                          EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                      child: ListTile(
-                        title: Text(
-                          title,
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: subtitle,
+                      color: Theme.of(context).colorScheme.secondaryContainer,
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 8.0, horizontal: 16.0),
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: ListTile(
+                          title: Text(
+                            title,
+                            style: const TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: subtitle,
+                          ),
                         ),
                       ),
                     );

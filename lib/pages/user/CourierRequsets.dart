@@ -1,9 +1,9 @@
-import 'package:elegant_notification/elegant_notification.dart';
 import 'package:elegant_notification/resources/arrays.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'bid_operations.dart';
+import 'package:elegant_notification/elegant_notification.dart';
 
 class BidsPage extends StatefulWidget {
   @override
@@ -65,7 +65,6 @@ class _BidsPageState extends State<BidsPage> {
           final shipmentRef = firestore.collection('shipments').doc(shipmentId);
           batch.update(shipmentRef, {
             'courierId': courierId,
-            'status': 'pending', // Update the status field to "pending"
             // Include any other fields you want to update in the shipment document
           });
         } else {
@@ -89,7 +88,7 @@ class _BidsPageState extends State<BidsPage> {
     }
 
     batch.commit().then((_) {
-      // Show a confirmation notification
+      // Show a confirmation snackbar
       ElegantNotification.success(
         title: Text('Bid Accepted'),
         description: Text('Thank you for accepting a bid.'),
@@ -99,22 +98,11 @@ class _BidsPageState extends State<BidsPage> {
         // color: Colors.green,
       ).show(context);
     }).catchError((error) {
-      // Show an error notification
-      ElegantNotification.error(
-        title: Text('Error Accepting Bid'),
-        description: Text('Error accepting bid: $error'),
-        // icon: Icon(Icons.error),
-        // color: Colors.red,
-      ).show(context);
+      // Show an error snackbar
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error accepting bid: $error')),
+      );
     });
-  }
-
-  Future<Map<String, dynamic>?> _getUserData(String courierId) async {
-    final snapshot = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(courierId)
-        .get();
-    return snapshot.data() as Map<String, dynamic>?;
   }
 
   @override
@@ -154,13 +142,6 @@ class _BidsPageState extends State<BidsPage> {
             );
           }
 
-          if (snapshot.data!.size == 0) {
-            // Display "No available bids" message
-            return Center(
-              child: Text('No available bids'),
-            );
-          }
-
           return ListView.builder(
             itemCount: snapshot.data!.size,
             itemBuilder: (BuildContext context, int index) {
@@ -184,50 +165,79 @@ class _BidsPageState extends State<BidsPage> {
                 return SizedBox.shrink();
               }
 
-              return FutureBuilder<Map<String, dynamic>?>(
-                future: _getUserData(courierId),
-                builder: (BuildContext context,
-                    AsyncSnapshot<Map<String, dynamic>?> userDataSnapshot) {
-                  if (userDataSnapshot.connectionState ==
-                      ConnectionState.waiting) {
-                    return SizedBox
-                        .shrink(); // Show a loading indicator if user data is still loading
-                  }
-
-                  final userData = userDataSnapshot.data;
-                  final firstName = userData?['firstName'] as String? ?? '';
-                  final lastName = userData?['lastName'] as String? ?? '';
-                  final overallRating =
-                      userData?['overallRating'] as double? ?? 0.0;
-
-                  return Card(
-                    elevation: 2,
-                    margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    child: ListTile(
-                      title: Text('Shipment ID: $shipmentId'),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Name: $firstName $lastName'),
-                          Text(
-                              'Overall Rating: ${overallRating.toStringAsFixed(2)}'),
-                          Text('Bid Price: $bidPrice'),
-                          Text('Bid Date: $bidDate'),
-                        ],
-                      ),
-                      trailing: IconButton(
-                        icon: Icon(Icons.check),
-                        color: Colors.green,
-                        onPressed: () {
-                          _onBidAccepted(shipmentId, bidId);
-                        },
-                      ),
-                      onTap: () {
-                        _onBidDeclined(bidId);
+              return Card(
+                elevation: 2,
+                margin:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                color: Theme.of(context).colorScheme.secondaryContainer,
+                child: Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: ListTile(
+                    title: Text('Shipment ID: $shipmentId'),
+                    subtitle:
+                        FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                      future: FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(courierId)
+                          .get(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>>
+                              snapshot) {
+                        if (snapshot.hasData) {
+                          final Map<String, dynamic>? userData =
+                              snapshot.data!.data();
+                          if (userData != null) {
+                            final String firstName =
+                                userData['firstName'] as String;
+                            final String lastName =
+                                userData['lastName'] as String;
+                            final double overallRating =
+                                userData['overallRating'] as double;
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Courier Name: $firstName $lastName'),
+                                Text(
+                                    'Overall Rating: ${overallRating.toStringAsFixed(2)}'),
+                                Text('Price: $bidPrice'),
+                                Text('Date: $bidDate'),
+                              ],
+                            );
+                          }
+                        }
+                        return CircularProgressIndicator();
                       },
                     ),
-                  );
-                },
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        FilledButton(
+                          onPressed: () {
+                            _onBidAccepted(shipmentId, bidId);
+                          },
+                          style: FilledButton.styleFrom(
+                              fixedSize: const Size.fromHeight(40),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8))),
+                          child: const Text('Accept'),
+                        ),
+                        SizedBox(width: 10),
+                        ElevatedButton(
+                          onPressed: () {
+                            _onBidDeclined(bidId);
+                            BidOperations.declineBid(context, bidId, courierId,
+                                bidPrice, bidDate, shipmentId);
+                          },
+                          style: FilledButton.styleFrom(
+                              fixedSize: const Size.fromHeight(40),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8))),
+                          child: const Text('Decline'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               );
             },
           );

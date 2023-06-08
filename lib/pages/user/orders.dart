@@ -120,15 +120,11 @@ class _OrderListState extends State<OrderList> {
             final courierId = shipment['courierId'] as String? ?? '';
             final shipmentStatus = shipment['status'] as String? ?? '';
 
-            final bool isDisabled = (widget.status == 'cancelled') ||
+            final bool isDisabled = widget.status == 'cancelled' ||
                 (widget.status is List &&
                     widget.status.contains(shipmentStatus));
 
-            bool isConfirmDeliveryEnabled =
-                (widget.status.contains('pending') ||
-                        widget.status.contains('approval_pending')) &&
-                    (shipmentStatus == 'pending' ||
-                        shipmentStatus == 'approval_pending');
+            bool isConfirmDeliveryEnabled = (shipmentStatus != "pending");
 
             bool isRateCourierEnabled =
                 widget.status == 'delivered' && shipmentStatus == 'delivered';
@@ -154,7 +150,7 @@ class _OrderListState extends State<OrderList> {
                     const SizedBox(
                       height: 10.0,
                     ),
-                    FilledButton(
+                    ElevatedButton(
                       onPressed: isConfirmDeliveryEnabled
                           ? () {
                               _confirmDelivery(context, shipmentId);
@@ -162,16 +158,16 @@ class _OrderListState extends State<OrderList> {
                           : null,
                       child: const Text("Confirm Delivery"),
                       style: ElevatedButton.styleFrom(
-                          primary: isDisabled ? Colors.grey : null,
-                          fixedSize: const Size.fromHeight(40),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8))),
+                        primary: isConfirmDeliveryEnabled ? null : Colors.grey,
+                        fixedSize: const Size.fromHeight(40),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8)),
+                      ),
                     ),
                     const SizedBox(height: 10.0),
                     ElevatedButton(
                       onPressed: isRateCourierEnabled &&
-                              !ratedShipments
-                                  .contains(shipmentId) // Updated condition
+                              !ratedShipments.contains(shipmentId)
                           ? () {
                               _showRatingDialog(context, shipmentId, courierId);
                             }
@@ -188,7 +184,7 @@ class _OrderListState extends State<OrderList> {
                       onPressed: () {
                         _showSupportDialog(context);
                       },
-                      style: FilledButton.styleFrom(
+                      style: ElevatedButton.styleFrom(
                           fixedSize: const Size.fromHeight(40),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8))),
@@ -308,5 +304,35 @@ class _OrderListState extends State<OrderList> {
 
   void _showSupportDialog(BuildContext context) {
     // Support dialog code here
+  }
+}
+
+class FilledButton extends StatelessWidget {
+  final VoidCallback? onPressed;
+  final Widget child;
+  final ButtonStyle? style;
+
+  const FilledButton({
+    Key? key,
+    required this.onPressed,
+    required this.child,
+    this.style,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      child: child,
+      style: style ??
+          ElevatedButton.styleFrom(
+            primary: Theme.of(context).accentColor,
+            onPrimary: Colors.white,
+            textStyle: TextStyle(
+              fontSize: 16.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+    );
   }
 }

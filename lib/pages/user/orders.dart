@@ -124,7 +124,8 @@ class _OrderListState extends State<OrderList> {
                 (widget.status is List &&
                     widget.status.contains(shipmentStatus));
 
-            bool isConfirmDeliveryEnabled = (shipmentStatus != "pending");
+            bool isConfirmDeliveryEnabled =
+                !(shipmentStatus == "pending" || shipmentStatus == "delivered");
 
             bool isRateCourierEnabled =
                 widget.status == 'delivered' && shipmentStatus == 'delivered';

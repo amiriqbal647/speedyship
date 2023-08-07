@@ -8,7 +8,6 @@ import 'package:speedyship/pages/shipments/summary_page.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../homepage.dart';
-import '../location.dart';
 
 class ShipmentInformation extends StatefulWidget {
   @override

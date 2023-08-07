@@ -7,7 +7,6 @@ import 'package:speedyship/pages/courier/deliveries.dart';
 import 'AcceptedBidsPage.dart';
 import 'IndvidualUserSh.dart';
 import 'RejectedBidsPage.dart';
-import 'editCourierAccount.dart';
 import 'package:speedyship/pages/courier/courier_help_page.dart';
 
 class CourierMain extends StatefulWidget {

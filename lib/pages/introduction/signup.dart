@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:elegant_notification/elegant_notification.dart';
 import 'package:email_validator/email_validator.dart';
@@ -17,7 +16,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:speedyship/pages/introduction/login.dart';
 import 'package:speedyship/services/auth_service.dart';
-import '../../components/image_picker.dart';
 import 'package:speedyship/services/auth_service.dart';
 import 'package:speedyship/components/my_elevated_button.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';

@@ -100,7 +100,7 @@ class _CourierRatingsPageState extends State<CourierRatingsPage> {
                     final rating = ratingData['rating'];
                     double ratingValue = 0.0;
                     if (rating is num) {
-                      ratingValue = (rating as num).toDouble();
+                      ratingValue = (rating).toDouble();
                     }
 
                     final comment = ratingData['comment'] as String? ?? '';
